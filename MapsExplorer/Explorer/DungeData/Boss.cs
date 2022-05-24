@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MapsExplorer
+{
+	public class Boss
+	{
+		public int Num;
+		public int Hp;
+		public List<Ability> Abils = new List<Ability>();
+		public string AllAbilsStr;
+		public int BossPower { get { return Abils.Count; } }
+		public string Name;
+		public Step Pos;
+		public bool HeroesWin;
+		public bool TribbleInFirst;
+		public bool TribbleInMiddle;
+		public bool TribbleInFinal;
+		public bool Escape1;
+		public bool Escape2;
+		public DateTime DateTime;
+		public List<int[]> Hps = new List<int[]>();
+		public bool CanBeRouting;
+		public bool IsRouting;
+		public bool IsFinal;
+	}
+}
