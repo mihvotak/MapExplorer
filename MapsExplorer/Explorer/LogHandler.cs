@@ -981,6 +981,8 @@ namespace MapsExplorer
 								if (ai != 0)
 									abils[ai] = abils[ai].Substring(1, abils[ai].Length - 1);
 								Ability ability = (Ability)Enum.Parse(typeof(Ability), abils[ai]);
+								if (ability == Ability.тащущий)
+									ability = Ability.тащащий;
 								boss.Abils.Add(ability);
 							}
 						}
