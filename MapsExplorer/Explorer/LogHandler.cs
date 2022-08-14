@@ -776,6 +776,15 @@ namespace MapsExplorer
 						}
 						stepLine++;
 					}
+					if (i == lastLineIndex)
+					{
+						Regex regex = new Regex(@"купон на [^\,]+ ©");
+						MatchCollection countryMatch = regex.Matches(lineText);
+						foreach (Match match in countryMatch)
+						{
+							dunge.Coupons.Add(match.Value);
+						}
+					}
 				}
 				int hintsCount = 0;
 				for (int floor = 1; floor <= 2; floor++)

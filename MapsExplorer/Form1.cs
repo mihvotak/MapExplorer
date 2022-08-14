@@ -138,6 +138,9 @@ namespace MapsExplorer
 				case ExploreMode.SearchJumps:
 					SearchJumps();                  //	Влияние гласов в прыгучести
 					break;
+				case ExploreMode.LookForCoupons:
+					LookForCoupons();               //	Считаем купоны
+					break;
 				default:
 					errorTextBox.Text = $"Mode {_exploreMode} not realized";
 					break;
@@ -1252,6 +1255,32 @@ namespace MapsExplorer
 			string exploreRes = builder.ToString();
 			tableRichTextBox.Text = exploreRes;
 			File.WriteAllText(Paths.ResultsDir + "/SearchJumps.txt", exploreRes);
+		}
+
+		private void LookForCoupons() // Исследуем купоны
+		{
+			var builder = new StringBuilder();
+			Dictionary<string, int> results = new Dictionary<string, int>();
+			for (int i = 0; i < _resultLines.Count; i++)
+			{
+				DungeLine line = _resultLines[i];
+				if (!line.Success)
+					continue;
+				Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
+				foreach (string coupon in dunge.Coupons)
+				{
+					if (!results.ContainsKey(coupon))
+						results.Add(coupon, 0);
+					results[coupon]++;
+				}
+				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+			}
+			progressBar1.Value = 100;
+			foreach (var pair in results)
+			{
+				builder.Append(pair.Key + "\t" + pair.Value + "\n");
+			}
+			tableRichTextBox.Text = builder.ToString();
 		}
 
 		private void SaveFormData()

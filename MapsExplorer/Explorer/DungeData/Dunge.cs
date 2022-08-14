@@ -13,6 +13,7 @@ namespace MapsExplorer
 		public bool[] CanBeHints = new bool[101];
 		public int UniqueSteps;
 		public List<Boss> Bosses = new List<Boss>();
+		public List<string> Coupons = new List<string>();
 		public List<VoiceKind>[] Voices;
 		public List<string> VoiceTexts = new List<string>();
 		public List<Member> Members = new List<Member>();

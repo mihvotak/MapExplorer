@@ -21,4 +21,5 @@ public enum ExploreMode
 	SearchAquas,
 	SearchWalls,
 	SearchJumps,
+	LookForCoupons,
 }
