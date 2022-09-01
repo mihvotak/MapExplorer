@@ -1283,19 +1283,41 @@ namespace MapsExplorer
 					dunge.TreasureBetweenWalls = true;
 					if (leftCell.CellKind == CellKind.Wall && rightCell.CellKind == CellKind.Wall)
 					{
-						if ((tlCell.CellKind == CellKind.Wall || trCell.CellKind == CellKind.Wall || topCell.CellKind == CellKind.Wall) &&
-							(blCell.CellKind == CellKind.Wall || brCell.CellKind == CellKind.Wall || bottomCell.CellKind == CellKind.Wall))
+						if (dunge.LastFloor == 2 && ((topCell.CellKind == CellKind.Wall && bottomCell.CellKind == CellKind.Boss)
+							|| (bottomCell.CellKind == CellKind.Wall && topCell.CellKind == CellKind.Boss)))
+							dunge.TreasureScheme = TreasureScheme.Tu;
+						else if (dunge.LastFloor == 2 && ((topCell.CellKind != CellKind.Wall && bottomCell.CellKind == CellKind.Boss)
+							|| (bottomCell.CellKind != CellKind.Wall && topCell.CellKind == CellKind.Boss)))
+							dunge.TreasureScheme = TreasureScheme.Tu_0;
+						else if (dunge.LastFloor == 2 && ((tlCell.CellKind == CellKind.Wall || trCell.CellKind == CellKind.Wall || topCell.CellKind == CellKind.Wall) &&
+							(blCell.CellKind == CellKind.Wall || brCell.CellKind == CellKind.Wall || bottomCell.CellKind == CellKind.Wall)))
 						{
 							dunge.TreasureScheme = TreasureScheme.T2;
+							if (topCell.CellKind != CellKind.Wall && bottomCell.CellKind != CellKind.Wall)
+								dunge.TreasureScheme = TreasureScheme.T2_0;
+							else if ((trCell.CellKind != CellKind.Boss && tlCell.CellKind != CellKind.Boss && bottomCell.CellKind == CellKind.Wall && (brCell.CellKind != CellKind.Wall || blCell.CellKind != CellKind.Wall))
+								|| (brCell.CellKind != CellKind.Boss && blCell.CellKind != CellKind.Boss && topCell.CellKind == CellKind.Wall && (trCell.CellKind != CellKind.Wall || tlCell.CellKind != CellKind.Wall)))
+								dunge.TreasureScheme = TreasureScheme.C;
 						}
 					}
 
 					if (topCell.CellKind == CellKind.Wall && bottomCell.CellKind == CellKind.Wall)
 					{
-						if ((tlCell.CellKind == CellKind.Wall || blCell.CellKind == CellKind.Wall || leftCell.CellKind == CellKind.Wall) &&
-							(trCell.CellKind == CellKind.Wall || brCell.CellKind == CellKind.Wall || rightCell.CellKind == CellKind.Wall))
+						if (dunge.LastFloor == 2 && ((rightCell.CellKind == CellKind.Wall && leftCell.CellKind == CellKind.Boss)
+							|| (leftCell.CellKind == CellKind.Wall && rightCell.CellKind == CellKind.Boss)))
+							dunge.TreasureScheme = TreasureScheme.Tu;
+						else if (dunge.LastFloor == 2 && ((rightCell.CellKind != CellKind.Wall && leftCell.CellKind == CellKind.Boss)
+							|| (leftCell.CellKind != CellKind.Wall && rightCell.CellKind == CellKind.Boss)))
+							dunge.TreasureScheme = TreasureScheme.Tu_0;
+						else if (dunge.LastFloor == 2 && ((tlCell.CellKind == CellKind.Wall || blCell.CellKind == CellKind.Wall || leftCell.CellKind == CellKind.Wall) &&
+							(trCell.CellKind == CellKind.Wall || brCell.CellKind == CellKind.Wall || rightCell.CellKind == CellKind.Wall)))
 						{
 							dunge.TreasureScheme = TreasureScheme.T2;
+							if (rightCell.CellKind != CellKind.Wall && leftCell.CellKind != CellKind.Wall)
+								dunge.TreasureScheme = TreasureScheme.T2_0;
+							else if ((trCell.CellKind != CellKind.Boss && brCell.CellKind != CellKind.Boss && leftCell.CellKind == CellKind.Wall && (blCell.CellKind != CellKind.Wall || tlCell.CellKind != CellKind.Wall))
+								|| (tlCell.CellKind != CellKind.Boss && blCell.CellKind != CellKind.Boss && rightCell.CellKind == CellKind.Wall && (trCell.CellKind != CellKind.Wall || brCell.CellKind != CellKind.Wall)))
+								dunge.TreasureScheme = TreasureScheme.C;
 						}
 					}
 				}

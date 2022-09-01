@@ -860,7 +860,8 @@ namespace MapsExplorer
 
 		private void SearchTreasurePos() // Таблица смещений сокры от входа
 		{
-			int needFloor = 2; bool from1FloorEntrance = false;
+			int needFloor = 2; 
+			bool from1FloorEntrance = false;
 			StringBuilder builder = new StringBuilder();
 			Plot2d plot = new Plot2d();
 			for (int i = 0; i < _resultLines.Count; i++)
@@ -873,6 +874,8 @@ namespace MapsExplorer
 				Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
 				if (dunge.LastFloor != needFloor)
 					continue;
+				if (!line.Success || line.Vault)
+					continue;
 				List<string> tds = new List<string>();
 				tds.Add(line.Link);
 				tds.Add(Utils.GetDateAndTimeString(line.DateTime));
@@ -883,18 +886,18 @@ namespace MapsExplorer
 				tds.Add(map.Width.ToString());
 				tds.Add(map.Height.ToString());
 				tds.Add(dunge.Bosses.Count.ToString());
-				if (line.Success && !line.Vault)
-				{
-					Int2 delta = dunge.TreasurePos.Pos - map.EnterPos;
-					if (from1FloorEntrance)
-						delta += (map0.StairsPos - map0.EnterPos);
-					int x = delta.x;
-					int y = -delta.y;
-					tds.Add(x.ToString());
-					tds.Add(y.ToString());
-					plot.Inc(x, y);
-				}
-				tds.Add(dunge.TreasureBetweenWalls ? "1" : "0");
+				Int2 delta = dunge.TreasurePos.Pos - map.EnterPos;
+				if (from1FloorEntrance)
+					delta += (map0.StairsPos - map0.EnterPos);
+				int x = delta.x;
+				int y = -delta.y;
+				tds.Add(x.ToString());
+				tds.Add(y.ToString());
+				plot.Inc(x, y);
+				var xx = Math.Abs(x);
+				var yy = Math.Abs(y);
+				tds.Add((xx <= yy ? xx : yy) + ";" + (xx <= yy ? yy : xx));
+				tds.Add(dunge.TreasureBetweenWalls ? "|x|" : "-");
 				tds.Add(dunge.TreasureSchemeKind.ToString());
 				tds.Add(dunge.TreasureScheme.ToString());
 				string tr = string.Join("\t", tds);

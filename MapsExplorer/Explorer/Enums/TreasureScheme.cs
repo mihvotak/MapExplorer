@@ -9,9 +9,13 @@ public enum TreasureScheme
 	Unknown,
 	T,
 	T2,
+	Tu,
+	Tc,
 	L,
 	O,
 	C,
+	T2_0,
+	Tu_0,
 }
 
 public enum TreasureSchemeKind
