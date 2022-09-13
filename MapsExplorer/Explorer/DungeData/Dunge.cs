@@ -36,6 +36,7 @@ namespace MapsExplorer
 		public int LastFloor;
 		public Map[] Maps = new Map[2];
 		public Step TreasurePos;
+		public int TreasureWalls;
 		public bool TreasureBetweenWalls;
 		public TreasureSchemeKind TreasureSchemeKind;
 		public TreasureScheme TreasureScheme;

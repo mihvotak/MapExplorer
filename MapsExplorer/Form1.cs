@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
@@ -898,6 +897,7 @@ namespace MapsExplorer
 				var yy = Math.Abs(y);
 				tds.Add((xx <= yy ? xx : yy) + ";" + (xx <= yy ? yy : xx));
 				tds.Add(dunge.TreasureBetweenWalls ? "|x|" : "-");
+				tds.Add(dunge.TreasureWalls.ToString());
 				tds.Add(dunge.TreasureSchemeKind.ToString());
 				tds.Add(dunge.TreasureScheme.ToString());
 				string tr = string.Join("\t", tds);

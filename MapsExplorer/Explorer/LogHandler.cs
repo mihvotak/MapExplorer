@@ -1272,11 +1272,39 @@ namespace MapsExplorer
 				Cell tlCell = map.GetCell(center.x - 1, center.y - 1);
 				Cell trCell = map.GetCell(center.x + 1, center.y - 1);
 
+				dunge.TreasureWalls = 0;
+				if (topCell.CellKind == CellKind.Wall) dunge.TreasureWalls++;
+				if (bottomCell.CellKind == CellKind.Wall) dunge.TreasureWalls++;
+				if (leftCell.CellKind == CellKind.Wall) dunge.TreasureWalls++;
+				if (rightCell.CellKind == CellKind.Wall) dunge.TreasureWalls++;
+
 				if (leftCell.CellKind == CellKind.Boss || rightCell.CellKind == CellKind.Boss || topCell.CellKind == CellKind.Boss || bottomCell.CellKind == CellKind.Boss)
 					dunge.TreasureSchemeKind = TreasureSchemeKind.Near;
 				if (tlCell.CellKind == CellKind.Boss || trCell.CellKind == CellKind.Boss || blCell.CellKind == CellKind.Boss || brCell.CellKind == CellKind.Boss)
 					dunge.TreasureSchemeKind = TreasureSchemeKind.Diagonal;
-
+				if (dunge.TreasureWalls == 0)
+				{
+					if (topCell.CellKind == CellKind.Boss || bottomCell.CellKind == CellKind.Boss || leftCell.CellKind == CellKind.Boss || rightCell.CellKind == CellKind.Boss || 
+						topCell.CellKind == CellKind.PossibleBoss || bottomCell.CellKind == CellKind.PossibleBoss || leftCell.CellKind == CellKind.PossibleBoss || rightCell.CellKind == CellKind.PossibleBoss)
+						dunge.TreasureScheme = TreasureScheme.O_0w0;
+					else
+						dunge.TreasureScheme = TreasureScheme.O_0w_hz;
+				}
+				else if (dunge.TreasureWalls == 1)
+				{
+					if ((topCell.CellKind == CellKind.Wall && (bottomCell.CellKind == CellKind.Boss || bottomCell.CellKind == CellKind.PossibleBoss))
+						|| (bottomCell.CellKind == CellKind.Wall && (topCell.CellKind == CellKind.Boss || topCell.CellKind == CellKind.PossibleBoss))
+						|| (leftCell.CellKind == CellKind.Wall && (rightCell.CellKind == CellKind.Boss || rightCell.CellKind == CellKind.PossibleBoss))
+						|| (rightCell.CellKind == CellKind.Wall && (leftCell.CellKind == CellKind.Boss || leftCell.CellKind == CellKind.PossibleBoss)))
+						dunge.TreasureScheme = TreasureScheme.O_1w_1;
+					else if (((topCell.CellKind == CellKind.Wall || bottomCell.CellKind == CellKind.Wall) && (leftCell.CellKind == CellKind.Boss || leftCell.CellKind == CellKind.PossibleBoss || rightCell.CellKind == CellKind.Boss || rightCell.CellKind == CellKind.PossibleBoss))
+						||
+						((leftCell.CellKind == CellKind.Wall || rightCell.CellKind == CellKind.Wall) && (topCell.CellKind == CellKind.Boss || topCell.CellKind == CellKind.PossibleBoss || bottomCell.CellKind == CellKind.Boss || bottomCell.CellKind == CellKind.PossibleBoss)))
+						dunge.TreasureScheme = TreasureScheme.O_1w_2;
+					else
+						dunge.TreasureScheme = TreasureScheme.O_1w_hz;
+				}
+				else
 				if ((leftCell.CellKind == CellKind.Wall && rightCell.CellKind == CellKind.Wall) ||
 					(topCell.CellKind == CellKind.Wall && bottomCell.CellKind == CellKind.Wall))
 				{
@@ -1321,6 +1349,8 @@ namespace MapsExplorer
 						}
 					}
 				}
+				else if (dunge.TreasureWalls == 2)
+					dunge.TreasureScheme = TreasureScheme.L;
 
 			}
 		}

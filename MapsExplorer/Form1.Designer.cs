@@ -286,7 +286,7 @@
 			this.Controls.Add(this.logsRichTextBox);
 			this.Controls.Add(this.startButton);
 			this.Name = "Form1";
-			this.Text = "Form1";
+			this.Text = "MapExplorer";
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
