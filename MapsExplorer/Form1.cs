@@ -863,6 +863,7 @@ namespace MapsExplorer
 			bool from1FloorEntrance = false;
 			StringBuilder builder = new StringBuilder();
 			Plot2d plot = new Plot2d();
+			Plot2d plotSF = new Plot2d();
 			for (int i = 0; i < _resultLines.Count; i++)
 			{
 				DungeLine line = _resultLines[i];
@@ -900,6 +901,20 @@ namespace MapsExplorer
 				tds.Add(dunge.TreasureWalls.ToString());
 				tds.Add(dunge.TreasureSchemeKind.ToString());
 				tds.Add(dunge.TreasureScheme.ToString());
+				bool normalFinPos = dunge.StartKind != DungeKind.Миграции && dunge.StartKind != DungeKind.Миграции && (!dunge.SecretRom.Exists || (dunge.SecretRom.SecretKind != SecretKind.ChangeType && dunge.SecretRom.SecretKind != SecretKind.UnknownMark));
+				if (normalFinPos && dunge.SfinPos.Floor > 0)
+				{
+					Int2 pos = dunge.SfinPos.Pos - map.EnterPos;
+					pos.y = -pos.y;
+					tds.Add(pos.x.ToString());
+					tds.Add(pos.y.ToString());
+					plotSF.Inc(pos.x, pos.y);
+				}
+				else
+				{
+					tds.Add("-");
+					tds.Add("-");
+				}
 				string tr = string.Join("\t", tds);
 				builder.Append(tr + "\n");
 				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
@@ -910,6 +925,7 @@ namespace MapsExplorer
 			string s = plot.GetRes(10);
 			s += plot.GetRes4(10);
 			s += plot.GetRes8(10);
+			s += plotSF.GetRes(10);
 			resultRichTextBox.Text = s;
 		}
 

@@ -995,6 +995,8 @@ namespace MapsExplorer
 								boss.Abils.Add(ability);
 							}
 						}
+						if (boss.Abils.Count == 4)
+							dunge.SfinPos = boss.Pos;
 						dunge.Bosses.Add(boss);
 					}
 				}
