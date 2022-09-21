@@ -971,7 +971,7 @@ namespace MapsExplorer
 		private void CalculateBossesAndTribbles() // Таблица всех встреченных боссов, их абилок и хп
 		{
 			List<DateTime> tribbleDays = new List<DateTime>();
-			tribbleDays.Add(new DateTime(2019, 12, 30));
+			/*tribbleDays.Add(new DateTime(2019, 12, 30));
 			tribbleDays.Add(new DateTime(2020, 01, 02));
 			tribbleDays.Add(new DateTime(2020, 01, 25));
 			tribbleDays.Add(new DateTime(2020, 03, 11));
@@ -980,15 +980,25 @@ namespace MapsExplorer
 			tribbleDays.Add(new DateTime(2020, 04, 24));
 			tribbleDays.Add(new DateTime(2020, 05, 21));
 			tribbleDays.Add(new DateTime(2020, 06, 01));
-			tribbleDays.Add(new DateTime(2020, 06, 06));
+			tribbleDays.Add(new DateTime(2020, 06, 06));*/
+
+			var dateStrings = new string[] { "29.12.2019", "01.01.2020", "24.01.2020", "23.04.2020", "20.05.2020", "31.05.2020", "02.07.2020", "08.07.2020", "01.09.2020", "20.11.2020", "30.11.2020", "27.12.2020", "14.05.2021", "19.06.2021", "11.12.2021", "11.01.2022", "10.03.2020", "17.03.2020", "03.04.2020", "05.06.2020", "18.07.2020", "21.07.2020", "16.08.2020", "26.10.2020", "28.11.2020", "02.12.2020", "26.01.2021", "02.03.2021", "17.05.2021", "27.05.2021", "10.07.2021", "01.08.2021", "20.08.2021", "28.09.2021", "24.11.2021", "05.02.2022", "14.02.2022", "26.02.2022" };
+			DateTime date;
+			foreach (string str in dateStrings)
+			{
+				bool parsed = DateTime.TryParseExact(str, "dd.MM.yyyy", System.Globalization.CultureInfo.GetCultureInfo("ru-RU"), System.Globalization.DateTimeStyles.None, out date);
+				if (parsed)
+					date += new TimeSpan(1, 0, 0, 0);
+				tribbleDays.Add(date);
+			}
 
 			StringBuilder builder = new StringBuilder();
 
-			int tMax = 4;
+			int tMax = 6;
 			int[] tAll = new int[tMax];
 			int[] tTribbles = new int[tMax];
 
-			int abMax = 4;
+			int abMax = 8;
 			int[] abAll = new int[abMax];
 			int[] abTribbles = new int[abMax];
 
@@ -1028,6 +1038,11 @@ namespace MapsExplorer
 							if (dateTime.Date == boss.DateTime.Date)
 								period = 4;
 					}
+					if (boss.Pos.Floor == 2)
+						period += 2;
+					int ab = boss.Abils.Count;
+					if (boss.Pos.Floor == 2)
+						ab += abMax;
 					total++;
 					if (!boss.HeroesWin)
 						loses++;
@@ -1037,12 +1052,12 @@ namespace MapsExplorer
 					{
 						winNoEsc++;
 						tAll[period - 1]++;
-						abAll[boss.Abils.Count - 1]++;
+						abAll[ab - 1]++;
 						if (boss.TribbleInFinal)
 						{
 							tribbles++;
 							tTribbles[period - 1]++;
-							abTribbles[boss.Abils.Count - 1]++;
+							abTribbles[ab - 1]++;
 						}
 					}
 					
@@ -1081,6 +1096,7 @@ namespace MapsExplorer
 					int posY = step.Pos.y - map.EnterPos.y;
 					tds.Add(posX.ToString());
 					tds.Add((-posY).ToString());
+					tds.Add(boss.Pos.Floor + "floor");
 					/*string posS = "";
 					if (boss.Abils.Count == 1)
 					{
@@ -1148,7 +1164,7 @@ namespace MapsExplorer
 
 			string exploreRes = builder.ToString();
 			tableRichTextBox.Text = exploreRes;
-			File.WriteAllText(Paths.ResultsDir + "/BossesResult.txt", exploreRes);
+			File.WriteAllText(Paths.ResultsDir + "/TribblesResult.txt", exploreRes);
 		}
 
 		private void SearchJumps() // Влияние гласов в прыгучести
