@@ -982,14 +982,13 @@ namespace MapsExplorer
 			tribbleDays.Add(new DateTime(2020, 06, 01));
 			tribbleDays.Add(new DateTime(2020, 06, 06));*/
 
-			var dateStrings = new string[] { "29.12.2019", "01.01.2020", "24.01.2020", "23.04.2020", "20.05.2020", "31.05.2020", "02.07.2020", "08.07.2020", "01.09.2020", "20.11.2020", "30.11.2020", "27.12.2020", "14.05.2021", "19.06.2021", "11.12.2021", "11.01.2022", "10.03.2020", "17.03.2020", "03.04.2020", "05.06.2020", "18.07.2020", "21.07.2020", "16.08.2020", "26.10.2020", "28.11.2020", "02.12.2020", "26.01.2021", "02.03.2021", "17.05.2021", "27.05.2021", "10.07.2021", "01.08.2021", "20.08.2021", "28.09.2021", "24.11.2021", "05.02.2022", "14.02.2022", "26.02.2022" };
+			var dateStrings = new string[] { "30.12.19", "02.01.20", "25.01.20", "24.04.20", "21.05.20", "01.06.20", "03.07.20", "09.07.20", "02.09.20", "21.11.20", "01.12.20", "28.12.20", "15.05.21", "20.06.21", "12.12.21", "12.01.22", "30.06.22", "11.03.20", "18.03.20", "04.04.20", "06.06.20", "19.07.20", "22.07.20", "17.08.20", "27.10.20", "29.11.20", "03.12.20", "27.01.21", "03.03.21", "18.05.21", "28.05.21", "11.07.21", "02.08.21", "21.08.21", "29.09.21", "25.11.21", "06.02.22", "15.02.22", "27.02.22", "22.06.22", "26.06.22", "19.08.22", "01.09.22" };
 			DateTime date;
 			foreach (string str in dateStrings)
 			{
-				bool parsed = DateTime.TryParseExact(str, "dd.MM.yyyy", System.Globalization.CultureInfo.GetCultureInfo("ru-RU"), System.Globalization.DateTimeStyles.None, out date);
+				bool parsed = DateTime.TryParseExact(str, "dd.MM.yy", System.Globalization.CultureInfo.GetCultureInfo("ru-RU"), System.Globalization.DateTimeStyles.None, out date);
 				if (parsed)
-					date += new TimeSpan(1, 0, 0, 0);
-				tribbleDays.Add(date);
+					tribbleDays.Add(date);
 			}
 
 			StringBuilder builder = new StringBuilder();
@@ -1042,7 +1041,7 @@ namespace MapsExplorer
 						period += 2;
 					int ab = boss.Abils.Count;
 					if (boss.Pos.Floor == 2)
-						ab += abMax;
+						ab += 4;
 					total++;
 					if (!boss.HeroesWin)
 						loses++;
