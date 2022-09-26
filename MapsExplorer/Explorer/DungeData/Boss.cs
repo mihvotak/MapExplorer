@@ -19,6 +19,7 @@ namespace MapsExplorer
 		public bool TribbleInFirst;
 		public bool TribbleInMiddle;
 		public bool TribbleInFinal;
+		public bool TribbleInFinal2;
 		public bool Escape1;
 		public bool Escape2;
 		public DateTime DateTime;

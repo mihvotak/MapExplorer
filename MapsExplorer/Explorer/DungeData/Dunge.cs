@@ -9,6 +9,7 @@ namespace MapsExplorer
 	public class Dunge
 	{
 		public DungeLine DungeLine;
+		public string ParseError;
 		public int Steps;
 		public bool[] CanBeHints = new bool[101];
 		public int UniqueSteps;

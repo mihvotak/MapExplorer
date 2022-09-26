@@ -34,14 +34,20 @@ namespace MapsExplorer
 			_mode = mode;
 			string content = GetLogContent(line);
 			Dunge dunge = new Dunge(line);
-			Parse(content, dunge);
+			Parse(content, dunge, false);
+			if (dunge.ParseError == "DescSort")
+			{
+				content = GetLogContent(line, 0, true);
+				dunge = new Dunge(line);
+				Parse(content, dunge, true);
+			}
 			return dunge;
 		}
 
-		private string GetLogContent(DungeLine line, int bossNum = 0)
+		private string GetLogContent(DungeLine line, int bossNum = 0, bool desc = false)
 		{
 			string dir = Paths.BaseDir + "/" + Utils.GetDateFolderString(line.DateTime);
-			string localPath = dir + "/" + line.Hash + (bossNum == 0 ? "" : "_" + bossNum) + ".html";
+			string localPath = dir + "/" + line.Hash + (bossNum == 0 ? "" : "_" + bossNum) + (desc ? "_desc" : "") + ".html";
 			string content;
 			if (File.Exists(localPath))
 			{
@@ -49,7 +55,7 @@ namespace MapsExplorer
 			}
 			else
 			{
-				string address = bossNum == 0 ? Paths.GetDungeLogPath(line.Hash) : Paths.GetBossLogPath(line.Hash, bossNum);
+				string address = (bossNum == 0 ? Paths.GetDungeLogPath(line.Hash) : Paths.GetBossLogPath(line.Hash, bossNum)) + (desc ? "?sort=desc" : "");
 				content = WebLoader.GetContent(address);
 				if (!Directory.Exists(dir))
 					Directory.CreateDirectory(dir);
@@ -58,8 +64,22 @@ namespace MapsExplorer
 			return content;
 		}
 
-		private async void Parse(string html, Dunge dunge)
+		private async void Parse(string html, Dunge dunge, bool isDesc)
 		{
+			var document = await _context.OpenAsync(req => req.Content(html));
+			var centralBlock = document.QuerySelectorAll("div").First(e => e.Id == "central_block");
+			var centralBlockContent = centralBlock.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
+			var logContainer0 = centralBlockContent.QuerySelector("div.d_content");
+			var logLines0 = logContainer0.QuerySelectorAll("div.new_line");
+			var header0 = centralBlockContent.QuerySelector("div.block_h");
+			var descLink0 = header0.QuerySelector("a");
+			bool desc0 = descLink0.GetAttribute("title").Contains("Прямая сортировка");
+			if (desc0 && !isDesc && dunge.ParseError == null)
+			{
+				dunge.ParseError = "DescSort";
+				return;
+			}
+
 			string movesBra = "var moves = [";
 			string floorsBra = "var d_aura = {";
 			int index1 = html.IndexOf(movesBra);
@@ -158,7 +178,6 @@ namespace MapsExplorer
 				}
 			}
 
-			var document = await _context.OpenAsync(req => req.Content(html));
 
 			var rowDivs = document.QuerySelectorAll("div.dml");
 			if (rowDivs.Length != 0)
@@ -422,7 +441,6 @@ namespace MapsExplorer
 			if (dunge.LastFloor == 1 && (float)wallsCount / (emptyCount + wallsCount) < 0.1f)
 				dunge.WrongDetectedAqua = true;
 
-			var centralBlock = document.QuerySelectorAll("div").First(e => e.Id == "central_block");
 			var blockH = centralBlock.QuerySelector("div.block_h");
 			string stepsStr = blockH.TextContent.Split('/')[1];
 			dunge.Steps = int.Parse(stepsStr.Substring(1, stepsStr.IndexOf(")") - 1));
@@ -472,18 +490,10 @@ namespace MapsExplorer
 				DateTime fightDateTime = localFightDateTime + timeZoneDiff;
 				dunge.DungeLine.DateTime = fightDateTime;
 
-				var centralBlockContent = centralBlock.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
-				var logContainer = centralBlockContent.QuerySelector("div.d_content");
-				var logLines = logContainer.QuerySelectorAll("div.new_line");
-				var header = centralBlockContent.QuerySelector("div.block_h");
-				var descLink = header.QuerySelector("a");
-				bool desc = descLink.GetAttribute("title").Contains("Прямая сортировка");
-				if (desc)
-					throw new Exception("Not realized");
 				List<string> dirStrings = new List<string>() { "север", "восток", "юг", "запад", "северо-восток", "юго-восток", "юго-запад", "северо-запад", "очень холодно", "холодно", "свежо", "тепло", "горячо", "очень горячо", "северной", "восточной", "южной", "западной" };
 				List<string> moveDirStrings = new List<string>() { "север", "восток", "юг", "запад" };
 				List<Int2> moveDirs = new List<Int2>() { new Int2(0, -1), new Int2(1, 0), new Int2(0, 1), new Int2(-1, 0) };
-				int lastLineIndex = logLines.Length - 1;
+				int lastLineIndex = logLines0.Length - 1;
 				int currentStep = 0;
 				bool currentIsNew = false;
 				bool cellWithHint = false;
@@ -495,9 +505,9 @@ namespace MapsExplorer
 				Int2? moveDir = null;
 				Step move = new Step();
 				Cell cell = null;
-				for (int i = 0; i < logLines.Length; i++)
+				for (int i = 0; i < logLines0.Length; i++)
 				{
-					var logLine = logLines[i];
+					var logLine = logLines0[i];
 					bool bold = logLine.ClassList.Contains("d_imp");
 					var turnEl = logLine.QuerySelector("div.d_turn");
 					string stepS = logLine.GetAttribute("data-t");
@@ -786,21 +796,21 @@ namespace MapsExplorer
 						}
 					}
 				}
-				int hintsCount = 0;
-				for (int floor = 1; floor <= 2; floor++)
-				{
-					Map map = dunge.Maps[floor - 1];
-					if (map == null)
-						continue;
-					foreach (Cell cellI in map.Cells)
-					{
-						if (cellI.CellKind == CellKind.Hint)
-							hintsCount++;
-					}
-				}
-				if (hintsCount != dunge.HintMoves.Count)
-					throw new Exception("Not all hints found in log!");
 			}
+			int hintsCount = 0;
+			for (int floor = 1; floor <= 2; floor++)
+			{
+				Map map = dunge.Maps[floor - 1];
+				if (map == null)
+					continue;
+				foreach (Cell cellI in map.Cells)
+				{
+					if (cellI.CellKind == CellKind.Hint)
+						hintsCount++;
+				}
+			}
+			if (dunge.ParseError == null && hintsCount != dunge.HintMoves.Count)
+				dunge.ParseError = "Not all hints found in log!";
 
 			var lastduelplEls = document.QuerySelectorAll("div.lastduelpl");
 			foreach (var lastduelplEl in lastduelplEls)
@@ -819,6 +829,20 @@ namespace MapsExplorer
 						boss.Num = bossNum;
 						string bossLog = GetLogContent(dunge.DungeLine, bossNum);
 						var bossDocument = await _context.OpenAsync(req => req.Content(bossLog));
+						var bossCentralBlock = bossDocument.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
+						var logContainer = bossDocument.QuerySelector("div.d_content");
+						var logLines = logContainer.QuerySelectorAll("div.new_line");
+						var header = bossCentralBlock.QuerySelector("div.block_h");
+						var descLink = header.QuerySelector("a");
+						bool desc = descLink.GetAttribute("title").Contains("Прямая сортировка");
+						if (desc)
+						{
+							bossLog = GetLogContent(dunge.DungeLine, bossNum, true);
+							bossDocument = await _context.OpenAsync(req => req.Content(bossLog));
+							bossCentralBlock = bossDocument.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
+							logContainer = bossDocument.QuerySelector("div.d_content");
+							logLines = logContainer.QuerySelectorAll("div.new_line");
+						}
 
 						var dateDivs = bossDocument.QuerySelectorAll("div.lastduelpl_f");
 						int dateDivIndex = 1;
@@ -845,14 +869,6 @@ namespace MapsExplorer
 							if (heroLine.QuerySelector("label.l_capt") != null)
 								heroesAndPetsCount++;
 
-						var bossCentralBlock = bossDocument.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
-						var logContainer = bossDocument.QuerySelector("div.d_content");
-						var logLines = logContainer.QuerySelectorAll("div.new_line");
-						var header = bossCentralBlock.QuerySelector("div.block_h");
-						var descLink = header.QuerySelector("a");
-						bool desc = descLink.GetAttribute("title").Contains("Прямая сортировка");
-						if (desc)
-							throw new Exception("Not realized");
 						bool tribbleAnywhere = false;
 						bool tribbleFirst = false;
 						string tribbleText = "триббл";
@@ -908,7 +924,12 @@ namespace MapsExplorer
 							int step = int.Parse(stepS);
 							if (step != lastLineStep)
 								break;
-							boss.TribbleInFinal = boss.TribbleInFinal || logLine.TextContent.Contains(tribbleText);
+							int tribblIndex = logLine.TextContent.IndexOf(tribbleText);
+							bool tribbl = tribblIndex > 0;
+							boss.TribbleInFinal = boss.TribbleInFinal || tribbl;
+							if (tribbl)
+								boss.TribbleInFinal2 = logLine.TextContent.IndexOf(tribbleText, tribblIndex + 6) > 0;
+
 						}
 						boss.TribbleInMiddle = tribbleAnywhere && !boss.TribbleInFinal;
 						boss.TribbleInFirst = tribbleFirst;

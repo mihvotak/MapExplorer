@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -17,10 +18,26 @@ namespace MapsExplorer
 		public Form1()
 		{
 			InitializeComponent();
+			backgroundWorker1.WorkerReportsProgress = true;
+			backgroundWorker1.WorkerSupportsCancellation = true;
+			backgroundWorker2.WorkerReportsProgress = true;
+			backgroundWorker2.WorkerSupportsCancellation = true;
 		}
 
 		private void startButton_Click(object sender, EventArgs e)
 		{
+			if (!backgroundWorker1.IsBusy && !backgroundWorker2.IsBusy)
+			{
+				progressBar1.Value = 0;
+				backgroundWorker1.RunWorkerAsync();
+			}
+			else
+				errorTextBox.Text = "Фоновый поток уже занят вычислениями. Дождитесь окончания работы и попробуйте снова.";
+		}
+
+		private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+		{
+			var worker = sender as BackgroundWorker;
 			if (!string.IsNullOrEmpty(hashTextBox.Text))
 				hashTextBox.Text = "";
 			var startDate = dateTimePicker1.Value;
@@ -32,7 +49,7 @@ namespace MapsExplorer
 				add += "&d=spec";
 			else if (customCheckBox.Checked) //кастомное
 				add += "&d2=custom";
-			_listViewer.StartView(startDate, endDate, add,  OnListViewReady, OnProgress);
+			_listViewer.StartView(startDate, endDate, add,  OnListViewReady, (percent) => worker.ReportProgress(percent));
 		}
 
 		private void OnListViewReady(string error, List<DungeLine> resultLines)
@@ -41,22 +58,30 @@ namespace MapsExplorer
 			for (int i = _resultLines.Count - 1; i >= 0; i--)
 				if (_resultLines[i].Hash.Length <= 5)
 					_resultLines.RemoveAt(i);
-			countTextBox.Text = resultLines.Count.ToString();
-			errorTextBox.Text = error ?? "";
+			_error = error; 
+		}
+
+		private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+			progressBar1.Value = e.ProgressPercentage;
+		}
+
+		private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			progressBar1.Value = 100;
+
+			countTextBox.Text = _resultLines.Count.ToString();
+			errorTextBox.Text = _error ?? "";
 			StringBuilder builder = new StringBuilder();
-			foreach (DungeLine line in resultLines)
+			foreach (DungeLine line in _resultLines)
 				builder.Append(line.ToString() + "\n");
 			string all = builder.ToString();
 			logsRichTextBox.Text = all;
 			File.WriteAllText(Paths.ResultsDir + "/list.txt", all);
 		}
 
-		private void OnProgress(int value)
-		{
-			progressBar1.Value = value;
-		}
-
 		private List<DungeLine> _resultLines;
+		private string _error;
 		LogHandler _logHandler = new LogHandler();
 
 		private void exploreButton_Click(object sender, EventArgs e)
@@ -93,6 +118,21 @@ namespace MapsExplorer
 				errorTextBox.Text = "Сначала нужно ввести хэш или получить список логов по датам (Start)";
 				return;
 			}
+
+			if (!backgroundWorker1.IsBusy && !backgroundWorker2.IsBusy)
+			{
+				progressBar1.Value = 0;
+				backgroundWorker2.RunWorkerAsync();
+			}
+			else
+				errorTextBox.Text = "Фоновый поток уже занят вычислениями. Дождитесь окончания работы и попробуйте снова.";
+
+		}
+
+		private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+		{
+			var worker = sender as BackgroundWorker;
+
 			switch (_exploreMode)
 			{ 
 				case ExploreMode.CountBossesAndTribbles:
@@ -145,6 +185,13 @@ namespace MapsExplorer
 					break;
 			}
 			progressBar1.Value = 100;
+		}
+
+		private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			progressBar1.Value = 100;
+
+			_completeCallback?.Invoke();
 		}
 
 		private void SearchAquas()
@@ -1006,6 +1053,7 @@ namespace MapsExplorer
 			int escapes = 0;
 			int winNoEsc = 0;
 			int tribbles = 0;
+			int tribbles2 = 0;
 			int mids = 0;
 			int firsts = 0;
 
@@ -1057,6 +1105,8 @@ namespace MapsExplorer
 							tribbles++;
 							tTribbles[period - 1]++;
 							abTribbles[ab - 1]++;
+							if (boss.TribbleInFinal2)
+								tribbles2++;
 						}
 					}
 					
@@ -1086,7 +1136,7 @@ namespace MapsExplorer
 					//tds.Add((Math.Abs(posX)).ToString());
 					//tds.Add((Math.Abs(posY)).ToString());
 					tds.Add(boss.HeroesWin ? "win" : "lose");
-					tds.Add(boss.TribbleInFinal ? "1" : "");
+					tds.Add(boss.TribbleInFinal ? (boss.TribbleInFinal2 ? "2" : "1") : "");
 					tds.Add(boss.Escape1 ? "escape" : "");
 					Step step = boss.Pos;
 					tds.Add(step.Floor.ToString());
@@ -1110,7 +1160,7 @@ namespace MapsExplorer
 					string tr = string.Join("\t", tds);
 					builder.Append(tr + "\n");
 				}
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 
 			builder.Append("\n");
@@ -1120,6 +1170,7 @@ namespace MapsExplorer
 			builder.Append($"Escape\t{escapes}\n");
 			builder.Append($"Win\t{winNoEsc}\n");
 			builder.Append($"Tribbles\t{tribbles}\t{((double)tribbles / winNoEsc * 100).ToString("f2")}%\n");
+			builder.Append($"Pair of tribbles\t{tribbles2}\t{((double)tribbles2 / tribbles * 100).ToString("f2")}%\n");
 			builder.Append("\n");
 			builder.Append($"Middle\t{mids}\n");
 			builder.Append($"First\t{firsts}\n");
@@ -1162,9 +1213,12 @@ namespace MapsExplorer
 			builder.Append("\n");
 
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
 			File.WriteAllText(Paths.ResultsDir + "/TribblesResult.txt", exploreRes);
+			_completeCallback = () => tableRichTextBox.Text = exploreRes;
 		}
+
+		private Action _completeCallback;
+		
 
 		private void SearchJumps() // Влияние гласов в прыгучести
 		{
