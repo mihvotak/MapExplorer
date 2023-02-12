@@ -1001,6 +1001,10 @@ namespace MapsExplorer
 							string meta = bossLines[bi + 1].TextContent;
 							if (string.IsNullOrEmpty(meta)) // "Мини-" без свойств
 								continue;
+							//if (hp == 1) // копия мнимого
+							//	continue;
+							if (meta.Contains('/'))
+								continue;
 							boss.Name = name;
 							boss.Hp = hp;
 							meta = meta.Substring(1, meta.Length - 2);
@@ -1404,6 +1408,8 @@ namespace MapsExplorer
 				cell.CellKind = CellKind.ClosedTreasure;
 			else if (symbol == "◿")
 				cell.CellKind = CellKind.Stairs;
+			else if (symbol == "⛲")
+				cell.CellKind = CellKind.Fountain;
 			else if (symbol == "@")
 				cell.CellKind = CellKind.End;
 			else

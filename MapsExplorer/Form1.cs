@@ -563,10 +563,10 @@ namespace MapsExplorer
 				string s = "";
 				foreach (Boss boss in dunge.Bosses)
 				{
-					if (boss.Abils.Count == 2)
+					if (boss.Pos.Floor == 2 && boss.Abils.Count == 3)
 					{
 						count++;
-						if (boss.Pos.Floor == dunge.TreasurePos.Floor && Math.Abs(boss.Pos.Pos.x - dunge.TreasurePos.Pos.x) == 1 && Math.Abs(boss.Pos.Pos.y - dunge.TreasurePos.Pos.y) == 1)
+						if (count > 1)
 							s = dunge.DungeLine.GetBossLink(boss.Num);
 					}
 				}
@@ -583,11 +583,11 @@ namespace MapsExplorer
 					string tr = string.Join("\t", tds);
 					builder.Append(tr + "\n");
 				}
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
 			File.WriteAllText(Paths.ResultsDir + "/BossesResult22.txt", exploreRes);
+			_completeCallback = () => tableRichTextBox.Text = exploreRes;
 		}
 
 		private void SearchBossesByName() // Поиск боссов по имени
@@ -802,7 +802,7 @@ namespace MapsExplorer
 
 				string tr = string.Join("\t", tds);
 				rawBuilder.Append(tr + "\n");
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 
 			AddHintResultsToBuilder(resultBuilder, normalCounter);

@@ -24,6 +24,7 @@ namespace MapsExplorer
 		Treasure,
 		Storeroom,
 		End,
-		Stairs
+		Stairs,
+		Fountain
 	}
 }
