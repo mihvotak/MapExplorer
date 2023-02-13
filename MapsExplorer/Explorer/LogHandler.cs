@@ -17,6 +17,7 @@ namespace MapsExplorer
 		private RoutesExplorer _routesExplorer;
 		private ExploreMode _mode;
 		private Regex _bossWarningRegex;
+		public string LastError;
 
 		public LogHandler()
 		{
@@ -32,20 +33,29 @@ namespace MapsExplorer
 		public Dunge GetDunge(DungeLine line, ExploreMode mode = ExploreMode.None)
 		{
 			_mode = mode;
-			string content = GetLogContent(line);
+			string content = GetLogContent(line, out LastError);
+			if (string.IsNullOrEmpty(content))
+				return null;
 			Dunge dunge = new Dunge(line);
 			Parse(content, dunge, false);
-			if (dunge.ParseError == "DescSort")
+			if (!string.IsNullOrEmpty(LastError))
+				return null;
+			if (dunge != null && dunge.ParseError == "DescSort")
 			{
-				content = GetLogContent(line, 0, true);
+				content = GetLogContent(line, out LastError, 0, true);
+				if (string.IsNullOrEmpty(content))
+					return null;
 				dunge = new Dunge(line);
 				Parse(content, dunge, true);
+				if (!string.IsNullOrEmpty(LastError))
+					return null;
 			}
 			return dunge;
 		}
 
-		private string GetLogContent(DungeLine line, int bossNum = 0, bool desc = false)
+		private string GetLogContent(DungeLine line, out string error, int bossNum = 0, bool desc = false)
 		{
+			error = "";
 			string dir = Paths.BaseDir + "/" + Utils.GetDateFolderString(line.DateTime);
 			string localPath = dir + "/" + line.Hash + (bossNum == 0 ? "" : "_" + bossNum) + (desc ? "_desc" : "") + ".html";
 			string content;
@@ -56,7 +66,9 @@ namespace MapsExplorer
 			else
 			{
 				string address = (bossNum == 0 ? Paths.GetDungeLogPath(line.Hash) : Paths.GetBossLogPath(line.Hash, bossNum)) + (desc ? "?sort=desc" : "");
-				content = WebLoader.GetContent(address);
+				content = WebLoader.GetContent(address, out error);
+				if (string.IsNullOrEmpty(content))
+					return null;
 				if (!Directory.Exists(dir))
 					Directory.CreateDirectory(dir);
 				File.WriteAllText(localPath, content);
@@ -827,7 +839,9 @@ namespace MapsExplorer
 						int bossNum = int.Parse(linkContent.Substring(index + 1, 1));
 						Boss boss = new Boss();
 						boss.Num = bossNum;
-						string bossLog = GetLogContent(dunge.DungeLine, bossNum);
+						string bossLog = GetLogContent(dunge.DungeLine, out LastError, bossNum);
+						if (string.IsNullOrEmpty(bossLog))
+							return;
 						var bossDocument = await _context.OpenAsync(req => req.Content(bossLog));
 						var bossCentralBlock = bossDocument.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
 						var logContainer = bossDocument.QuerySelector("div.d_content");
@@ -837,7 +851,9 @@ namespace MapsExplorer
 						bool desc = descLink.GetAttribute("title").Contains("Прямая сортировка");
 						if (desc)
 						{
-							bossLog = GetLogContent(dunge.DungeLine, bossNum, true);
+							bossLog = GetLogContent(dunge.DungeLine, out LastError, bossNum, true);
+							if (string.IsNullOrEmpty(bossLog))
+								return;
 							bossDocument = await _context.OpenAsync(req => req.Content(bossLog));
 							bossCentralBlock = bossDocument.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
 							logContainer = bossDocument.QuerySelector("div.d_content");

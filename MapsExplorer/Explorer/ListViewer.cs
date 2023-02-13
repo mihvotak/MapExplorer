@@ -66,6 +66,8 @@ namespace MapsExplorer
                 if (d2 > endDate)
                     d2 = endDate;
                 LoadList(date, d2, add, onProgress, index, parts);
+				if (!string.IsNullOrEmpty(_error))
+					break;
                 index++;
                 onProgress((int)((double)index / parts * 100));
             }
@@ -82,7 +84,9 @@ namespace MapsExplorer
             {
                 string address = GetAddress(beginDate, endDate, add, page);
                 Console.WriteLine(page + ") " + address);
-                doc = WebLoader.GetContent(address);
+                doc = WebLoader.GetContent(address, out _error);
+				if (string.IsNullOrEmpty(doc))
+					break;
                 AddPageList(_context, doc);
                 if (_total > 0)
                 {

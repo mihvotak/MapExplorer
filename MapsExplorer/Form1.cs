@@ -77,6 +77,8 @@ namespace MapsExplorer
 				builder.Append(line.ToString() + "\n");
 			string all = builder.ToString();
 			logsRichTextBox.Text = all;
+			if (!Directory.Exists(Paths.ResultsDir))
+				Directory.CreateDirectory(Paths.ResultsDir);
 			File.WriteAllText(Paths.ResultsDir + "/list.txt", all);
 		}
 
@@ -138,8 +140,8 @@ namespace MapsExplorer
 				case ExploreMode.CountBossesAndTribbles:
 					CalculateBossesAndTribbles();	//	Трибблы у боссов
 					break;
-				case ExploreMode.Count2AbilBosses:
-					Count2AbilBosses();             //	Полуфиналы
+				case ExploreMode.CountHalfFinBosses:
+					CountHalfFinBosses();             //	Полуфиналы
 					break;
 				case ExploreMode.SearchBossesByName:
 					SearchBossesByName();           //	Поиск конкретного босса
@@ -184,14 +186,22 @@ namespace MapsExplorer
 					errorTextBox.Text = $"Mode {_exploreMode} not realized";
 					break;
 			}
-			progressBar1.Value = 100;
 		}
 
 		private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			progressBar1.Value = 100;
 
-			_completeCallback?.Invoke();
+			if (!string.IsNullOrEmpty(_logHandler.LastError))
+			{
+				errorTextBox.Text = _logHandler.LastError;
+				_logHandler.LastError = null;
+			}
+			else
+			{
+				progressBar1.Value = 100;
+				_completeCallback?.Invoke();
+			}
+
 		}
 
 		private void SearchAquas()
@@ -552,13 +562,15 @@ namespace MapsExplorer
 			tableRichTextBox.Text = exploreRes;
 		}
 
-		private void Count2AbilBosses() // Таблица всех полуфиналов
+		private void CountHalfFinBosses() // Таблица всех полуфиналов
 		{
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < _resultLines.Count; i++)
 			{
 				DungeLine line = _resultLines[i];
 				Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
+				if (dunge == null)
+					break;
 				int count = 0;
 				string s = "";
 				foreach (Boss boss in dunge.Bosses)
@@ -1411,6 +1423,8 @@ namespace MapsExplorer
 					ModeComboBox.SelectedIndex = ModeComboBox.Items.Count - 1;
 			}
 
+			Form1_ResizeEnd(sender, e);
+
 			ReadExploreMode();
 		}
 
@@ -1424,6 +1438,27 @@ namespace MapsExplorer
 		{
 			ReadExploreMode();
 			checkBoxMinRoute.Visible = _exploreMode == ExploreMode.CalculateRoutes;
+		}
+
+		private void Form1_ResizeEnd(object sender, EventArgs e)
+		{
+			logsRichTextBox.Width = Width - logsRichTextBox.Left - 30;
+			tableRichTextBox.Width = Width - tableRichTextBox.Left - 30;
+			resultRichTextBox.Width = Width - resultRichTextBox.Left - 30;
+			errorTextBox.Width = Width - 40;
+			progressBar1.Width = Width - 40;
+
+			float h = (int)(Height - errorTextBox.Height - progressBar1.Height - 130);
+			int h3 = (int)(h / 3);
+			int space = 20;
+			logsRichTextBox.Top = (int)space;
+			logsRichTextBox.Height = h3;
+			tableRichTextBox.Top = logsRichTextBox.Top + logsRichTextBox.Height + space;
+			tableRichTextBox.Height = h3;
+			resultRichTextBox.Top = tableRichTextBox.Top + tableRichTextBox.Height + space;
+			resultRichTextBox.Height = h3;
+			errorTextBox.Top = Height - space * 2 - errorTextBox.Height - progressBar1.Height - 20;
+			progressBar1.Top = Height - space - progressBar1.Height - 30;
 		}
 	}
 }

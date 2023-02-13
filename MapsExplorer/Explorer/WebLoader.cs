@@ -7,11 +7,31 @@ namespace MapsExplorer
 {
 	public class WebLoader
 	{
-		public static string GetContent(string address)
+		public static string GetContent(string address, out string error)
         {
-            StringBuilder builder = new StringBuilder();
+			error = "";
+			StringBuilder builder = new StringBuilder();
             WebRequest request = WebRequest.Create(address);
-            WebResponse response = request.GetResponse();
+			WebResponse response = null;
+			int count = 0;
+			int limit = 3;
+			while (count < limit)
+			{
+				try
+				{
+					response = request.GetResponse();
+					break;
+				}
+				catch (WebException e)
+				{
+					count++;
+					if (count == limit)
+					{
+						error = "WebLoader error with address " + address + " : " + e.Message;
+						return null;
+					}
+				}
+			}
             using (Stream stream = response.GetResponseStream())
             {
                 using (StreamReader reader = new StreamReader(stream))

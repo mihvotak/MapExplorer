@@ -8,7 +8,7 @@ public enum ExploreMode
 {
 	None,
 	CountBossesAndTribbles,
-	Count2AbilBosses,
+	CountHalfFinBosses,
 	SearchBossesByName,
 	SearchTreasurePos,
 	SearchStairsPos,
