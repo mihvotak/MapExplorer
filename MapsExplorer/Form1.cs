@@ -29,6 +29,7 @@ namespace MapsExplorer
 			if (!backgroundWorker1.IsBusy && !backgroundWorker2.IsBusy)
 			{
 				progressBar1.Value = 0;
+				errorTextBox.Text = "";
 				backgroundWorker1.RunWorkerAsync();
 			}
 			else

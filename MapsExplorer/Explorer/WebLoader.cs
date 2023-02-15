@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Net;
+using System.Threading;
 
 namespace MapsExplorer
 {
@@ -11,20 +12,21 @@ namespace MapsExplorer
         {
 			error = "";
 			StringBuilder builder = new StringBuilder();
-            WebRequest request = WebRequest.Create(address);
 			WebResponse response = null;
 			int count = 0;
-			int limit = 3;
+			int limit = 500;
 			while (count < limit)
 			{
 				try
 				{
+					WebRequest request = WebRequest.Create(address);
 					response = request.GetResponse();
 					break;
 				}
 				catch (WebException e)
 				{
 					count++;
+					Thread.Sleep(5000);
 					if (count == limit)
 					{
 						error = "WebLoader error with address " + address + " : " + e.Message;
