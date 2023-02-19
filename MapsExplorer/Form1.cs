@@ -255,12 +255,12 @@ namespace MapsExplorer
 				string tr = string.Join("\t", tds);
 				builder.Append(tr + "\n");
 
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 
 			string exploreTab = builder.ToString();
-			tableRichTextBox.Text = exploreTab;
 			File.WriteAllText(Paths.ResultsDir + "/SearchAquaTab.txt", exploreTab);
+			_completeCallback = () => tableRichTextBox.Text = exploreTab;
 		}
 
 		private void SearchWalls()
@@ -291,12 +291,12 @@ namespace MapsExplorer
 				string tr = string.Join("\t", tds);
 				builder.Append(tr + "\n");
 
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 
 			string exploreTab = builder.ToString();
-			tableRichTextBox.Text = exploreTab;
 			File.WriteAllText(Paths.ResultsDir + "/SearchWallsTab.txt", exploreTab);
+			_completeCallback = () => tableRichTextBox.Text = exploreTab;
 		}
 
 		private void ExploreTeleports()
@@ -306,7 +306,7 @@ namespace MapsExplorer
 			for (int i = 0; i < _resultLines.Count; i++)
 			{
 				DungeLine line = _resultLines[i];
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 				if (line.Category != Category.Stable)
 					continue;
 				Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
@@ -344,7 +344,7 @@ namespace MapsExplorer
 				}
 			}
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
+			_completeCallback = () => tableRichTextBox.Text = exploreRes;
 		}
 
 		private void CalculateRoutes()
@@ -464,7 +464,7 @@ namespace MapsExplorer
 						builder.Append("\n");
 					}
 				}
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 
 			void WriteResultGraph(string name, int[,] data)
@@ -490,12 +490,17 @@ namespace MapsExplorer
 			WriteResultGraph("Все однушки", all1);
 
 			string exploreTab = builder.ToString();
-			tableRichTextBox.Text = exploreTab;
 			File.WriteAllText(Paths.ResultsDir + "/RoutesTab.txt", exploreTab);
 
 			string exploreRes = builder2.ToString();
-			resultRichTextBox.Text = exploreRes;
 			File.WriteAllText(Paths.ResultsDir + "/RoutesResult.txt", exploreRes);
+
+			_completeCallback = 
+				() =>
+				{
+					tableRichTextBox.Text = exploreTab;
+					resultRichTextBox.Text = exploreRes;
+				};
 		}
 
 		private void ExploreStables()
@@ -505,7 +510,7 @@ namespace MapsExplorer
 			for (int i = 0; i < _resultLines.Count; i++)
 			{
 				DungeLine line = _resultLines[i];
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 				if (line.Category != Category.Stable)
 					continue;
 				Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
@@ -537,9 +542,10 @@ namespace MapsExplorer
 					}
 					builder.Append("--------------------------\n");
 				}
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
+			_completeCallback = () => tableRichTextBox.Text = exploreRes;
 		}
 
 		private void ExploreCacheHints()
@@ -548,7 +554,6 @@ namespace MapsExplorer
 			for (int i = 0; i < _resultLines.Count; i++)
 			{
 				DungeLine line = _resultLines[i];
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
 				Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
 				Map map = dunge.Maps[dunge.LastFloor - 1];
 				bool enough = dunge.Stable != null && dunge.Stable.EnoughInfo;
@@ -558,9 +563,10 @@ namespace MapsExplorer
 				builder.Append(map.Width + "\t" + map.Height + "\t");
 				builder.Append((dunge.HintOnCache ? 1 : 0) + "\t");
 				builder.Append("\n");
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
+			_completeCallback = () => tableRichTextBox.Text = exploreRes;
 		}
 
 		private void CountHalfFinBosses() // Таблица всех полуфиналов
@@ -626,11 +632,11 @@ namespace MapsExplorer
 						builder.Append(tr + "\n");
 					}
 				}
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
 			File.WriteAllText(Paths.ResultsDir + "/BossesResult22.txt", exploreRes);
+			_completeCallback = () => tableRichTextBox.Text = exploreRes;
 		}
 
 		private const int MaxStep = 100;
@@ -676,16 +682,20 @@ namespace MapsExplorer
 					string tr = string.Join("\t", tds);
 					rawBuilder.Append(tr + "\n");
 				}
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 
 			string rawDataTable = rawBuilder.ToString();
-			tableRichTextBox.Text = rawDataTable;
 			File.WriteAllText(Paths.ResultsDir + "/SearchVoicesRaw.txt", rawDataTable);
 
 			string resData = resultBuilder.ToString();
-			resultRichTextBox.Text = resData;
 			File.WriteAllText(Paths.ResultsDir + "/SearchVoicesResult.txt", resData);
+			_completeCallback =
+				() =>
+				{
+					tableRichTextBox.Text = rawDataTable;
+					resultRichTextBox.Text = resData;
+				};
 		}
 
 		private void SearchHints() // Таблица подсказок
@@ -824,12 +834,16 @@ namespace MapsExplorer
 			AddHintResultsToBuilder(resultBuilder, moreCounter);
 
 			string rawDataTable = rawBuilder.ToString();
-			tableRichTextBox.Text = rawDataTable;
 			File.WriteAllText(Paths.ResultsDir + "/SearchHintsRaw.txt", rawDataTable);
 
 			string resData = resultBuilder.ToString();
-			resultRichTextBox.Text = resData;
 			File.WriteAllText(Paths.ResultsDir + "/SearchHintsResult.txt", resData);
+			_completeCallback =
+				() =>
+				{
+					tableRichTextBox.Text = rawDataTable;
+					resultRichTextBox.Text = resData;
+				};
 		}
 
 		private void AddHintResultsToBuilder(StringBuilder builder, HintCounter counter)
@@ -977,16 +991,20 @@ namespace MapsExplorer
 				}
 				string tr = string.Join("\t", tds);
 				builder.Append(tr + "\n");
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
 			File.WriteAllText(Paths.ResultsDir + "/BossesResult.txt", exploreRes);
 			string s = plot.GetRes(10);
 			s += plot.GetRes4(10);
 			s += plot.GetRes8(10);
 			s += plotSF.GetRes(10);
-			resultRichTextBox.Text = s;
+			_completeCallback =
+				() =>
+				{
+					tableRichTextBox.Text = exploreRes;
+					resultRichTextBox.Text = s;
+				};
 		}
 
 		private void SearchStairsPos() // Таблица смещений ЛЕСТНИЦЫ от входа
@@ -1018,14 +1036,18 @@ namespace MapsExplorer
 				plot.Inc(x, y);
 				string tr = string.Join("\t", tds);
 				builder.Append(tr + "\n");
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
 			File.WriteAllText(Paths.ResultsDir + "/BossesResult.txt", exploreRes);
 			string s = plot.GetRes(5);
 			s += plot.GetRes4(5);
-			resultRichTextBox.Text = s;
+			_completeCallback =
+				() =>
+				{
+					tableRichTextBox.Text = exploreRes;
+					resultRichTextBox.Text = s;
+				};
 		}
 
 		private void CalculateBossesAndTribbles() // Таблица всех встреченных боссов, их абилок и хп
@@ -1350,12 +1372,12 @@ namespace MapsExplorer
 				string tr = string.Join("\t", tds);
 				builder.Append(tr + "\n");
 
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
 
 			string exploreRes = builder.ToString();
-			tableRichTextBox.Text = exploreRes;
 			File.WriteAllText(Paths.ResultsDir + "/SearchJumps.txt", exploreRes);
+			_completeCallback = () => tableRichTextBox.Text = exploreRes;
 		}
 
 		private void LookForCoupons() // Исследуем купоны
@@ -1374,14 +1396,13 @@ namespace MapsExplorer
 						results.Add(coupon, 0);
 					results[coupon]++;
 				}
-				progressBar1.Value = (int)((double)(i + 1) / _resultLines.Count * 100);
+				backgroundWorker2.ReportProgress((int)((double)(i + 1) / _resultLines.Count * 100));
 			}
-			progressBar1.Value = 100;
 			foreach (var pair in results)
 			{
 				builder.Append(pair.Key + "\t" + pair.Value + "\n");
 			}
-			tableRichTextBox.Text = builder.ToString();
+			_completeCallback = () => tableRichTextBox.Text = builder.ToString();
 		}
 
 		private void SaveFormData()
