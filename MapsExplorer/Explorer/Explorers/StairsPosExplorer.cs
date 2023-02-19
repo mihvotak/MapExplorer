@@ -1,0 +1,46 @@
+﻿using MapsExplorer;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+
+public class StairsPosExplorer : ExplorerBase
+{
+	public override void Work()
+	{
+		StringBuilder builder = new StringBuilder();
+		Plot2d plot = new Plot2d();
+		for (int i = 0; i < _resultLines.Count; i++)
+		{
+			DungeLine line = _resultLines[i];
+			if (line.Category != Category.Usual)
+				continue;
+			Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
+			Map map = dunge.Maps[0];
+			if (map.StairsPos == Int2.Zero)
+				continue;
+			List<string> tds = new List<string>();
+			tds.Add(line.Link);
+			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
+			tds.Add(line.Kind.ToString());
+			tds.Add(map.Width.ToString());
+			tds.Add(map.Height.ToString());
+			Int2 delta = map.StairsPos - map.EnterPos;
+			int x = delta.x;
+			int y = -delta.y;
+			tds.Add(x.ToString());
+			tds.Add(y.ToString());
+			tds.Add(dunge.FirstStairMove.ToString());
+			tds.Add(dunge.LastFloor.ToString());
+			plot.Inc(x, y);
+			string tr = string.Join("\t", tds);
+			builder.Append(tr + "\n");
+			ReportProgress(i);
+		}
+		string exploreRes = builder.ToString();
+		File.WriteAllText(Paths.ResultsDir + "/BossesResult.txt", exploreRes);
+		string s = plot.GetRes(5);
+		s += plot.GetRes4(5);
+		TableText = exploreRes;
+		ResultText = s;
+	}
+}

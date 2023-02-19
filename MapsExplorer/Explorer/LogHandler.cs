@@ -1299,7 +1299,7 @@ namespace MapsExplorer
 				}
 			}
 
-			if (_mode == ExploreMode.CalculateRoutes && dunge.DungeLine.Category == Category.Usual)
+			if (_mode == ExploreMode.RoutesAndBosses && dunge.DungeLine.Category == Category.Usual)
 				_routesExplorer.Explore(dunge);
 			if (dunge.DungeLine.Success && !dunge.DungeLine.Vault)
 			{
