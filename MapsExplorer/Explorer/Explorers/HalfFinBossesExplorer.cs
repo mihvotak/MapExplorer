@@ -41,7 +41,7 @@ public class HalfFinBossesExplorer : ExplorerBase
 			ReportProgress(i);
 		}
 		string exploreRes = builder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/BossesResult22.txt", exploreRes);
+		File.WriteAllText(Paths.ResultsDir + "/HalfFinBosses.txt", exploreRes);
 		TableText = exploreRes;
 
 	}

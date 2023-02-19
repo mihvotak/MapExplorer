@@ -18,7 +18,7 @@ public class TreasurePosExplorer : ExplorerBase
 			DungeLine line = _resultLines[i];
 			if (!line.Success || line.Vault)
 				continue;
-			if (needFloor == 1 && line.Category != Category.Usual)
+			if (needFloor == 1 && line.Category != Category.Рандом)
 				continue;
 			Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
 			if (dunge.LastFloor != needFloor)
@@ -69,7 +69,7 @@ public class TreasurePosExplorer : ExplorerBase
 			ReportProgress(i);
 		}
 		string exploreRes = builder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/BossesResult.txt", exploreRes);
+		File.WriteAllText(Paths.ResultsDir + "/TreasurePosResult.txt", exploreRes);
 		string s = plot.GetRes(10);
 		s += plot.GetRes4(10);
 		s += plot.GetRes8(10);

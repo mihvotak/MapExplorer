@@ -26,7 +26,7 @@ public class WallsExplorer : ExplorerBase
 			List<string> tds = new List<string>();
 			tds.Add(line.Link);
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
-			tds.Add(dunge.WrongDetectedAqua ? "Aqua!" : dunge.DungeLine.Category.ToString());
+			tds.Add(dunge.WrongDetectedAqua ? "Аква!" : dunge.DungeLine.Category.ToString());
 			tds.Add(line.Kind.ToString());
 			tds.Add(map.Width + "");
 			tds.Add(map.Height + "");
@@ -37,7 +37,7 @@ public class WallsExplorer : ExplorerBase
 		}
 
 		string exploreTab = builder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/SearchWallsTab.txt", exploreTab);
+		File.WriteAllText(Paths.ResultsDir + "/WallsTab.txt", exploreTab);
 		TableText = exploreTab;
 	}
 }

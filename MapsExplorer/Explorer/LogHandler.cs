@@ -450,7 +450,7 @@ namespace MapsExplorer
 						emptyCount++;
 				}
 			}
-			if (dunge.LastFloor == 1 && (float)wallsCount / (emptyCount + wallsCount) < 0.1f)
+			if (dunge.LastFloor == 1 && (float)wallsCount / (emptyCount + wallsCount) < 0.1f && dunge.DungeLine.Category != Category.Аква)
 				dunge.WrongDetectedAqua = true;
 
 			var blockH = centralBlock.QuerySelector("div.block_h");
@@ -526,6 +526,21 @@ namespace MapsExplorer
 					int stepI = stepS == "" ? currentStep : int.Parse(stepS);
 					if (stepI != currentStep)
 					{
+						{
+							var timeBlock = logLine.QuerySelector("div.d_capt");
+							string timeStr = timeBlock.TextContent;
+							string hourS = timeStr.Substring(0, 2);
+							string minS = timeStr.Substring(3, 2);
+							int hour = int.Parse(hourS);
+							int min = int.Parse(minS);
+							DateTime date = localFightDateTime.Date;
+							bool nextDate = localFightDateTime.Hour > hour;
+							DateTime stepTime = date + new TimeSpan(nextDate ? 1 : 0, hour, min, 0);
+							if (i == 0)
+								dunge.StartDateTime = stepTime + timeZoneDiff;
+							else
+								dunge.EndDateTime = stepTime + timeZoneDiff;
+						}
 						move = dunge.Moves[stepI - 1];
 						cell = dunge.GetCell(move);
 						stepLine = 0;
@@ -1039,6 +1054,7 @@ namespace MapsExplorer
 						if (boss.Abils.Count == 4)
 							dunge.SfinPos = boss.Pos;
 						dunge.Bosses.Add(boss);
+						dunge.BossFights++;
 					}
 				}
 			}
@@ -1184,7 +1200,7 @@ namespace MapsExplorer
 				}
 			}
 
-			if (dunge.DungeLine.Category == Category.Stable)
+			if (dunge.DungeLine.Category == Category.Конюшня)
 			{
 				Map map = dunge.Maps[0];
 				dunge.Stable = new Stable();
@@ -1271,7 +1287,7 @@ namespace MapsExplorer
 					}
 				}
 			}
-			else if (dunge.DungeLine.Category == Category.Chamomile)
+			else if (dunge.DungeLine.Category == Category.Ромашка)
 			{
 				Map map = dunge.Maps[0];
 				for (int i = 0; i < dunge.HintMoves.Count; i++)
@@ -1285,7 +1301,7 @@ namespace MapsExplorer
 						dunge.HintOnCache = true;
 				}
 			}
-			else if (dunge.DungeLine.Category == Category.Usual)
+			else if (dunge.DungeLine.Category == Category.Рандом)
 			{
 				if (dunge.DungeLine.Success && !dunge.DungeLine.Vault)
 				{
@@ -1299,7 +1315,7 @@ namespace MapsExplorer
 				}
 			}
 
-			if (_mode == ExploreMode.RoutesAndBosses && dunge.DungeLine.Category == Category.Usual)
+			if (_mode == ExploreMode.RoutesAndBosses && dunge.DungeLine.Category == Category.Рандом)
 				_routesExplorer.Explore(dunge);
 			if (dunge.DungeLine.Success && !dunge.DungeLine.Vault)
 			{

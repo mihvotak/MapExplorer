@@ -101,7 +101,7 @@ namespace MapsExplorer
 				{
 					Hash = hashTextBox.Text,
 					DateTime = Utils.ParseDateTime("11.11.2011 11:11"),
-					Category = Category.Usual,
+					Category = Category.Рандом,
 					Kind = DungeKind.Неизвестное,
 					Success = true
 				};
@@ -164,31 +164,32 @@ namespace MapsExplorer
 				case ExploreMode.Hints:			//	Подсказки в кастомках
 					explorer = new HintsExplorer();                  
 					break;
-				case ExploreMode.Stables:		//	Конюшни
+				case ExploreMode.Stables:			//	Конюшни
 					explorer = new StablesExplorer();               
 					break;
 				case ExploreMode.CacheHints:		//	Прикладовые подсказки
 					explorer = new CacheHintsExplorer();			
 					break;
-				case ExploreMode.RoutesAndBosses:		//	Непутевые боссы
+				case ExploreMode.RoutesAndBosses:	//	Непутевые боссы
 					explorer = new RoutesAndBossesExplorer();				
 					break;
-				case ExploreMode.Teleports:      //	Телепорты и ловушки
+				case ExploreMode.Teleports:			//	Телепорты и ловушки
 					explorer = new TeleportsExplorer();				
 					break;
-				case ExploreMode.Aquas:           //	Исследование аквариумов
+				case ExploreMode.Aquas:				//	Исследование аквариумов
 					explorer = new AquasExplorer();                  
 					break;
-				case ExploreMode.Walls:           //	Капиталки, размеры данжей
+				case ExploreMode.Walls:				//	Капиталки, размеры данжей
 					explorer = new WallsExplorer();                  
 					break;
-				case ExploreMode.Jumps:           //	Влияние гласов в прыгучести
+				case ExploreMode.Jumps:				//	Влияние гласов в прыгучести
 					explorer = new JumpsExplorer();                  
 					break;
-				case ExploreMode.Coupons:        //	Считаем купоны
+				case ExploreMode.Coupons:			//	Считаем купоны
 					explorer = new CouponsExplorer();
 					break;
-				case ExploreMode.TimeStatistic:
+				case ExploreMode.TimeStatistic:     //	Время в данже
+					explorer = new TimeStatisticExplorer();
 					break;
 				default:
 					_logHandler.LastError = $"Mode {_exploreMode} not realized";

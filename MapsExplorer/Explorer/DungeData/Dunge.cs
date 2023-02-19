@@ -13,6 +13,7 @@ namespace MapsExplorer
 		public int Steps;
 		public bool[] CanBeHints = new bool[101];
 		public int UniqueSteps;
+		public int BossFights;
 		public List<Boss> Bosses = new List<Boss>();
 		public List<string> Coupons = new List<string>();
 		public List<VoiceKind>[] Voices;
@@ -50,6 +51,9 @@ namespace MapsExplorer
 		public bool HintOnCache;
 
 		public bool WrongDetectedAqua;
+
+		public DateTime StartDateTime;
+		public DateTime EndDateTime;
 
 		public Dunge(DungeLine dungeLine)
 		{

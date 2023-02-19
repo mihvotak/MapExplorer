@@ -8,9 +8,9 @@ namespace MapsExplorer
 {
 	public enum Category
 	{
-		Usual,
-		Chamomile,
-		Stable,
-		Aqua
+		Рандом,
+		Ромашка,
+		Конюшня,
+		Аква
 	}
 }

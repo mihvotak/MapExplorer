@@ -37,7 +37,7 @@ public class HintsExplorer : ExplorerBase
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
 			DungeLine line = _resultLines[i];
-			if (line.Category != Category.Usual)
+			if (line.Category != Category.Рандом)
 				continue;
 			Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
 			if (dunge.IsCustom && !_customCheckBoxChecked)
@@ -162,10 +162,10 @@ public class HintsExplorer : ExplorerBase
 		AddHintResultsToBuilder(resultBuilder, moreCounter);
 
 		string rawDataTable = rawBuilder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/SearchHintsRaw.txt", rawDataTable);
+		File.WriteAllText(Paths.ResultsDir + "/HintsRaw.txt", rawDataTable);
 
 		string resData = resultBuilder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/SearchHintsResult.txt", resData);
+		File.WriteAllText(Paths.ResultsDir + "/HintsResult.txt", resData);
 		TableText = rawDataTable;
 		ResultText = resData;
 	}

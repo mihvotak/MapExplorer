@@ -142,8 +142,13 @@ namespace MapsExplorer
                             t12 = "v";
                         }
                     }
-                    if (t11 != "")
-                        line.Category = t11 == "3" ? Category.Aqua : (t11 == "2" ? Category.Stable : Category.Chamomile);
+					if (t11 != "")
+					{
+						if (t11 == "custom")
+							line.Custom = true;
+						else
+							line.Category = t11 == "3" ? Category.Аква : (t11 == "2" ? Category.Конюшня : Category.Ромашка);
+					}
                     line.Vault = t12 == "v";
                     if (t1.Length > 11)// подземелье 
                     {
@@ -153,7 +158,10 @@ namespace MapsExplorer
 							line.Kind = DungeKind.Обыденности;
 						else if (byIndex != -1)
 							t1 = t1.Substring(0, byIndex);
-                    }
+						if (byIndex != -1)
+							line.Custom = true;
+
+					}
                     if (line.Kind != DungeKind.Обыденности && !Enum.TryParse(t1, out line.Kind))
                     {
                         line.Kind = DungeKind.Обыденности;

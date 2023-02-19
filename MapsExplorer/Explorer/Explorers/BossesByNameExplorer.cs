@@ -34,7 +34,7 @@ public class BossesByNameExplorer : ExplorerBase
 		}
 		builder.AppendLine("Total: " + counter);
 		string exploreRes = builder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/BossesResult22.txt", exploreRes);
+		File.WriteAllText(Paths.ResultsDir + "/BossesByName.txt", exploreRes);
 		TableText = exploreRes;
 	}
 }

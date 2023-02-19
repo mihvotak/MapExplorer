@@ -12,7 +12,7 @@ public class StairsPosExplorer : ExplorerBase
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
 			DungeLine line = _resultLines[i];
-			if (line.Category != Category.Usual)
+			if (line.Category != Category.Рандом)
 				continue;
 			Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
 			Map map = dunge.Maps[0];
@@ -37,7 +37,7 @@ public class StairsPosExplorer : ExplorerBase
 			ReportProgress(i);
 		}
 		string exploreRes = builder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/BossesResult.txt", exploreRes);
+		File.WriteAllText(Paths.ResultsDir + "/StairsPosResult.txt", exploreRes);
 		string s = plot.GetRes(5);
 		s += plot.GetRes4(5);
 		TableText = exploreRes;

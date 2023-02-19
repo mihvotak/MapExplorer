@@ -19,7 +19,7 @@ public class RoutesAndBossesExplorer : ExplorerBase
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
 			DungeLine line = _resultLines[i];
-			if (line.Category != Category.Usual)
+			if (line.Category != Category.Рандом)
 				continue;
 			if (!line.Success || line.Vault)
 				continue;
@@ -41,7 +41,7 @@ public class RoutesAndBossesExplorer : ExplorerBase
 					continue;
 				tds.Add(line.Link);
 				tds.Add(Utils.GetDateAndTimeString(line.DateTime));
-				tds.Add(dunge.WrongDetectedAqua ? "Aqua!" : dunge.DungeLine.Category.ToString());
+				tds.Add(dunge.WrongDetectedAqua ? "Аква!" : dunge.DungeLine.Category.ToString());
 				tds.Add(line.Kind.ToString());
 				Int2 delta = boss.Pos.Pos - map.EnterPos;
 				tds.Add(delta.x + "");

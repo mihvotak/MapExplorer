@@ -127,7 +127,7 @@ public class JumpsExplorer : ExplorerBase
 		}
 
 		string exploreRes = builder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/SearchJumps.txt", exploreRes);
+		File.WriteAllText(Paths.ResultsDir + "/Jumps.txt", exploreRes);
 		TableText = exploreRes;
 
 	}

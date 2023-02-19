@@ -12,7 +12,7 @@ public class AquasExplorer : ExplorerBase
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
 			DungeLine line = _resultLines[i];
-			if (line.Category != Category.Aqua)
+			if (line.Category != Category.Аква)
 				continue;
 			if (!line.Success)
 				continue;
@@ -46,7 +46,7 @@ public class AquasExplorer : ExplorerBase
 			List<string> tds = new List<string>();
 			tds.Add(line.Link);
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
-			tds.Add(dunge.WrongDetectedAqua ? "Aqua!" : dunge.DungeLine.Category.ToString());
+			tds.Add(dunge.WrongDetectedAqua ? "Аква!" : dunge.DungeLine.Category.ToString());
 			tds.Add(dunge.TreasurePos.Pos.x + "");
 			tds.Add(dunge.TreasurePos.Pos.y + "");
 			tds.Add(line.Kind.ToString());
@@ -59,7 +59,7 @@ public class AquasExplorer : ExplorerBase
 		}
 
 		string exploreTab = builder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/SearchAquaTab.txt", exploreTab);
+		File.WriteAllText(Paths.ResultsDir + "/AquasTab.txt", exploreTab);
 		TableText = exploreTab;
 
 	}

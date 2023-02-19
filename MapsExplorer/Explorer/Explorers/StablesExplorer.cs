@@ -13,7 +13,7 @@ public class StablesExplorer : ExplorerBase
 		{
 			DungeLine line = _resultLines[i];
 			ReportProgress(i);
-			if (line.Category != Category.Stable)
+			if (line.Category != Category.Конюшня)
 				continue;
 			Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
 			bool enough = dunge.Stable != null && dunge.Stable.EnoughInfo;

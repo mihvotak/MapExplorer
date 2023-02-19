@@ -32,10 +32,10 @@ public class VoicesExplorer : ExplorerBase
 		}
 
 		string rawDataTable = rawBuilder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/SearchVoicesRaw.txt", rawDataTable);
+		File.WriteAllText(Paths.ResultsDir + "/VoicesRaw.txt", rawDataTable);
 
 		string resData = resultBuilder.ToString();
-		File.WriteAllText(Paths.ResultsDir + "/SearchVoicesResult.txt", resData);
+		File.WriteAllText(Paths.ResultsDir + "/VoicesResult.txt", resData);
 		TableText = rawDataTable;
 		ResultText = resData;
 	}

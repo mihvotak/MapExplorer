@@ -67,6 +67,7 @@
     <Compile Include="Explorer\DungeData\Int2.cs" />
     <Compile Include="Explorer\DungeData\Stable.cs" />
     <Compile Include="Explorer\DungeData\Step.cs" />
+    <Compile Include="Explorer\DungeData\Table.cs" />
     <Compile Include="Explorer\Enums\ConditionResultKind.cs" />
     <Compile Include="Explorer\Enums\ExploreMode.cs" />
     <Compile Include="Explorer\Enums\Hint.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Explorer\Enums\SecretKind.cs" />
     <Compile Include="Explorer\Enums\TreasureScheme.cs" />
     <Compile Include="Explorer\Enums\VoiceKind.cs" />
+    <Compile Include="Explorer\Explorers\TimeStatisticExplorer.cs" />
     <Compile Include="Explorer\Explorers\TribblesWithBossesExplorer.cs" />
     <Compile Include="Explorer\Explorers\BossesByNameExplorer.cs" />
     <Compile Include="Explorer\Explorers\CacheHintsExplorer.cs" />
@@ -89,9 +91,9 @@
     <Compile Include="Explorer\Explorers\HintsExplorer.cs" />
     <Compile Include="Explorer\Explorers\CouponsExplorer.cs" />
     <Compile Include="Explorer\Explorers\RoutesAndBossesExplorer.cs" />
-    <Compile Include="Explorer\Explorers\SearchAquasExplorer.cs" />
-    <Compile Include="Explorer\Explorers\SearchJumpsExplorer.cs" />
-    <Compile Include="Explorer\Explorers\SearchWallsExplorer.cs" />
+    <Compile Include="Explorer\Explorers\AquasExplorer.cs" />
+    <Compile Include="Explorer\Explorers\JumpsExplorer.cs" />
+    <Compile Include="Explorer\Explorers\WallsExplorer.cs" />
     <Compile Include="Explorer\Explorers\StablesExplorer.cs" />
     <Compile Include="Explorer\Explorers\TreasurePosExplorer.cs" />
     <Compile Include="Explorer\Explorers\StairsPosExplorer.cs" />
