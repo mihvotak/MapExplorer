@@ -502,7 +502,7 @@ namespace MapsExplorer
 								canBeStable = false;
 							if (isWall && (y2 < 2 || x2mod2 != 0))
 								canBeStable = false;
-							if (!isWall && isKnown && (y2 >= 2 && x2mod2 != 1))
+							if (!isWall && isKnown && (y2 == 2 && x2mod2 != 1))
 								canBeStable = false;
 						}
 					}
