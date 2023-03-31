@@ -22,7 +22,8 @@ namespace MapsExplorer
 		public bool TribbleInFinal2;
 		public bool Escape1;
 		public bool Escape2;
-		public DateTime DateTime;
+		public DateTime StartDateTime;
+		public DateTime EndDateTime;
 		public List<int[]> Hps = new List<int[]>();
 		public bool CanBeRouting;
 		public bool IsRouting;

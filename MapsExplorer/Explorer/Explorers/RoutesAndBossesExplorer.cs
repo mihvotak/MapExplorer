@@ -27,7 +27,7 @@ public class RoutesAndBossesExplorer : ExplorerBase
 			Map map = dunge.Maps[dunge.LastFloor - 1];
 			if (map.BadRouteWalls)
 				continue;
-			if (dunge.WrongDetectedAqua || !dunge.IsNormalBosses())
+			if (dunge.LookAsAqua || !dunge.IsNormalBosses())
 				continue;
 			//if (!dunge.AllBossesFound)
 			//	continue;
@@ -41,7 +41,7 @@ public class RoutesAndBossesExplorer : ExplorerBase
 					continue;
 				tds.Add(line.Link);
 				tds.Add(Utils.GetDateAndTimeString(line.DateTime));
-				tds.Add(dunge.WrongDetectedAqua ? "Аква!" : dunge.DungeLine.Category.ToString());
+				tds.Add((dunge.LookAsAqua && dunge.DungeLine.Category != Category.Аква) ? "Аква!" : dunge.DungeLine.Category.ToString());
 				tds.Add(line.Kind.ToString());
 				Int2 delta = boss.Pos.Pos - map.EnterPos;
 				tds.Add(delta.x + "");

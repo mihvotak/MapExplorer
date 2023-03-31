@@ -69,12 +69,12 @@ public class TribblesWithBossesExplorer : ExplorerBase
 				List<string> tds = new List<string>();
 				tds.Add(line.Link);
 				tds.Add(Utils.GetDateAndTimeString(line.DateTime));
-				tds.Add(Utils.GetDateAndTimeString(boss.DateTime));
+				tds.Add(Utils.GetDateAndTimeString(boss.StartDateTime));
 				int period = time1 ? 1 : (time2 ? 2 : 3);
 				if (period == 3)
 				{
 					foreach (DateTime dateTime in tribbleDays)
-						if (dateTime.Date == boss.DateTime.Date)
+						if (dateTime.Date == boss.StartDateTime.Date)
 							period = 4;
 				}
 				if (boss.Pos.Floor == 2)

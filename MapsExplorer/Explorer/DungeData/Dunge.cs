@@ -17,6 +17,7 @@ namespace MapsExplorer
 		public List<Boss> Bosses = new List<Boss>();
 		public List<string> Coupons = new List<string>();
 		public List<VoiceKind>[] Voices;
+		public int VoicesCount;
 		public List<string> VoiceTexts = new List<string>();
 		public List<Member> Members = new List<Member>();
 		public int MembersSumHp;
@@ -50,7 +51,8 @@ namespace MapsExplorer
 
 		public bool HintOnCache;
 
-		public bool WrongDetectedAqua;
+		public bool LookAsAqua;
+		public bool LookAsStable;
 
 		public DateTime StartDateTime;
 		public DateTime EndDateTime;

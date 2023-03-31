@@ -14,11 +14,17 @@ namespace MapsExplorer
 
 		public Int2 EnterPos;
 		public Int2 StairsPos;
+		
+		public bool EnterCorner;	// Старт от угла
+		public bool EnterWall;		// Старт от стены
+		public Int2 EnterDir;		// Направление от начальной стены
 
 		public bool IsRightWall;
 		public bool IsLeftWall;
 		public bool IsTopWall;
 		public bool IsBottomWall;
+
+		public bool RareWalls;
 
 		public bool BadRouteWalls;
 		public RoutesExplorer.RouteGrid Grid;

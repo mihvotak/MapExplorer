@@ -12,15 +12,20 @@ public class StairsPosExplorer : ExplorerBase
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
 			DungeLine line = _resultLines[i];
-			if (line.Category != Category.Рандом)
-				continue;
+			//if (line.Category != Category.Аква)
+			//	continue;
 			Dunge dunge = _logHandler.GetDunge(line, _exploreMode);
 			Map map = dunge.Maps[0];
 			if (map.StairsPos == Int2.Zero)
 				continue;
+			bool match = dunge.LookAsAqua;
+			if (line.Category != Category.Аква && !dunge.LookAsAqua)
+				continue;
 			List<string> tds = new List<string>();
 			tds.Add(line.Link);
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
+			tds.Add(line.Category.ToString());
+			tds.Add(dunge.LookAsAqua ? "Аква!" : (dunge.LookAsStable ? "Конюшня!" : ""));
 			tds.Add(line.Kind.ToString());
 			tds.Add(map.Width.ToString());
 			tds.Add(map.Height.ToString());
@@ -31,15 +36,16 @@ public class StairsPosExplorer : ExplorerBase
 			tds.Add(y.ToString());
 			tds.Add(dunge.FirstStairMove.ToString());
 			tds.Add(dunge.LastFloor.ToString());
-			plot.Inc(x, y);
+			if (match)
+				plot.Inc(x, y);
 			string tr = string.Join("\t", tds);
 			builder.Append(tr + "\n");
 			ReportProgress(i);
 		}
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/StairsPosResult.txt", exploreRes);
-		string s = plot.GetRes(5);
-		s += plot.GetRes4(5);
+		string s = plot.GetRes(20);
+		s += plot.GetRes4(20);
 		TableText = exploreRes;
 		ResultText = s;
 	}

@@ -30,6 +30,8 @@ namespace MapsExplorer
 			{
 				progressBar1.Value = 0;
 				errorTextBox.Text = "";
+				if (!string.IsNullOrEmpty(hashTextBox.Text))
+					hashTextBox.Text = "";
 				logsBackgroundWorker.RunWorkerAsync();
 			}
 			else
@@ -39,8 +41,6 @@ namespace MapsExplorer
 		private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
 		{
 			var worker = sender as BackgroundWorker;
-			if (!string.IsNullOrEmpty(hashTextBox.Text))
-				hashTextBox.Text = "";
 			var startDate = dateTimePicker1.Value;
 			var endDate = dateTimePicker2.Value;
 			string add = "";

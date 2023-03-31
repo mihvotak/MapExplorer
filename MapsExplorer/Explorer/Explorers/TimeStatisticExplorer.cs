@@ -21,7 +21,7 @@ public class TimeStatisticExplorer : ExplorerBase
 			var time = dunge.EndDateTime - dunge.StartDateTime;
 			tds.Add("Время", time.ToString());
 			tds.Add("Минуты", time.TotalMinutes.ToString());
-			tds.Add("Карта", dunge.WrongDetectedAqua ? "Аква?" : line.Category.ToString());
+			tds.Add("Карта", (dunge.LookAsAqua && dunge.DungeLine.Category != Category.Аква) ? "Аква?" : line.Category.ToString());
 			tds.Add("Кастомное", line.Custom ? "Кастомное" : "");
 			tds.Add("Тип", line.Kind.ToString());
 			tds.Add("Ширина", map.Width.ToString());
@@ -30,6 +30,7 @@ public class TimeStatisticExplorer : ExplorerBase
 			tds.Add("Боссы", dunge.BossFights.ToString());
 			tds.Add("Этаж", dunge.LastFloor.ToString());
 			tds.Add("Шаги", dunge.Moves.Count.ToString());
+			tds.Add("Гласы", dunge.VoicesCount.ToString());
 			ReportProgress(i);
 		}
 		string exploreRes = tds.ToString();

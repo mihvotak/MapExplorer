@@ -374,84 +374,149 @@ namespace MapsExplorer
 				}
 			}
 
-			int wallCount = 0;
-			Map lastMap = dunge.Maps[dunge.LastFloor - 1];
-			lastMap.IsLeftWall = true;
-			for (int i = 0; i < lastMap.Height; i++)
+			for (int floor = 1; floor <= 2; floor++)
 			{
-				Cell cell = lastMap.GetCell(0, i);
-				if (cell.CellKind == CellKind.Wall)
-					wallCount++;
-				else if (cell.CellKind != CellKind.Unknown)
-				{
-					lastMap.IsLeftWall = false;
-					break;
-				}
-			}
-			lastMap.IsLeftWall &= wallCount >= 3;
-			wallCount = 0;
-			lastMap.IsRightWall = true;
-			for (int i = 0; i < lastMap.Height; i++)
-			{
-				Cell cell = lastMap.GetCell(lastMap.Width - 1, i);
-				if (cell.CellKind == CellKind.Wall)
-					wallCount++;
-				else if (cell.CellKind != CellKind.Unknown)
-				{
-					lastMap.IsRightWall = false;
-					break;
-				}
-			}
-			lastMap.IsRightWall &= wallCount >= 3;
-			wallCount = 0;
-			lastMap.IsTopWall = true;
-			for (int i = 0; i < lastMap.Width; i++)
-			{
-				Cell cell = lastMap.GetCell(i, 0);
-				if (cell.CellKind == CellKind.Wall)
-					wallCount++;
-				else if (cell.CellKind != CellKind.Unknown)
-				{
-					lastMap.IsTopWall = false;
-					break;
-				}
-			}
-			lastMap.IsTopWall &= wallCount >= 3;
-			wallCount = 0;
-			lastMap.IsBottomWall = true;
-			for (int i = 0; i < lastMap.Width; i++)
-			{
-				Cell cell = lastMap.GetCell(i, lastMap.Height - 1);
-				if (cell.CellKind == CellKind.Wall)
-					wallCount++;
-				else if (cell.CellKind != CellKind.Unknown)
-				{
-					lastMap.IsBottomWall = false;
-					break;
-				}
-			}
-			lastMap.IsBottomWall &= wallCount >= 3;
+				int wallCount = 0;
+				Map map = dunge.Maps[floor - 1];
+				if (map == null)
+					continue;
 
-			// Определение аквариумов
-			int minInX = lastMap.IsLeftWall ? 1 : 0;
-			int maxInX = lastMap.IsRightWall ? lastMap.Width - 2 : lastMap.Width - 1;
-			int minInY = lastMap.IsTopWall ? 1 : 0;
-			int maxInY = lastMap.IsBottomWall? lastMap.Height - 2 : lastMap.Height - 1;
-			int emptyCount = 0;
-			int wallsCount = 0;
-			for (int x = minInX; x <= maxInX; x++)
-			{
-				for (int y = minInY; y <= maxInY; y++)
+				map.IsLeftWall = true;
+				for (int i = 0; i < map.Height; i++)
 				{
-					Cell cell = lastMap.GetCell(x, y);
+					Cell cell = map.GetCell(0, i);
 					if (cell.CellKind == CellKind.Wall)
-						wallsCount++;
-					else if (cell.CellKind != CellKind.Wall && cell.CellKind != CellKind.Unknown)
-						emptyCount++;
+						wallCount++;
+					else if (cell.CellKind != CellKind.Unknown)
+					{
+						map.IsLeftWall = false;
+						break;
+					}
+				}
+				map.IsLeftWall &= wallCount >= 3;
+				wallCount = 0;
+				map.IsRightWall = true;
+				for (int i = 0; i < map.Height; i++)
+				{
+					Cell cell = map.GetCell(map.Width - 1, i);
+					if (cell.CellKind == CellKind.Wall)
+						wallCount++;
+					else if (cell.CellKind != CellKind.Unknown)
+					{
+						map.IsRightWall = false;
+						break;
+					}
+				}
+				map.IsRightWall &= wallCount >= 3;
+				wallCount = 0;
+				map.IsTopWall = true;
+				for (int i = 0; i < map.Width; i++)
+				{
+					Cell cell = map.GetCell(i, 0);
+					if (cell.CellKind == CellKind.Wall)
+						wallCount++;
+					else if (cell.CellKind != CellKind.Unknown)
+					{
+						map.IsTopWall = false;
+						break;
+					}
+				}
+				map.IsTopWall &= wallCount >= 3;
+				wallCount = 0;
+				map.IsBottomWall = true;
+				for (int i = 0; i < map.Width; i++)
+				{
+					Cell cell = map.GetCell(i, map.Height - 1);
+					if (cell.CellKind == CellKind.Wall)
+						wallCount++;
+					else if (cell.CellKind != CellKind.Unknown)
+					{
+						map.IsBottomWall = false;
+						break;
+					}
+				}
+				map.IsBottomWall &= wallCount >= 3;
+
+				bool nearLeftWall = map.IsLeftWall && map.EnterPos.x == 1;
+				bool nearRightWall = map.IsRightWall && map.EnterPos.x == map.Width - 2;
+				bool nearTopWall = map.IsTopWall && map.EnterPos.y == 1;
+				bool nearBottomWall = map.IsBottomWall && map.EnterPos.y == map.Height - 2;
+				map.EnterCorner = (nearLeftWall && nearBottomWall)
+					|| (nearLeftWall && nearTopWall)
+					|| (nearRightWall && nearBottomWall)
+					|| (nearRightWall && nearTopWall);
+				if (nearLeftWall && !nearTopWall && !nearBottomWall)
+				{
+					map.EnterWall = true;
+					map.EnterDir = new Int2(1, 0);
+				}
+				if (nearRightWall && !nearTopWall && !nearBottomWall)
+				{
+					map.EnterWall = true;
+					map.EnterDir = new Int2(-1, 0);
+				}
+				if (nearTopWall && !nearLeftWall && !nearRightWall)
+				{
+					map.EnterWall = true;
+					map.EnterDir = new Int2(0, 1);
+				}
+				if (nearBottomWall && !nearLeftWall && !nearRightWall)
+				{
+					map.EnterWall = true;
+					map.EnterDir = new Int2(0, -1);
+				}
+
+				bool canBeAqua = map.EnterCorner || map.EnterWall;
+				bool canBeStable = map.EnterWall;
+				Int2 forward = map.EnterDir;
+				Int2 perpDir = map.EnterDir.x != 0 ? new Int2(0, 1) : new Int2(1, 0);
+
+				// Определение аквариумов
+				int minInX = map.IsLeftWall ? 1 : 0;
+				int maxInX = map.IsRightWall ? map.Width - 2 : map.Width - 1;
+				int minInY = map.IsTopWall ? 1 : 0;
+				int maxInY = map.IsBottomWall ? map.Height - 2 : map.Height - 1;
+				int emptyCount = 0;
+				int wallsCount = 0;
+				for (int x = minInX; x <= maxInX; x++)
+				{
+					for (int y = minInY; y <= maxInY; y++)
+					{
+						Cell cell = map.GetCell(x, y);
+						bool isWall = cell.CellKind == CellKind.Wall;
+						bool isKnown = cell.CellKind != CellKind.Unknown;
+						if (isWall)
+							wallsCount++;
+						else if (!isWall && isKnown)
+							emptyCount++;
+						if (canBeStable)
+						{
+							int dx = x - map.EnterPos.x;
+							int dy = y - map.EnterPos.y;
+							int y2 = dx * forward.x + dy * forward.y;
+							int x2 = dx * perpDir.x + dy * perpDir.y;
+							int x2mod2 = (x2 + 100) % 2;
+							if (cell.CellKind == CellKind.Boss && (y2 != 2 || x2mod2 != 1))
+								canBeStable = false;
+							if (cell.BossWarning.IsWarning && ((y2 != 1 && y2 != 3) || x2mod2 != 1))
+								canBeStable = false;
+							if (isWall && (y2 < 2 || x2mod2 != 0))
+								canBeStable = false;
+							if (!isWall && isKnown && (y2 >= 2 && x2mod2 != 1))
+								canBeStable = false;
+						}
+					}
+				}
+				if ((float)wallsCount / (emptyCount + wallsCount) < 0.05f)
+					map.RareWalls = true;
+				if (floor == 1)
+				{
+					if (canBeStable)
+						dunge.LookAsStable = true;
+					else if (map.RareWalls && canBeAqua && !canBeStable)
+						dunge.LookAsAqua = true;
 				}
 			}
-			if (dunge.LastFloor == 1 && (float)wallsCount / (emptyCount + wallsCount) < 0.1f && dunge.DungeLine.Category != Category.Аква)
-				dunge.WrongDetectedAqua = true;
 
 			var blockH = centralBlock.QuerySelector("div.block_h");
 			string stepsStr = blockH.TextContent.Split('/')[1];
@@ -535,11 +600,11 @@ namespace MapsExplorer
 							int min = int.Parse(minS);
 							DateTime date = localFightDateTime.Date;
 							bool nextDate = localFightDateTime.Hour > hour;
-							DateTime stepTime = date + new TimeSpan(nextDate ? 1 : 0, hour, min, 0);
+							DateTime stepTime = date + new TimeSpan(nextDate ? 1 : 0, hour, min, 0) + timeZoneDiff;
 							if (i == 0)
-								dunge.StartDateTime = stepTime + timeZoneDiff;
+								dunge.StartDateTime = stepTime;
 							else
-								dunge.EndDateTime = stepTime + timeZoneDiff;
+								dunge.EndDateTime = stepTime;
 						}
 						move = dunge.Moves[stepI - 1];
 						cell = dunge.GetCell(move);
@@ -593,6 +658,7 @@ namespace MapsExplorer
 								}
 							}
 							dunge.Voices[stepI].Add(kind);
+							dunge.VoicesCount++;
 						}
 						continue;
 					}
@@ -914,18 +980,27 @@ namespace MapsExplorer
 							int stepI = int.Parse(stepS);
 							if (stepI == 1)
 								firstBlock = false;
-							if (i == 0)
 							{
 								var timeBlock = logLine.QuerySelector("div.d_capt");
 								string timeStr = timeBlock.TextContent;
 								string hourS = timeStr.Substring(0, 2);
 								string minS = timeStr.Substring(3, 2);
-								int hour = int.Parse(hourS);
-								int min = int.Parse(minS);
-								DateTime date = localFightDateTime.Date;
-								bool nextDate = localFightDateTime.Hour > hour;
-								DateTime startTime = date + new TimeSpan(nextDate ? 1 : 0, hour, min, 0);
-								boss.DateTime = startTime + timeZoneDiff;
+								int hour = 0;
+								int min = 0;
+								if (int.TryParse(hourS, out hour) && int.TryParse(minS, out min))
+								{
+									DateTime date = localFightDateTime.Date;
+									bool nextDate = localFightDateTime.Hour > hour;
+									DateTime stepTime = date + new TimeSpan(nextDate ? 1 : 0, hour, min, 0) + timeZoneDiff;
+									if (i == 0)
+										boss.StartDateTime = stepTime;
+									else
+									{
+										boss.EndDateTime = stepTime;
+										if (stepTime > dunge.EndDateTime)
+											dunge.EndDateTime = stepTime;
+									}
+								}
 							}
 							bool infl = logLine.QuerySelector("div.infl") != null;
 							string lineText = logLine.TextContent;

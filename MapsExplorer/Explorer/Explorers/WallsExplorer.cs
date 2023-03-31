@@ -26,7 +26,7 @@ public class WallsExplorer : ExplorerBase
 			List<string> tds = new List<string>();
 			tds.Add(line.Link);
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
-			tds.Add(dunge.WrongDetectedAqua ? "Аква!" : dunge.DungeLine.Category.ToString());
+			tds.Add((dunge.LookAsAqua && dunge.DungeLine.Category != Category.Аква) ? "Аква!" : dunge.DungeLine.Category.ToString());
 			tds.Add(line.Kind.ToString());
 			tds.Add(map.Width + "");
 			tds.Add(map.Height + "");
