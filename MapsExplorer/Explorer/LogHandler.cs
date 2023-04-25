@@ -227,6 +227,8 @@ namespace MapsExplorer
 					{
 						string mapsStrFull = html.Substring(mapsIndex1 + bra.Length, mapsIndex2 - (mapsIndex1 + bra.Length));
 						string[] mapStrArr = mapsStrFull.Split(new string[] { "]], [[" }, StringSplitOptions.None);
+						string map1 = mapStrArr[1].Substring(0, mapStrArr[1].Length - 1);
+						dunge.SeeStairsFromEntrance = map1.Contains("◿");
 						for (int floor = 1; floor <= 2; floor++)
 						{
 							//int lastMapIndex = mapsStrFull.LastIndexOf("[[");

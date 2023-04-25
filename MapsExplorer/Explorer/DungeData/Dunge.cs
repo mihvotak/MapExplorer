@@ -11,6 +11,7 @@ namespace MapsExplorer
 		public DungeLine DungeLine;
 		public string ParseError;
 		public int Steps;
+		public bool SeeStairsFromEntrance;
 		public bool[] CanBeHints = new bool[101];
 		public int UniqueSteps;
 		public int BossFights;
