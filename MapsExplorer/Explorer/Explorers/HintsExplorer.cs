@@ -29,9 +29,11 @@ public class HintsExplorer : ExplorerBase
 	public override void Work()
 	{
 		HintCounter normalCounter = new HintCounter() { name = "обычный" };
+		HintCounter halfCounter = new HintCounter() { name = "полуправда" };
 		HintCounter thermoCounter = new HintCounter() { name = "термо" };
 		HintCounter quickCounter = new HintCounter() { name = "спешка" };
 		HintCounter moreCounter = new HintCounter() { name = "густота" };
+		HintCounter customCounter = new HintCounter() { name = "кастом" };
 		StringBuilder rawBuilder = new StringBuilder();
 		StringBuilder resultBuilder = new StringBuilder();
 		for (int i = 0; i < _resultLines.Count; i++)
@@ -43,7 +45,7 @@ public class HintsExplorer : ExplorerBase
 			if (dunge.IsCustom && !_customCheckBoxChecked)
 				continue;
 			List<string> tds = new List<string>();
-			tds.Add(line.Hash);
+			tds.Add(line.Link);
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
 			tds.Add(line.Category.ToString());
 			tds.Add(line.Kind.ToString());
@@ -63,15 +65,18 @@ public class HintsExplorer : ExplorerBase
 			HintCounter counter = null;
 			if (!dunge.SecretRom.Exists || (dunge.SecretRom.SecretKind != SecretKind.ChangeType && dunge.SecretRom.SecretKind != SecretKind.UnknownMark && dunge.SecretRom.SecretKind != SecretKind.HintsOn))
 			{
-				if (dunge.DungeLine.Kind != DungeKind.Термодинамики && dunge.DungeLine.Kind != DungeKind.Спешки && dunge.DungeLine.Kind != DungeKind.Густоты && dunge.DungeLine.Kind != DungeKind.Загадки
-				&& dunge.StartKind != DungeKind.Термодинамики && dunge.StartKind != DungeKind.Спешки && dunge.StartKind != DungeKind.Густоты && dunge.StartKind != DungeKind.Загадки)
-					counter = normalCounter;
+				if (dunge.DungeLine.Custom || dunge.IsCustom)
+					counter = customCounter;
+				else if (dunge.DungeLine.Kind == DungeKind.Полуправды && dunge.StartKind == DungeKind.Полуправды)
+					counter = halfCounter;
 				else if (dunge.DungeLine.Kind == DungeKind.Термодинамики && dunge.StartKind == DungeKind.Термодинамики)
 					counter = thermoCounter;
 				else if (dunge.DungeLine.Kind == DungeKind.Спешки && dunge.StartKind == DungeKind.Спешки)
 					counter = quickCounter;
 				else if (dunge.DungeLine.Kind == DungeKind.Густоты && dunge.StartKind == DungeKind.Густоты)
 					counter = moreCounter;
+				else if (dunge.DungeLine.Kind != DungeKind.Загадки && dunge.StartKind != DungeKind.Загадки)
+					counter = normalCounter;
 			}
 			if (counter != null)
 			{
@@ -157,9 +162,11 @@ public class HintsExplorer : ExplorerBase
 		}
 
 		AddHintResultsToBuilder(resultBuilder, normalCounter);
+		AddHintResultsToBuilder(resultBuilder, halfCounter);
 		AddHintResultsToBuilder(resultBuilder, thermoCounter);
 		AddHintResultsToBuilder(resultBuilder, quickCounter);
 		AddHintResultsToBuilder(resultBuilder, moreCounter);
+		AddHintResultsToBuilder(resultBuilder, customCounter);
 
 		string rawDataTable = rawBuilder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/HintsRaw.txt", rawDataTable);

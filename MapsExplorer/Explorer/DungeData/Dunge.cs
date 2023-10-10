@@ -35,6 +35,7 @@ namespace MapsExplorer
 		public string UnknownMoveDir;
 		public string UnknownHint;
 		public bool MiniQuest;
+		public bool Translation;
 		public DungeKind StartKind;
 
 		public int LastFloor;
