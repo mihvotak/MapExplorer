@@ -28,6 +28,7 @@ public class WallsExplorer : ExplorerBase
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
 			tds.Add((dunge.LookAsAqua && dunge.DungeLine.Category != Category.Аква) ? "Аква!" : dunge.DungeLine.Category.ToString());
 			tds.Add(line.Kind.ToString());
+			tds.Add(dunge.LastFloor + "");
 			tds.Add(map.Width + "");
 			tds.Add(map.Height + "");
 			string tr = string.Join("\t", tds);
