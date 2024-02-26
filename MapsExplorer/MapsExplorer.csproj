@@ -82,6 +82,7 @@
     <Compile Include="Explorer\Enums\SecretKind.cs" />
     <Compile Include="Explorer\Enums\TreasureScheme.cs" />
     <Compile Include="Explorer\Enums\VoiceKind.cs" />
+    <Compile Include="Explorer\Explorers\RotationsExplorer.cs" />
     <Compile Include="Explorer\Explorers\TimeStatisticExplorer.cs" />
     <Compile Include="Explorer\Explorers\TribblesWithBossesExplorer.cs" />
     <Compile Include="Explorer\Explorers\BossesByNameExplorer.cs" />

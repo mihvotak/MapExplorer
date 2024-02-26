@@ -17,7 +17,7 @@ public struct Int2
 	public static readonly Int2 MinCell = new Int2(int.MinValue, int.MinValue);
 	public static readonly Int2 Zero = new Int2(0, 0);
 	public static readonly Int2 One = new Int2(1, 1);
-	public static readonly Int2[] FourDirections = new Int2[] { new Int2(0, -1), new Int2(1, 0), new Int2(0, 1), new Int2(-1, 0) };
+	public static readonly List<Int2> FourDirections = new List<Int2> { new Int2(0, -1), new Int2(1, 0), new Int2(0, 1), new Int2(-1, 0) };
 	public static readonly Int2[] FiveDirs = new Int2[] { Int2.Zero, new Int2(1, 0), new Int2(0, 1), new Int2(-1, 0), new Int2(0, -1) };
 	public static readonly Int2[] EightDirs = new Int2[] { new Int2(1, -1), new Int2(1, 0), new Int2(1, 1), new Int2(0, 1), new Int2(-1, 1), new Int2(-1, 0), new Int2(-1, -1), new Int2(0, -1) }; 
 	public static readonly Int2[] ZeroDirs = new Int2[] { new Int2(0, 0) };

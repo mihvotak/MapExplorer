@@ -13,6 +13,7 @@ namespace MapsExplorer
 		public Boss Boss;
 		public Hint Hint;
 		public int Step = -1;
+		public bool Reverse = false;
 
 		public bool CanBeBoss()
 		{

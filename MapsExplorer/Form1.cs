@@ -143,8 +143,11 @@ namespace MapsExplorer
 			ExplorerBase explorer = null;
 			switch (_exploreMode)
 			{ 
-				case ExploreMode.TribblesWithBosses:	//	Трибблы у боссов
-					explorer = new TribblesWithBossesExplorer();	
+				case ExploreMode.Rotations: //	Повороты без гласов
+					explorer = new RotationsExplorer();	
+					break;
+				case ExploreMode.TribblesWithBosses:    //	Трибблы у боссов
+					explorer = new TribblesWithBossesExplorer();
 					break;
 				case ExploreMode.HalfFinBosses:	//	Полуфиналы
 					explorer = new HalfFinBossesExplorer();             

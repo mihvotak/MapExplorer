@@ -7,17 +7,20 @@ namespace MapsExplorer
 	{
 		public int Floor;
 		public Int2 Pos;
+		public Int2 Delta;
 
-		public Step(int x, int y, int floor)
+		public Step(int x, int y, int floor, Int2 delta)
 		{
 			Pos = new Int2(x, y);
 			Floor = floor;
+			Delta = delta;
 		}
 
-		public Step(Int2 pos, int floor)
+		public Step(Int2 pos, int floor, Int2 delta)
 		{
 			Pos = pos;
 			Floor = floor;
+			Delta = delta;
 		}
 
 		public static bool operator ==(Step value1, Step value2)

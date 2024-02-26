@@ -23,7 +23,6 @@ namespace MapsExplorer
 		public List<Member> Members = new List<Member>();
 		public int MembersSumHp;
 		public List<Step> Moves = new List<Step>();
-		public List<int> MoveFloors = new List<int>();
 		public int FirstStairMove;
 		public List<int[]> Hps = new List<int[]>();
 		public List<int> HintMoves = new List<int>();

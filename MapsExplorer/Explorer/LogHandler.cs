@@ -144,8 +144,10 @@ namespace MapsExplorer
 								}
 							}
 						}
-						dunge.Moves.Add(new Step(x, y, floorI));
-						dunge.MoveFloors.Add(floorI);
+						int index = dunge.Moves.Count;
+						Int2 pos = new Int2(x, y);
+						Int2 delta = index > 0 && floorI == dunge.Moves[index - 1].Floor ? pos - dunge.Moves[index - 1].Pos : Int2.Zero;
+						dunge.Moves.Add(new Step(pos, floorI, delta));
 						lastIndexByFloor[floorI - 1] = i;
 						lastFloor = floorI;
 					}
@@ -673,6 +675,8 @@ namespace MapsExplorer
 					{
 						if (stepLine == 0)
 							visited.Add(cell);
+						if (lineText.Contains("знак разворота"))
+							cell.Reverse = true;
 						if (lineText.Contains("Приятный голос откуда-то сверху сообщил, что ни единого живого босса в этом подземелье не осталось"))
 							dunge.AllBossesFound = true;
 						if (_bossWarningRegex.IsMatch(lineText))
@@ -1205,7 +1209,7 @@ namespace MapsExplorer
 							{
 								goodCell.CellKind = CellKind.Boss;
 								Boss boss = new Boss();
-								boss.Pos = new Step(goodCellPos, floor);
+								boss.Pos = new Step(goodCellPos, floor, Int2.Zero);
 								boss.Name = "(вычислен точно)";
 								dunge.Bosses.Add(boss);
 								goodCell.Boss = boss;
@@ -1269,7 +1273,7 @@ namespace MapsExplorer
 										nearCell.BossWarning.IsUsed = true;
 									cell.CellKind = CellKind.Boss;
 									Boss boss = new Boss();
-									boss.Pos = new Step(pos, floor);
+									boss.Pos = new Step(pos, floor, Int2.Zero);
 									boss.Name = "(вычислен по " + warnings + " подсказкам)";
 									dunge.Bosses.Add(boss);
 									cell.Boss = boss;
@@ -1292,7 +1296,7 @@ namespace MapsExplorer
 					dunge.Stable.EnoughInfo = true;
 					if (true) // без поворотов и достраивания
 					{
-						for (int i = 0; i < Int2.FourDirections.Length; i++)
+						for (int i = 0; i < Int2.FourDirections.Count; i++)
 						{
 							Int2 dir = Int2.FourDirections[i];
 							Int2 pos = map.EnterPos + dir;
