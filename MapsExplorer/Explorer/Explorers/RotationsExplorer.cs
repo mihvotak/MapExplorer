@@ -7,6 +7,13 @@ public class RotationsExplorer : ExplorerBase
 {
 	private class Summator
 	{
+		public string Name;
+
+		public Summator(string name) 
+		{
+			Name = name;
+		}
+
 		public Dictionary<int, Dictionary<int, int>> Dicts = new Dictionary<int, Dictionary<int, int>>();
 		public Dictionary<int, Dictionary<int, float>> Results = new Dictionary<int, Dictionary<int, float>>();
 		public Dictionary<int, int> Sums = new Dictionary<int, int>();
@@ -76,7 +83,7 @@ public class RotationsExplorer : ExplorerBase
 			foreach (var pair in Results)
 			{
 				foreach (var pair2 in pair.Value)
-					sb.Append($"{GetWallsSumTextName(pair.Key)}\t{GetLocalDirTextName(pair2.Key)}\t{pair2.Value * 100}\n");
+					sb.Append($"{Name}\t{GetWallsSumTextName(pair.Key)}\t{GetLocalDirTextName(pair2.Key)}\t{pair2.Value * 100}\n");
 			}
 			return sb.ToString();
 		}
@@ -84,7 +91,14 @@ public class RotationsExplorer : ExplorerBase
 
 	public override void Work()
 	{
-		var calc0 = new Summator();
+		var calc0 = new Summator("All");
+		int steps = 10;
+		Summator[] calcByStep = new Summator[steps];
+		Summator[] calcAfterVoice = new Summator[steps];
+		for (int i = 0; i < steps; i++)
+			calcByStep[i] = new Summator($"steps {i}0+");
+		for (int i = 0; i < steps; i++)
+			calcAfterVoice[i] = new Summator($"afterVoice {i+1}");
 		var builder = new StringBuilder();
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
@@ -95,12 +109,22 @@ public class RotationsExplorer : ExplorerBase
 			if (dunge.SecretRom.Exists && (dunge.SecretRom.SecretKind == SecretKind.ChangeType || dunge.SecretRom.SecretKind == SecretKind.UnknownMark) && dunge.SecretRom.Visited)
 				continue;
 
-			for (int m = 2; m <= dunge.Moves.Count; m++)
+			int stepAfter = 0;
+			for (int m = 1; m <= dunge.Moves.Count; m++)
 			{
 				var curr = dunge.Moves[m - 1];
+				if (dunge.Voices[m] != null && dunge.Voices[m].Count > 0)
+				{
+					stepAfter = 0;
+					continue;
+				}
+				else
+					stepAfter++;
+				if (m == 1)
+					continue;
 				var prev = dunge.Moves[m - 2];
 				bool isSteps = curr.Delta.SumMagnitude == 1 && prev.Delta.SumMagnitude == 1;
-				if (!isSteps || (dunge.Voices[m] != null && dunge.Voices[m].Count > 0))
+				if (!isSteps)
 					continue;
 				Int2 forward = prev.Delta;
 				int fIndex = Int2.FourDirections.IndexOf(forward);
@@ -123,6 +147,10 @@ public class RotationsExplorer : ExplorerBase
 					currDelta == -right ? 3 :
 					-1;
 				calc0.Add(wallsSum, currLocal);
+				int step10 = (m - 1) / steps;
+				calcByStep[step10].Add(wallsSum, currLocal);
+				if (stepAfter > 0 && stepAfter <= 10)
+					calcAfterVoice[stepAfter - 1].Add(wallsSum, currLocal);
 				if (wallsSum == 5 && currLocal == 0)
 				{
 					List<string> tds = new List<string>();
@@ -138,9 +166,21 @@ public class RotationsExplorer : ExplorerBase
 		}
 
 		calc0.Calculate();
+		for (int i = 0; i < steps; i++)
+			calcByStep[i].Calculate();
+		for (int i = 0; i < steps; i++)
+			calcAfterVoice[i].Calculate();
 
-		builder.Append('\n');
+		builder.Append("Общие шансы\n");
 		builder.Append(calc0.GetResLines());
+		
+		builder.Append("Зависимость от номера шага, десятки\n");
+		for (int i = 0; i < steps; i++)
+			builder.Append(calcByStep[i].GetResLines());
+
+		builder.Append("Зависимость от номера шага после гласа\n");
+		for (int i = 0; i < steps; i++)
+			builder.Append(calcAfterVoice[i].GetResLines());
 
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/Rotations.txt", exploreRes);

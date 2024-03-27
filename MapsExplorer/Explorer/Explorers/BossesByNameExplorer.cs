@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Linq;
 
 public class BossesByNameExplorer : ExplorerBase
 {
@@ -29,6 +30,18 @@ public class BossesByNameExplorer : ExplorerBase
 					builder.Append(tr + "\n");
 					counter++;
 				}
+			}
+			if (dunge.Hps[dunge.Hps.Count - 1].Count(hp => hp > 1) == 1)
+			{
+				List<string> tds = new List<string>();
+				tds.Add(dunge.DungeLine.Link);
+				tds.Add(Utils.GetDateAndTimeString(line.DateTime));
+				tds.Add(line.Category.ToString());
+				tds.Add(line.Kind.ToString());
+				tds.Add("Всего 1 выживший");
+				string tr = string.Join("\t", tds);
+				builder.Append(tr + "\n");
+				counter++;
 			}
 			ReportProgress(i);
 		}

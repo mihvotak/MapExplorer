@@ -14,6 +14,7 @@ public class RoutesAndBossesExplorer : ExplorerBase
 		int[,] routes = new int[half * 2, half * 2];
 		int[,] canRoutes = new int[half * 2, half * 2];
 		int[,] all1 = new int[half * 2, half * 2];
+		int[,] noRoutesTreasure = new int[half * 2, half * 2];
 		StringBuilder builder = new StringBuilder();
 		StringBuilder builder2 = new StringBuilder();
 		for (int i = 0; i < _resultLines.Count; i++)
@@ -43,6 +44,7 @@ public class RoutesAndBossesExplorer : ExplorerBase
 				tds.Add(Utils.GetDateAndTimeString(line.DateTime));
 				tds.Add((dunge.LookAsAqua && dunge.DungeLine.Category != Category.Аква) ? "Аква!" : dunge.DungeLine.Category.ToString());
 				tds.Add(line.Kind.ToString());
+				tds.Add(boss.Pos.Floor + "");
 				Int2 delta = boss.Pos.Pos - map.EnterPos;
 				tds.Add(delta.x + "");
 				tds.Add(delta.y + "");
@@ -82,7 +84,14 @@ public class RoutesAndBossesExplorer : ExplorerBase
 						canRoutes[delta2.x + half, delta2.y + half]++;
 					all1[delta2.x + half, delta2.y + half]++;
 				}
-
+				if ((boss.Abils.Count == boss.Pos.Floor || boss.Abils.Count == 0) && !boss.IsFinal
+					&&  boss.Pos.Floor == dunge.TreasurePos.Floor 
+					&& (!boss.IsRouting && !boss.CanBeRouting))
+				{
+					var deltaFromTreasure = boss.Pos.Pos - dunge.TreasurePos.Pos;
+					if (deltaFromTreasure.x >= 0 && deltaFromTreasure.x < noRoutesTreasure.Length && deltaFromTreasure.y >= 0 && deltaFromTreasure.y < noRoutesTreasure.Length)
+						noRoutesTreasure[deltaFromTreasure.x, deltaFromTreasure.y]++;
+				}
 				string tr = string.Join("\t", tds);
 				builder.Append(tr + "\n");
 
@@ -146,6 +155,7 @@ public class RoutesAndBossesExplorer : ExplorerBase
 		WriteResultGraph("Путевые", routes);
 		WriteResultGraph("Возможно путевые", canRoutes);
 		WriteResultGraph("Все однушки", all1);
+		WriteResultGraph("Непутевые от сокры", noRoutesTreasure);
 
 		string exploreTab = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/RoutesTab.txt", exploreTab);
