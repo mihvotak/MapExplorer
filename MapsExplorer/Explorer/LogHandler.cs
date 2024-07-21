@@ -10,7 +10,7 @@ namespace MapsExplorer
 {
 	public class LogHandler
 	{
-		private readonly string[] VoiceKinds = { "север", "восток", "юг", "запад", "вниз", "спуск", "лестниц", "вверх", "наверх", "подним" };
+		private readonly string[] VoiceKinds = { "север", "восток", "юг", "запад", "вниз", "спуск", "лестниц", "вверх", "наверх", "подним", "норд", "ост", "зюйд", "вест" };
 
 		private IConfiguration _config;
 		private IBrowsingContext _context;
@@ -1493,6 +1493,7 @@ namespace MapsExplorer
 
 		private void SetCellContent(Cell cell, string symbol)
 		{
+			cell.Symbol = symbol;
 			if (symbol == "?")
 				cell.CellKind = CellKind.Unknown;
 			else if (symbol == " ")
@@ -1565,6 +1566,8 @@ namespace MapsExplorer
 						cell.Hint = Hint.ЮП;
 					else if (symbol == "╣")
 						cell.Hint = Hint.ЗП;
+					else if (symbol == "↫")
+						cell.Hint = Hint.СВ_В;
 					else if (symbol == "✵")
 						cell.Hint = Hint.ОчХолодно;
 					else if (symbol == "❄")
@@ -1582,6 +1585,18 @@ namespace MapsExplorer
 						cell.CellKind = CellKind.Unknown;
 						throw new Exception("Unknown symbol: " + symbol);
 					}
+					if (cell.Hint == Hint.С || cell.Hint == Hint.З || cell.Hint == Hint.Ю || cell.Hint == Hint.В || cell.Hint == Hint.СВ || cell.Hint == Hint.СЗ || cell.Hint == Hint.ЮВ || cell.Hint == Hint.ЮЗ)
+						cell.HintCategory = HintCategory.OneDir;
+					else if (cell.Hint == Hint.С_В || cell.Hint == Hint.С_З || cell.Hint == Hint.Ю_З || cell.Hint == Hint.Ю_В || cell.Hint == Hint.СВ_СЗ || cell.Hint == Hint.СЗ_ЮЗ || cell.Hint == Hint.СВ_ЮВ || cell.Hint == Hint.ЮЗ_ЮВ)
+						cell.HintCategory = HintCategory.TwoDirs;
+					else if (cell.Hint == Hint.ОчХолодно || cell.Hint == Hint.Холодно || cell.Hint == Hint.Прохладно || cell.Hint == Hint.Тепло || cell.Hint == Hint.Горячо || cell.Hint == Hint.ОчГорячо)
+						cell.HintCategory = HintCategory.Thermo;
+					else if (cell.Hint == Hint.ВП || cell.Hint == Hint.СП || cell.Hint == Hint.ЗП || cell.Hint == Hint.ЮП)
+						cell.HintCategory = HintCategory.HalfMap;
+					else if (cell.Hint == Hint.СВ_В)
+						cell.HintCategory = HintCategory.Experimental;
+					else
+						cell.HintCategory = HintCategory.Unknown;
 				}
 			}
 		}
@@ -1709,6 +1724,8 @@ namespace MapsExplorer
 				kind = DungeKind.Токсичности;
 			else if (text.Contains("Чистоты") || text.Contains("Здесь нет ни мощных ловушек, ни серьезных лечилок, ни богатых тайников"))
 				kind = DungeKind.Чистоты;
+			else if (text.Contains("Полуправды") || text.Contains("Половина указателей на сокровищницу здесь врёт"))
+				kind = DungeKind.Полуправды;
 
 			return kind != DungeKind.Обыденности;
 		}

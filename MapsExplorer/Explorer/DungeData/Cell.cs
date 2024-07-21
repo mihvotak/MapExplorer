@@ -12,6 +12,8 @@ namespace MapsExplorer
 		public BossWarning BossWarning = new BossWarning();
 		public Boss Boss;
 		public Hint Hint;
+		public HintCategory HintCategory;
+		public string Symbol;
 		public int Step = -1;
 
 		public bool CanBeBoss()

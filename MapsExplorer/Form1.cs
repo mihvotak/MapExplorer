@@ -191,6 +191,9 @@ namespace MapsExplorer
 				case ExploreMode.TimeStatistic:     //	Время в данже
 					explorer = new TimeStatisticExplorer();
 					break;
+				case ExploreMode.HalfTrueHints:     //	Указатели в полуправде
+					explorer = new HalfTrueHintsExplorer();
+					break;
 				default:
 					_logHandler.LastError = $"Mode {_exploreMode} not realized";
 					break;

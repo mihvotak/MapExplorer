@@ -23,4 +23,5 @@ public enum ExploreMode
 	Jumps,
 	Coupons,
 	TimeStatistic,
+	HalfTrueHints,
 }

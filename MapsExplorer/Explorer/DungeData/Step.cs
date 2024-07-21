@@ -33,7 +33,7 @@ namespace MapsExplorer
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Equals(Step rhs) { return Floor == rhs.Floor && Pos == rhs.Pos; }
 
-		public override bool Equals(object o) { return Equals((Int2)o); }
+		public override bool Equals(object o) { return Equals((Step)o); }
 
 
 		public override int GetHashCode()
