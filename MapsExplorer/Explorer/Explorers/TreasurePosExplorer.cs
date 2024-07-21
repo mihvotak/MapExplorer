@@ -58,9 +58,17 @@ public class TreasurePosExplorer : ExplorerBase
 				tds.Add(pos.x.ToString());
 				tds.Add(pos.y.ToString());
 				plotSF.Inc(pos.x, pos.y);
+				Int2 pos2 = dunge.SfinPos.Pos - dunge.TreasurePos.Pos;
+				pos2.y = -pos2.y;
+				tds.Add(Math.Abs(pos2.x) + "_" + Math.Abs(pos2.y));
+				tds.Add(pos2.x.ToString());
+				tds.Add(pos2.y.ToString());
 			}
 			else
 			{
+				tds.Add("-");
+				tds.Add("-");
+				tds.Add("|");
 				tds.Add("-");
 				tds.Add("-");
 			}

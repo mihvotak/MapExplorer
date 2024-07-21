@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 public enum ExploreMode
 {
 	None,
+	Rotations,
 	TribblesWithBosses,
 	HalfFinBosses,
 	BossesByName,

@@ -15,6 +15,7 @@ namespace MapsExplorer
 		public HintCategory HintCategory;
 		public string Symbol;
 		public int Step = -1;
+		public bool Reverse = false;
 
 		public bool CanBeBoss()
 		{
