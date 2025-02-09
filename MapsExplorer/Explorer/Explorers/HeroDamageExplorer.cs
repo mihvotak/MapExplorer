@@ -78,6 +78,7 @@ public class HeroDamageExplorer : ExplorerBase
 					List<string> tds = new List<string>();
 					tds.Add(dunge.StartKind.ToString() + (dunge.StartKind2 != DungeKind.Обыденности ? "+" + dunge.StartKind2 : ""));
 					tds.Add($"{line.GetBossLink(boss.Num)}&s={st}");
+					tds.Add(st.ToString());
 					Step step = boss.Pos;
 					//tds.Add(boss.Pos.Floor + "floor");
 					tds.Add(dunge.Members[indexAlive].God);
