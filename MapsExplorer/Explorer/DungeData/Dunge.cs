@@ -36,6 +36,7 @@ namespace MapsExplorer
 		public bool MiniQuest;
 		public bool Translation;
 		public DungeKind StartKind;
+		public DungeKind StartKind2;
 
 		public int LastFloor;
 		public Map[] Maps = new Map[2];

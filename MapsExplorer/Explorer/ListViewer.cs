@@ -124,6 +124,7 @@ namespace MapsExplorer
 					if (line.Hash.Contains("_") || line.Hash.Contains("f9kysecen"))
 						continue;
                     var t1 = tds[1].TextContent;    // Тип данжа и 1/2/3/vault
+					string t1_2 = null;
                     string t11 = "";
                     string t12 = "";
                     var t11s = tds[1].QuerySelectorAll("sup");
@@ -162,12 +163,26 @@ namespace MapsExplorer
 							line.Custom = true;
 
 					}
+					if (t1.Contains("+"))
+					{
+						var tt = t1.Split('+');
+						if (tt.Length == 2)
+						{
+							t1 = tt[0];
+							t1_2 = tt[1];
+						}
+					}
                     if (line.Kind != DungeKind.Обыденности && !Enum.TryParse(t1, out line.Kind))
                     {
                         line.Kind = DungeKind.Обыденности;
                         //SetError("Неизвестный тип подземелья");
                     }
-                    var t2 = tds[2].TextContent;    //  боги
+					if (!string.IsNullOrEmpty(t1_2) && !Enum.TryParse(t1_2, out line.Kind2))
+					{
+						line.Kind2 = DungeKind.Обыденности;
+						//SetError("Неизвестный тип подземелья");
+					}
+					var t2 = tds[2].TextContent;    //  боги
                     line.Gods = new List<string>(t2.Split(','));
                     for (int i = 0; i < line.Gods.Count; i++)
                     {

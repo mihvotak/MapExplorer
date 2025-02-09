@@ -11,5 +11,6 @@ namespace MapsExplorer
 		public string God;
 		public string Hero;
 		public int Hp;
+		public bool IsHuman;
 	}
 }

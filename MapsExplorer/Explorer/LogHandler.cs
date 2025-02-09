@@ -16,7 +16,10 @@ namespace MapsExplorer
 		private IBrowsingContext _context;
 		private RoutesExplorer _routesExplorer;
 		private ExploreMode _mode;
+		
 		private Regex _bossWarningRegex;
+		private Regex _partBossLevelRegex;
+
 		public string LastError;
 
 		public LogHandler()
@@ -28,6 +31,7 @@ namespace MapsExplorer
 			JObject jObject = JObject.Parse(content);
 			string warnings = jObject.GetValue("bossHint").ToString();
 			_bossWarningRegex = new Regex(warnings);
+			_partBossLevelRegex = new Regex(@" \(ур\. [1234]\)");
 		}
 
 		public Dunge GetDunge(DungeLine line, ExploreMode mode = ExploreMode.None)
@@ -133,7 +137,13 @@ namespace MapsExplorer
 							string floorStr = floorsArrStr[i + 2];
 							string floorValue = floorStr.Split(':')[1];
 							floorValue = floorValue.Substring(1, floorValue.Length - 1);
-							if (floorValue.Substring(floorValue.Length - 2, 1) == "2")
+							int moves = dunge.Moves.Count;
+							if (floorValue.Substring(floorValue.Length - 2, 1) == "2" 
+								|| (dunge.DungeLine.Hash == "cg6hp4pcn" && moves >= 8)
+								|| (dunge.DungeLine.Hash == "537j2webf" && moves >= 19)
+								|| (dunge.DungeLine.Hash == "uagxwhecj" && moves >= 12)
+								|| (dunge.DungeLine.Hash == "g4p269y05" && moves >= 4 && !(moves >= 57))
+								)
 							{
 								floorI = 2;
 								if (!floor2found)
@@ -538,6 +548,7 @@ namespace MapsExplorer
 				string link = linkEl.GetAttribute("href");
 				string heroName = linkEl.TextContent;
 				member.Hero = heroName;
+				member.IsHuman = heroName[0] != '+' && heroName[heroName.Length - 1] != '+';
 				int godIndex = link.LastIndexOf("/");
 				string godName = link.Substring(godIndex + 1, link.Length - (godIndex + 1));
 				member.God = godName;
@@ -671,6 +682,11 @@ namespace MapsExplorer
 					string turnText = turnEl.TextContent;
 					if (bold)
 						AddImportant(dunge, lineText);
+					if (dunge.StartKind == DungeKind.Неизвестное)
+					{
+						dunge.StartKind = DungeKind.Обыденности;
+						dunge.StartKind2 = DungeKind.Обыденности;
+					}
 					if (!infl)
 					{
 						if (stepLine == 0)
@@ -976,80 +992,6 @@ namespace MapsExplorer
 							if (heroLine.QuerySelector("label.l_capt") != null)
 								heroesAndPetsCount++;
 
-						bool tribbleAnywhere = false;
-						bool tribbleFirst = false;
-						string tribbleText = "триббл";
-						string escape2 = "без добычи";
-						int lastLineIndex = logLines.Length - 1;
-						bool firstBlock = true;
-						for (int i = 0; i < logLines.Length; i++)
-						{
-							var logLine = logLines[i];
-							var turnEl = logLine.QuerySelector("div.d_turn");
-							string stepS = logLine.GetAttribute("data-t");
-							int stepI = int.Parse(stepS);
-							if (stepI == 1)
-								firstBlock = false;
-							{
-								var timeBlock = logLine.QuerySelector("div.d_capt");
-								string timeStr = timeBlock.TextContent;
-								string hourS = timeStr.Substring(0, 2);
-								string minS = timeStr.Substring(3, 2);
-								int hour = 0;
-								int min = 0;
-								if (int.TryParse(hourS, out hour) && int.TryParse(minS, out min))
-								{
-									DateTime date = localFightDateTime.Date;
-									bool nextDate = localFightDateTime.Hour > hour;
-									DateTime stepTime = date + new TimeSpan(nextDate ? 1 : 0, hour, min, 0) + timeZoneDiff;
-									if (i == 0)
-										boss.StartDateTime = stepTime;
-									else
-									{
-										boss.EndDateTime = stepTime;
-										if (stepTime > dunge.EndDateTime)
-											dunge.EndDateTime = stepTime;
-									}
-								}
-							}
-							bool infl = logLine.QuerySelector("div.infl") != null;
-							string lineText = logLine.TextContent;
-							string turnText = turnEl.TextContent;
-							if (!infl)
-							{
-								boss.Escape2 |= lineText.Contains(escape2);
-								if (firstBlock)
-									tribbleFirst = tribbleFirst || lineText.Contains(tribbleText);
-								else
-									tribbleAnywhere = tribbleAnywhere || lineText.Contains(tribbleText);
-							}
-							if (i == lastLineIndex)
-							{
-								Step step = dunge.Moves[stepI - 1];
-								boss.Pos = step;
-								dunge.GetCell(step).Boss = boss;
-							}
-						}
-						var lastLine = logLines[lastLineIndex];
-						string lastLineStepS = lastLine.GetAttribute("data-t");
-						int lastLineStep = int.Parse(lastLineStepS);
-						for (int i = logLines.Length - 1; i >= 0; i--)
-						{
-							var logLine = logLines[i];
-							string stepS = logLine.GetAttribute("data-t");
-							int step = int.Parse(stepS);
-							if (step != lastLineStep)
-								break;
-							int tribblIndex = logLine.TextContent.IndexOf(tribbleText);
-							bool tribbl = tribblIndex > 0;
-							boss.TribbleInFinal = boss.TribbleInFinal || tribbl;
-							if (tribbl)
-								boss.TribbleInFinal2 = logLine.TextContent.IndexOf(tribbleText, tribblIndex + 6) > 0;
-
-						}
-						boss.TribbleInMiddle = tribbleAnywhere && !boss.TribbleInFinal;
-						boss.TribbleInFirst = tribbleFirst;
-
 						string hpBra = "var hp = {";
 						string hpKet = "}}";
 						int hpIndex1 = bossLog.IndexOf(hpBra);
@@ -1136,8 +1078,117 @@ namespace MapsExplorer
 								boss.Abils.Add(ability);
 							}
 						}
-						if (boss.Abils.Count == 4)
+						if (boss.Abils.Count == 4 && !boss.Abils.Contains(Ability.крепчающий))
 							dunge.SfinPos = boss.Pos;
+						bool tribbleAnywhere = false;
+						bool tribbleFirst = false;
+						string tribbleText = "триббл";
+						string escape2 = "без добычи";
+						int lastLineIndex = logLines.Length - 1;
+						bool firstBlock = true;
+						boss.Steps = boss.Hps.Count - 2;
+						boss.InfluencesByStep = new int[boss.Steps + 1];
+						if (_mode == ExploreMode.HeroDamages)
+							boss.TextLines = new List<string>[boss.Steps + 1];
+						for (int i = 0; i < logLines.Length; i++)
+						{
+							bool lastBlock = i == logLines.Length - 1;
+							var logLine = logLines[i];
+							var turnEl = logLine.QuerySelector("div.d_turn");
+							string stepS = logLine.GetAttribute("data-t");
+							int stepI = int.Parse(stepS);
+							if (stepI == 1)
+								firstBlock = false;
+							{
+								var timeBlock = logLine.QuerySelector("div.d_capt");
+								string timeStr = timeBlock.TextContent;
+								string hourS = timeStr.Substring(0, 2);
+								string minS = timeStr.Substring(3, 2);
+								int hour = 0;
+								int min = 0;
+								if (int.TryParse(hourS, out hour) && int.TryParse(minS, out min))
+								{
+									DateTime date = localFightDateTime.Date;
+									bool nextDate = localFightDateTime.Hour > hour;
+									DateTime stepTime = date + new TimeSpan(nextDate ? 1 : 0, hour, min, 0) + timeZoneDiff;
+									if (i == 0)
+										boss.StartDateTime = stepTime;
+									else
+									{
+										boss.EndDateTime = stepTime;
+										if (stepTime > dunge.EndDateTime)
+											dunge.EndDateTime = stepTime;
+									}
+								}
+							}
+							bool infl = logLine.QuerySelector("div.infl") != null;
+							string lineText = logLine.TextContent;
+							string turnText = turnEl.TextContent;
+							if (!firstBlock && !lastBlock)
+							{
+								if (infl)
+									boss.InfluencesByStep[stepI]++;
+								if (_mode == ExploreMode.HeroDamages && stepI < boss.TextLines.Length)
+								{
+									var strBlock = logLine.QuerySelector("div.text_content");
+									var strBlockS = logLine.QuerySelector("span.t");
+									string strBlockStr = strBlockS.TextContent;
+									if (boss.TextLines[stepI] == null)
+										boss.TextLines[stepI] = new List<string>();
+									string text = strBlockStr.Trim();
+									bool heroTurn = stepI % 2 == 1;
+									string hero = heroTurn ? "%attacker%" : "%defender%";
+									string god = heroTurn ? "%attacker_godname%" : "%defender_godname%";
+									string boss1 = heroTurn ? "%defender%" : "%attacker%";
+									foreach (var member in dunge.Members)
+									{
+										text = text.Replace(member.Hero, hero);
+										text = text.Replace(member.God, god);
+									}
+									text = text.Replace(boss.Name, boss1);
+									text = _partBossLevelRegex.Replace(text, "");
+									text = new Regex(@"(умени[еяю] )«[^»]+»").Replace(text, "$1%skill%");
+									text = new Regex(@"(хохочет — разве это )«[^»]+»").Replace(text, $"$1%skill%");
+									text = new Regex(@"(дразнит противника, демонстрируя ему )[^\.]+\.").Replace(text, $"$1%item%.");
+									text = new Regex(@"(ловко блокирует его, используя )[^\.]+\.").Replace(text, "$1%item%.");
+									boss.TextLines[stepI].Add(text);
+								}
+							}
+							if (!infl)
+							{
+								boss.Escape2 |= lineText.Contains(escape2);
+								if (firstBlock)
+									tribbleFirst = tribbleFirst || lineText.Contains(tribbleText);
+								else
+									tribbleAnywhere = tribbleAnywhere || lineText.Contains(tribbleText);
+							}
+							if (i == lastLineIndex)
+							{
+								Step step = dunge.Moves[stepI - 1];
+								boss.Pos = step;
+								dunge.GetCell(step).Boss = boss;
+							}
+						}
+						var lastLine = logLines[lastLineIndex];
+						string lastLineStepS = lastLine.GetAttribute("data-t");
+						int lastLineStep = int.Parse(lastLineStepS);
+						for (int i = logLines.Length - 1; i >= 0; i--)
+						{
+							var logLine = logLines[i];
+							string stepS = logLine.GetAttribute("data-t");
+							int step = int.Parse(stepS);
+							if (step != lastLineStep)
+								break;
+							int tribblIndex = logLine.TextContent.IndexOf(tribbleText);
+							bool tribbl = tribblIndex > 0;
+							boss.TribbleInFinal = boss.TribbleInFinal || tribbl;
+							if (tribbl)
+								boss.TribbleInFinal2 = logLine.TextContent.IndexOf(tribbleText, tribblIndex + 6) > 0;
+
+						}
+						boss.TribbleInMiddle = tribbleAnywhere && !boss.TribbleInFinal;
+						boss.TribbleInFirst = tribbleFirst;
+
 						dunge.Bosses.Add(boss);
 						dunge.BossFights++;
 					}
@@ -1633,8 +1684,8 @@ namespace MapsExplorer
 				dunge.SecretRom.SecretKind = SecretKind.ChangeType;
 				int index = text.IndexOf(", сколько");
 				string newTypeStr = text.Substring(index + 9);
-				DungeKind dungeKind;
-				if (TestDungeKind(newTypeStr, out dungeKind))
+				DungeKind dungeKind, dungeKind2;
+				if (TestDungeKind(newTypeStr, out dungeKind, out dungeKind2))
 					dunge.DungeLine.Kind = dungeKind;
 				else
 					throw new Exception("Not realized: " + text);
@@ -1685,67 +1736,76 @@ namespace MapsExplorer
 			return text.Trim(charsToTrim);
 		}
 
-		private bool TestDungeKind(string text, out DungeKind kind)
+		private bool TestDungeKind(string text, out DungeKind kind, out DungeKind kind2)
 		{
+			List<DungeKind> kinds = new List<DungeKind>();
 			kind = DungeKind.Обыденности;
+			kind2 = DungeKind.Обыденности;
 			if (text.Contains("Бессилия") || text.Contains("Антибожественное покрытие туннелей экранирует влияния"))
-				kind = DungeKind.Бессилия;
-			else if (text.Contains("Бесшумности") || text.Contains("Боссы здесь тихие и ослабленные"))
-				kind = DungeKind.Бесшумности;
-			else if (text.Contains("Бодрости") || text.Contains("Здесь лечит сам воздух"))
-				kind = DungeKind.Бодрости;
-			else if (text.Contains("Густоты") || text.Contains("Пустых комнат здесь почти нет, сплошь тайники да ловушки"))
-				kind = DungeKind.Густоты;
-			else if (text.Contains("Достатка") || text.Contains("Деньги тут валяются прямо под ногами"))
-				kind = DungeKind.Достатка;
-			else if (text.Contains("Заброшенности") || text.Contains("Боссы ушли, расставив вместо себя ловушки"))
-				kind = DungeKind.Заброшенности;
-			else if (text.Contains("Загадки") || text.Contains("У подземелья есть особое свойство, но какое — непонятно"))
-				kind = DungeKind.Загадки;
-			else if (text.Contains("Залога") || text.Contains("Здесь на входе у каждого берут в залог одно бревно, а для возврата хозяин должен живым дойти до сокровищницы"))
-				kind = DungeKind.Залога;
-			else if (text.Contains("Заметности") || text.Contains("Хорошее освещение позволяет издалека замечать интересные места"))
-				kind = DungeKind.Заметности;
-			else if (text.Contains("Изобилия") || text.Contains("В сокровищнице двойная порция бревен"))
-				kind = DungeKind.Изобилия;
-			else if (text.Contains("Инкассации") || text.Contains("Золото из сокровищницы боссы здесь носят с собой"))
-				kind = DungeKind.Инкассации;
-			else if (text.Contains("Миграции") || text.Contains("Сила боссов здесь никак не связана с близостью сокровища"))
-				kind = DungeKind.Миграции;
-			else if (text.Contains("Мольбы") || text.Contains("Здесь почти каждая комната даёт по капле праны"))
-				kind = DungeKind.Мольбы;
-			else if (text.Contains("Противоречия") || text.Contains("Путаницы") || text.Contains("никак не могут определиться"))
-				kind = DungeKind.Противоречия;
-			else if (text.Contains("Прыгучести") || text.Contains("Постарайтесь не удариться головой при полетах через клетки"))
-				kind = DungeKind.Прыгучести;
-			else if (text.Contains("Риска") || text.Contains("Выжившие герои заберут все золото"))
-				kind = DungeKind.Риска;
-			else if (text.Contains("Сбережения") || text.Contains("После нахождения сокровищницы вся наличность героев автоматически переводится в их сбережения") || text.Contains("В сокровищнице вся наличность героев автоматически перейдёт в их сбережения"))
-				kind = DungeKind.Сбережения;
-			else if (text.Contains("Складчины") || text.Contains("Наличное золото здесь при входе изымается в призовой фонд сокровищницы, где и будет затем раздаваться по справедливости"))
-				kind = DungeKind.Складчины;
-			else if (text.Contains("Спешки") || text.Contains("Эвакуация здесь происходит через 50 ходов вместо 100"))
-				kind = DungeKind.Спешки;
-			else if (text.Contains("Термодинамики") || text.Contains("Указатели здесь работают по принципу «горячо-холодно»"))
-				kind = DungeKind.Термодинамики;
-			else if (text.Contains("Токсичности") || text.Contains("Ядовитый газ в коридорах подрывает здоровье исследователей"))
-				kind = DungeKind.Токсичности;
-			else if (text.Contains("Чистоты") || text.Contains("Здесь нет ни мощных ловушек, ни серьезных лечилок, ни богатых тайников"))
-				kind = DungeKind.Чистоты;
-			else if (text.Contains("Полуправды") || text.Contains("Половина указателей на сокровищницу здесь врёт"))
-				kind = DungeKind.Полуправды;
-
+				kinds.Add(DungeKind.Бессилия);
+			if (text.Contains("Бесшумности") || text.Contains("Боссы здесь тихие и ослабленные"))
+				kinds.Add(DungeKind.Бесшумности);
+			if (text.Contains("Бодрости") || text.Contains("Здесь лечит сам воздух"))
+				kinds.Add(DungeKind.Бодрости);
+			if (text.Contains("Густоты") || text.Contains("Пустых комнат здесь почти нет, сплошь тайники да ловушки"))
+				kinds.Add(DungeKind.Густоты);
+			if (text.Contains("Достатка") || text.Contains("Деньги тут валяются прямо под ногами"))
+				kinds.Add(DungeKind.Достатка);
+			if (text.Contains("Заброшенности") || text.Contains("Боссы ушли, расставив вместо себя ловушки"))
+				kinds.Add(DungeKind.Заброшенности);
+			if (text.Contains("Загадки") || text.Contains("У подземелья есть особое свойство, но какое — непонятно"))
+				kinds.Add(DungeKind.Загадки);
+			if (text.Contains("Залога") || text.Contains("Здесь на входе у каждого берут в залог одно бревно, а для возврата хозяин должен живым дойти до сокровищницы"))
+				kinds.Add(DungeKind.Залога);
+			if (text.Contains("Заметности") || text.Contains("Хорошее освещение позволяет издалека замечать интересные места"))
+				kinds.Add(DungeKind.Заметности);
+			if (text.Contains("Изобилия") || text.Contains("В сокровищнице двойная порция бревен"))
+				kinds.Add(DungeKind.Изобилия);
+			if (text.Contains("Инкассации") || text.Contains("Золото из сокровищницы боссы здесь носят с собой"))
+				kinds.Add(DungeKind.Инкассации);
+			if (text.Contains("Миграции") || text.Contains("Сила боссов здесь никак не связана с близостью сокровища"))
+				kinds.Add(DungeKind.Миграции);
+			if (text.Contains("Мольбы") || text.Contains("Здесь почти каждая комната даёт по капле праны"))
+				kinds.Add(DungeKind.Мольбы);
+			if (text.Contains("Противоречия") || text.Contains("Путаницы") || text.Contains("никак не могут определиться"))
+				kinds.Add(DungeKind.Противоречия);
+			if (text.Contains("Прыгучести") || text.Contains("Постарайтесь не удариться головой при полетах через клетки"))
+				kinds.Add(DungeKind.Прыгучести);
+			if (text.Contains("Риска") || text.Contains("Выжившие герои заберут все золото"))
+				kinds.Add(DungeKind.Риска);
+			if (text.Contains("Сбережения") || text.Contains("После нахождения сокровищницы вся наличность героев автоматически переводится в их сбережения") || text.Contains("В сокровищнице вся наличность героев автоматически перейдёт в их сбережения"))
+				kinds.Add(DungeKind.Сбережения);
+			if (text.Contains("Складчины") || text.Contains("Наличное золото здесь при входе изымается в призовой фонд сокровищницы, где и будет затем раздаваться по справедливости"))
+				kinds.Add(DungeKind.Складчины);
+			if (text.Contains("Спешки") || text.Contains("Эвакуация здесь происходит через 50 ходов вместо 100"))
+				kinds.Add(DungeKind.Спешки);
+			if (text.Contains("Термодинамики") || text.Contains("Указатели здесь работают по принципу «горячо-холодно»"))
+				kinds.Add(DungeKind.Термодинамики);
+			if (text.Contains("Токсичности") || text.Contains("Ядовитый газ в коридорах подрывает здоровье исследователей"))
+				kinds.Add(DungeKind.Токсичности);
+			if (text.Contains("Чистоты") || text.Contains("Здесь нет ни мощных ловушек, ни серьезных лечилок, ни богатых тайников"))
+				kinds.Add(DungeKind.Чистоты);
+			if (text.Contains("Полуправды") || text.Contains("Половина указателей на сокровищницу здесь врёт"))
+				kinds.Add(DungeKind.Полуправды);
+			if (kinds.Count > 0)
+				kind = kinds[0];
+			if (kinds.Count > 1)
+				kind = kinds[1];
 			return kind != DungeKind.Обыденности;
 		}
 
 		private void AddImportant(Dunge dunge, string text)
 		{
 			DungeKind dungeKind;
-			if (TestDungeKind(text, out dungeKind))
+			DungeKind dungeKind2;
+			if (TestDungeKind(text, out dungeKind, out dungeKind2))
 			{
 				dunge.StartKind = dungeKind;
+				dunge.StartKind2 = dungeKind2;
 				if (dunge.DungeLine.Kind == DungeKind.Неизвестное)
 					dunge.DungeLine.Kind = dungeKind;
+				if (dungeKind2 != DungeKind.Обыденности)
+					dunge.DungeLine.Kind2 = dungeKind2;
 			}
 			else if (text.Contains("Отдел оптимизации экскурсий обещает посетителям, дошедшим до сокровища за 40 шагов, награду") || text.Contains("Служба нагнетания информирует, что команде положена награда") || text.Contains("Ассоциация вольных стрелков сообщает, что убившим всех боссов") || text.Contains("Общество защиты монстров обещает посетителям, не тронувшим ни одного босса") || text.Contains("подрулившим гласами не более 8 раз"))
 			{

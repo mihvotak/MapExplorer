@@ -24,7 +24,10 @@ namespace MapsExplorer
 		public bool Escape2;
 		public DateTime StartDateTime;
 		public DateTime EndDateTime;
+		public int Steps;
 		public List<int[]> Hps = new List<int[]>();
+		public int[] InfluencesByStep;
+		public List<string>[] TextLines;
 		public bool CanBeRouting;
 		public bool IsRouting;
 		public bool IsFinal;

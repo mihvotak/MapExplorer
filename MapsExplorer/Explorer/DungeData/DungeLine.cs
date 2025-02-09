@@ -10,6 +10,7 @@ namespace MapsExplorer
 	{
 		public string Hash;
 		public DungeKind Kind;
+		public DungeKind Kind2;
 		public Category Category;
 		public bool Custom;
 		public bool Vault;
@@ -22,7 +23,7 @@ namespace MapsExplorer
 
 		public override string ToString()
 		{
-			return Hash + "\t" + Kind + "\t" + (Category == Category.Рандом ? "" : ((int)Category).ToString()) + "\t" + (Vault ? "v" : "") + "\t" + string.Join<string>(", ", Gods) + "\t" + (Success ? "успех" : "провал") + "\t" + Utils.GetDateAndTimeString(DateTime);
+			return Hash + "\t" + Kind + (Kind2 == DungeKind.Неизвестное ? "" : ("/" + Kind2)) + "\t" + (Category == Category.Рандом ? "" : ((int)Category).ToString()) + "\t" + (Vault ? "v" : "") + "\t" + string.Join<string>(", ", Gods) + "\t" + (Success ? "успех" : "провал") + "\t" + Utils.GetDateAndTimeString(DateTime);
 		}
 	}
 }

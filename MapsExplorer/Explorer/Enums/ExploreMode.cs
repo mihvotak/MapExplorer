@@ -25,4 +25,5 @@ public enum ExploreMode
 	Coupons,
 	TimeStatistic,
 	HalfTrueHints,
+	HeroDamages,
 }

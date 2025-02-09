@@ -197,6 +197,9 @@ namespace MapsExplorer
 				case ExploreMode.HalfTrueHints:     //	Указатели в полуправде
 					explorer = new HalfTrueHintsExplorer();
 					break;
+				case ExploreMode.HeroDamages:     //	Дамаг, наносимый героями
+					explorer = new HeroDamageExplorer();
+					break;
 				default:
 					_logHandler.LastError = $"Mode {_exploreMode} not realized";
 					break;
