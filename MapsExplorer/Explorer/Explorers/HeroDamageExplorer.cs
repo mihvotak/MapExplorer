@@ -81,6 +81,7 @@ public class HeroDamageExplorer : ExplorerBase
 					tds.Add(st.ToString());
 					Step step = boss.Pos;
 					//tds.Add(boss.Pos.Floor + "floor");
+					tds.Add(dunge.MembersSumHp.ToString());
 					tds.Add(dunge.Members[indexAlive].God);
 					tds.Add(dunge.Members[indexAlive].Hero);
 					tds.Add(dunge.Members[indexAlive].Hp.ToString());
@@ -92,7 +93,8 @@ public class HeroDamageExplorer : ExplorerBase
 					tds.Add(boss.Hp.ToString());
 					tds.Add(lastBossHp.ToString());
 					tds.Add(bossDelta.ToString());
-					tds.Add(boss.TextLines[st][0]);
+					tds.Add(boss.TextLines[st][0].Text);
+					//tds.Add(boss.TextLines[st][0].Pattern.ToString());
 					string tr = string.Join("\t", tds);
 					builder.Append(tr + "\n");
 				}

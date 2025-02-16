@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace MapsExplorer
 {
+	public class TextLine 
+	{
+		public string Text;
+		public int Pattern;
+	}
+
 	public class Boss
 	{
 		public int Num;
@@ -27,7 +33,7 @@ namespace MapsExplorer
 		public int Steps;
 		public List<int[]> Hps = new List<int[]>();
 		public int[] InfluencesByStep;
-		public List<string>[] TextLines;
+		public List<TextLine>[] TextLines;
 		public bool CanBeRouting;
 		public bool IsRouting;
 		public bool IsFinal;

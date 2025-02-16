@@ -19,6 +19,67 @@ namespace MapsExplorer
 		
 		private Regex _bossWarningRegex;
 		private Regex _partBossLevelRegex;
+		private readonly string[] _fightPhrases = {
+"%attacker% бросается противнику в глаза, но %defender% отвергает (его|её) одним взмахом ресниц.",
+"%attacker% делает сильнейший замах, но %defender% умудряется уклониться и пройти в паре пикселей от серьёзного удара.",
+"%attacker% демонстрирует молниеносную реакцию, но химические опыты никому не интересны.",
+"%attacker% дразнит противника, демонстрируя ему %item%. %defender% борется с жабой, яростно сопя.",
+"%attacker% закрывается на переучёт урона. %defender% терпеливо ожидает сдачи.",
+"%attacker% замахнул(ся|ась), но %defender% ловко увернул(ся|ась).",
+"%attacker% заорал(|а) так громко, что испугал(|а) сам(ого|у) себя и пропустил(|а) ход.",
+"%attacker% зло поцокал(|а) языком на соперника.",
+"%attacker% изливает душу противнику, но %defender% упрямо идёт против течения.",
+"%attacker% машет руками как мельница, подбрасывает и ловит .+, делает сальто и выпады в прыжке. %defender% стоит в сторонке.",
+"%attacker% наносит столь сильный удар, что при подсчёте урона происходит переполнение счётчика и обнуление результата.",
+"%attacker% отбежал(|а) в сторону и отвесил(|а) в молитве несколько поклонов.",
+"%attacker% отказывается продолжать дуэль без секунданта и пропускает ход. %defender% в восторге . побольше бы таких закидонов.",
+"%attacker% попытал(ся|ась) применить умение. %defender% хохочет . разве это .+",
+"%attacker% попытал(ся|ась) было исполнить канкан, но невозмутимый %defender% видал и не такое.",
+"%attacker% попытал(ся|ась) измотать противника бегом на месте.",
+"%attacker% попытал(ся|ась) ударить, но внезапный приступ радикулита смазал впечатление.",
+"%attacker% предлагает противнику передохнуть. %defender% подыхать отказывается.",
+"%attacker% приготовил(ся|ась) нанести противнику молодецкий удар прямо в грудь, но тот повернул(ся|ась) боком, порушив все планы.",
+"%attacker% применяет умение %skill%, но %defender% ловко блокирует его, используя %item%.",
+"%attacker% применяет стиль текучей воды. %defender% уверенно отвечает стойкой лежачего камня.",
+"%attacker% прицельно плюнул(|а), надеясь увидеть в противнике дырку от ядовитой слюны.",
+"%attacker% производит сканирование противника на наличие уязвимостей, ошибок и неисправностей, но засыпает, не дожидаясь результатов.",
+"%attacker% прыгает на противника, но взлетает так высоко, что не успевает упасть обратно до конца своего хода.",
+"%attacker% пытается вцепиться сопернику в горло, но оно надёжно защищено тремя подбородками.",
+"%attacker% пытается выбить землю из-под ног противника, но не находит точку опоры.",
+"%attacker% пытается задавить противника интеллектом. %defender% небрежно отмахивается.",
+"%attacker% пытается наложить древнее проклятье, но его срок годности давно истёк.",
+"%attacker% пытается применить умение, но остаётся в недоумении.",
+"%attacker% пытается прожечь соперника взглядом, но выпучивания глаз для этого явно недостаточно.",
+"%attacker% размахнул(ся|ась) и ударил(|а) прямо мимо врага.",
+"%attacker% рычит и бьёт себя кулаками по груди. %defender% наблюдает с безопасного расстояния.",
+"%attacker% с бешеным криком прыгает прямо мимо соперника.",
+"%attacker% собирает все физические и моральные силы для нанесения сокрушительного удара. К сожалению, на это уходит всё время, отведённое на ход.",
+"%attacker% считает врага жалкой, ничтожной личностью и в знак презрения к нему пропускает ход.",
+"%attacker% так сильно замахнул(ся|ась), что выронил(|а) .+ %defender% ехидно хихикает в сторонке.",
+"%attacker% тщательно прицеливается, тщательно замахивается и не менее тщательно промахивается.",
+"%attacker% усердно натирает эбонитовую палочку о волосы, пытаясь вызвать молнию в противника.",
+"%attacker% швыряет в соперника горсть камней, но тот всё схватывает на лету.",
+"%attacker%, повернувшись спиной к врагу, продемонстрировал(|а) ему своё презрение.",
+"%defender% бежит из боя, не утруждая себя выбором, кошелёк или жизнь ему сохранить.",
+"%defender% делает большие глаза, басовито мурлычет и застенчиво мнёт в руках шляпу. Умиляясь, %attacker% пропускает ход.",
+"%defender% обманным блоком блокирует обманный удар.",
+"%defender% принимает таблетки от головы. %attacker%, потеряв цель, в недоумении пропускает свой ход.",
+"%defender%, задумавшись, пропускает мощную атаку и забывает получить за неё урон.",
+"Апперкот, пинок, залп, огненный шар . ничего из этого %attacker% не сделал(|а).",
+"Бац, бац . и мимо. %attacker% огорч(ён|ена).",
+"Вместо удара %attacker% предпоч(ёл|ла) сжевать леденец и слегка поправить себе здоровье.",
+"Всё время своего хода %attacker% ругается на противника, ни разу не повторившись.",
+"На этом ходу %attacker% забавно пыхтит и сердится.",
+"Не поняв, что сейчас его ход, %attacker% тратит его на манёвр уклонения.",
+"От напряжения %defender% меняется в лице, и %attacker%, опасаясь изувечить постороннего, пропускает ход.",
+"Подкупающей улыбкой %defender% обезоруживает жадного до взяток противника.",
+"Предъявив промах-код, %defender% заставляет противника промахнуться.",
+"Проведя сложную комбинацию, %attacker% понимает, что воевал(|а) не в ту сторону.",
+"Сославшись на сомнительность контента, %defender% блокирует входящий урон.",
+"Угрожающе что-то прорычав, %attacker% решил(|а) пока этим и ограничиться.",
+"Ухмыльнувшись, %attacker% испугал противника, заставив выронить .+",
+"Финты, вольты, уклонения . %attacker% пытается отбиться от осы.",
+		};
 
 		public string LastError;
 
@@ -558,7 +619,8 @@ namespace MapsExplorer
 				int hp = int.Parse(hpStr);
 				member.Hp = hp;
 				dunge.Members.Add(member);
-				dunge.MembersSumHp += member.Hp;
+				if (member.IsHuman)
+					dunge.MembersSumHp += member.Hp;
 			}
 			dunge.Voices = new List<VoiceKind>[dunge.Moves.Count + 1];
 			// Log reading
@@ -1089,7 +1151,7 @@ namespace MapsExplorer
 						boss.Steps = boss.Hps.Count - 2;
 						boss.InfluencesByStep = new int[boss.Steps + 1];
 						if (_mode == ExploreMode.HeroDamages)
-							boss.TextLines = new List<string>[boss.Steps + 1];
+							boss.TextLines = new List<TextLine>[boss.Steps + 1];
 						for (int i = 0; i < logLines.Length; i++)
 						{
 							bool lastBlock = i == logLines.Length - 1;
@@ -1126,15 +1188,15 @@ namespace MapsExplorer
 							string turnText = turnEl.TextContent;
 							if (!firstBlock && !lastBlock)
 							{
-								if (infl)
+								if (infl && stepI < boss.TextLines.Length - 1)
 									boss.InfluencesByStep[stepI]++;
-								if (_mode == ExploreMode.HeroDamages && stepI < boss.TextLines.Length)
+								if (_mode == ExploreMode.HeroDamages && stepI < boss.TextLines.Length - 1)
 								{
 									var strBlock = logLine.QuerySelector("div.text_content");
 									var strBlockS = logLine.QuerySelector("span.t");
 									string strBlockStr = strBlockS.TextContent;
 									if (boss.TextLines[stepI] == null)
-										boss.TextLines[stepI] = new List<string>();
+										boss.TextLines[stepI] = new List<TextLine>();
 									string text = strBlockStr.Trim();
 									bool heroTurn = stepI % 2 == 1;
 									string hero = heroTurn ? "%attacker%" : "%defender%";
@@ -1148,10 +1210,19 @@ namespace MapsExplorer
 									text = text.Replace(boss.Name, boss1);
 									text = _partBossLevelRegex.Replace(text, "");
 									text = new Regex(@"(умени[еяю] )«[^»]+»").Replace(text, "$1%skill%");
-									text = new Regex(@"(хохочет — разве это )«[^»]+»").Replace(text, $"$1%skill%");
+									text = new Regex(@"(хохочет . разве это )«[^»]+»").Replace(text, $"$1%skill%");
 									text = new Regex(@"(дразнит противника, демонстрируя ему )[^\.]+\.").Replace(text, $"$1%item%.");
 									text = new Regex(@"(ловко блокирует его, используя )[^\.]+\.").Replace(text, "$1%item%.");
-									boss.TextLines[stepI].Add(text);
+									int pattern = -1;
+									for (int ii = 0; ii < _fightPhrases.Length; ii++)
+									{
+										if (new Regex(_fightPhrases[ii]).IsMatch(text))
+										{
+											pattern = ii;
+											break;
+										}
+									}
+									boss.TextLines[stepI].Add(new TextLine() { Text = text, Pattern = pattern });
 								}
 							}
 							if (!infl)
