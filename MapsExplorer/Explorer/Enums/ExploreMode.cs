@@ -11,6 +11,7 @@ public enum ExploreMode
 	TribblesWithBosses,
 	HalfFinBosses,
 	BossesByName,
+	BossesLoot,
 	TreasurePos,
 	StairsPos,
 	Voices,

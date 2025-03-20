@@ -83,6 +83,7 @@
     <Compile Include="Explorer\Enums\SecretKind.cs" />
     <Compile Include="Explorer\Enums\TreasureScheme.cs" />
     <Compile Include="Explorer\Enums\VoiceKind.cs" />
+    <Compile Include="Explorer\Explorers\BossLootExplorer.cs" />
     <Compile Include="Explorer\Explorers\HalfTrueHintsExplorer.cs" />
     <Compile Include="Explorer\Explorers\HeroDamageExplorer.cs" />
     <Compile Include="Explorer\Explorers\RotationsExplorer.cs" />

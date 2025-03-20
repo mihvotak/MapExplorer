@@ -37,5 +37,7 @@ namespace MapsExplorer
 		public bool CanBeRouting;
 		public bool IsRouting;
 		public bool IsFinal;
+		public List<string> Loot = new List<string>();
+		public List<string> LootParts = new List<string>();
 	}
 }
