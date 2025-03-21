@@ -1142,8 +1142,6 @@ namespace MapsExplorer
 								boss.Abils.Add(ability);
 							}
 						}
-						if (boss.Abils.Count == 4 && !boss.Abils.Contains(Ability.крепчающий))
-							dunge.SfinPos = boss.Pos;
 						bool tribbleAnywhere = false;
 						bool tribbleFirst = false;
 						string tribbleText = "триббл";
@@ -1278,6 +1276,10 @@ namespace MapsExplorer
 						}
 						boss.TribbleInMiddle = tribbleAnywhere && !boss.TribbleInFinal;
 						boss.TribbleInFirst = tribbleFirst;
+
+						boss.AbilsCount = boss.Abils.Contains(Ability.крепчающий) ? boss.Pos.Floor : boss.Abils.Count;
+						if (boss.AbilsCount == 4)
+							dunge.SfinPos = boss.Pos;
 
 						dunge.Bosses.Add(boss);
 						dunge.BossFights++;

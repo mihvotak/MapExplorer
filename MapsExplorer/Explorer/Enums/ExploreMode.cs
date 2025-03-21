@@ -12,6 +12,7 @@ public enum ExploreMode
 	HalfFinBosses,
 	BossesByName,
 	BossesLoot,
+	BossAbils,
 	TreasurePos,
 	StairsPos,
 	Voices,

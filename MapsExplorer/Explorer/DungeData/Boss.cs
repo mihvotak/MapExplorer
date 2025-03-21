@@ -17,6 +17,7 @@ namespace MapsExplorer
 		public int Num;
 		public int Hp;
 		public List<Ability> Abils = new List<Ability>();
+		public int AbilsCount;
 		public string AllAbilsStr;
 		public int BossPower { get { return Abils.Count; } }
 		public string Name;

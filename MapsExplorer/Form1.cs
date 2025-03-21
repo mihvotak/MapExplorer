@@ -158,6 +158,9 @@ namespace MapsExplorer
 				case ExploreMode.BossesLoot:	//	Перечисление выпавшего лута
 					explorer = new BossLootExplorer();           
 					break;
+				case ExploreMode.BossAbils:	//	Абилки боссов
+					explorer = new BossAbilsExplorer();           
+					break;
 				case ExploreMode.TreasurePos:		//	Положения клада
 					explorer = new TreasurePosExplorer();            
 					break;
