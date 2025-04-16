@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
@@ -13,7 +12,9 @@ namespace MapsExplorer
 		private const string SaveFileName = "/FormDataSave.txt";
 
 		private ListViewer _listViewer = new ListViewer();
-		private ExploreMode _exploreMode;
+		private DungeonExploreMode _dungeonExploreMode;
+		private PolygonExploreMode _polygonExploreMode;
+		private AvantureKind _avantureKind;
 
 		public Form1()
 		{
@@ -44,16 +45,19 @@ namespace MapsExplorer
 			var startDate = dateTimePicker1.Value;
 			var endDate = dateTimePicker2.Value;
 			string add = "";
-			if (successCheckBox.Checked)     //успех
-				add += "&r=1";
-			if (specialCheckBox.Checked)     //специальное
-				add += "&d=spec";
-			else if (customCheckBox.Checked) //кастомное
-				add += "&d2=custom";
-			_listViewer.StartView(startDate, endDate, add,  OnListViewReady, (percent) => worker.ReportProgress(percent));
+			if (_avantureKind == AvantureKind.Dungeon)
+			{
+				if (successCheckBox.Checked)     //успех
+					add += "&r=1";
+				if (specialCheckBox.Checked)     //специальное
+					add += "&d=spec";
+				else if (customCheckBox.Checked) //кастомное
+					add += "&d2=custom";
+			}
+			_listViewer.StartView(_avantureKind, startDate, endDate, add,  OnListViewReady, (percent) => worker.ReportProgress(percent));
 		}
 
-		private void OnListViewReady(string error, List<DungeLine> resultLines)
+		private void OnListViewReady(string error, List<LogLine> resultLines)
 		{
 			_resultLines = resultLines;
 			for (int i = _resultLines.Count - 1; i >= 0; i--)
@@ -74,7 +78,7 @@ namespace MapsExplorer
 			countTextBox.Text = _resultLines.Count.ToString();
 			errorTextBox.Text = _error ?? "";
 			StringBuilder builder = new StringBuilder();
-			foreach (DungeLine line in _resultLines)
+			foreach (LogLine line in _resultLines)
 				builder.Append(line.ToString() + "\n");
 			string all = builder.ToString();
 			logsRichTextBox.Text = all;
@@ -83,9 +87,10 @@ namespace MapsExplorer
 			File.WriteAllText(Paths.ResultsDir + "/list.txt", all);
 		}
 
-		private List<DungeLine> _resultLines;
+		private List<LogLine> _resultLines;
 		private string _error;
-		LogHandler _logHandler = new LogHandler();
+		private DungeonLogHandler _dungeonLogHandler = new DungeonLogHandler();
+		private PolygonLogHandler _polygonLogHandler = new PolygonLogHandler();
 
 		private void exploreButton_Click(object sender, EventArgs e)
 		{
@@ -97,34 +102,35 @@ namespace MapsExplorer
 			SaveFormData();
 			if (!string.IsNullOrEmpty(hashTextBox.Text))
 			{
-				DungeLine line = new DungeLine()
-				{
-					Hash = hashTextBox.Text,
-					DateTime = Utils.ParseDateTime("11.11.2011 11:11"),
-					Category = Category.Рандом,
-					Kind = DungeKind.Неизвестное,
-					Success = true
-				};
-				_resultLines = new List<DungeLine>();
+				LogLine line = (hashTextBox.Text.Length > 6) ?
+					new LogLine()
+					{
+						Hash = hashTextBox.Text,
+						DateTime = Utils.ParseDateTime("11.11.2011 11:11"),
+						AvantureKind = AvantureKind.Dungeon,
+						Category = MapCategory.Рандом,
+						DungeKind = DungeKind.Неизвестное,
+						Success = true
+					} :
+					new LogLine()
+					{
+						Hash = hashTextBox.Text,
+						DateTime = Utils.ParseDateTime("11.11.2011 11:11"),
+						AvantureKind = AvantureKind.Plygon,
+						PolygonKind = PolygonKind.Неизвестный,
+						Success = true
+					};
+				_resultLines = new List<LogLine>();
 				_resultLines.Add(line);
-				/*Dunge dunge = _logHandler.GetDunge(line);
-				string s = dunge.DungeLine.Link + "\t" + dunge.Steps + " steps\n";
-				if (dunge.Bosses.Count > 0)
-				{
-					var boss = dunge.Bosses[0];
-					s += boss.Name + " " + boss.AllAbilsStr;
-				}
-				richTextBox2.Text = s;
-				return;*/
 			}
-			else if (_exploreMode == ExploreMode.None)
+			else if (_dungeonExploreMode == DungeonExploreMode.None)
 			{
 				errorTextBox.Text = "Режим не выбран (None)";
 				return;
 			}
 			else if (_resultLines == null || _resultLines.Count == 0)
 			{
-				errorTextBox.Text = "Сначала нужно ввести хэш данжа или получить список логов по датам [Start]";
+				errorTextBox.Text = "Сначала нужно ввести хэш лога или получить список логов по датам [Start]";
 				return;
 			}
 
@@ -141,78 +147,94 @@ namespace MapsExplorer
 		private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
 		{
 			ExplorerBase explorer = null;
-			switch (_exploreMode)
-			{ 
-				case ExploreMode.Rotations: //	Повороты без гласов
-					explorer = new RotationsExplorer();	
-					break;
-				case ExploreMode.TribblesWithBosses:    //	Трибблы у боссов
-					explorer = new TribblesWithBossesExplorer();
-					break;
-				case ExploreMode.HalfFinBosses:	//	Полуфиналы
-					explorer = new HalfFinBossesExplorer();             
-					break;
-				case ExploreMode.BossesByName:	//	Поиск конкретного босса
-					explorer = new BossesByNameExplorer();           
-					break;
-				case ExploreMode.BossesLoot:	//	Перечисление выпавшего лута
-					explorer = new BossLootExplorer();           
-					break;
-				case ExploreMode.BossAbils:	//	Абилки боссов
-					explorer = new BossAbilsExplorer();           
-					break;
-				case ExploreMode.TreasurePos:		//	Положения клада
-					explorer = new TreasurePosExplorer();            
-					break;
-				case ExploreMode.StairsPos:		//	Положения лестниц
-					explorer = new StairsPosExplorer();				
-					break;
-				case ExploreMode.Voices:			//	Поиск гласов
-					explorer = new VoicesExplorer();                 
-					break;
-				case ExploreMode.Hints:			//	Подсказки в кастомках
-					explorer = new HintsExplorer();                  
-					break;
-				case ExploreMode.Stables:			//	Конюшни
-					explorer = new StablesExplorer();               
-					break;
-				case ExploreMode.CacheHints:		//	Прикладовые подсказки
-					explorer = new CacheHintsExplorer();			
-					break;
-				case ExploreMode.RoutesAndBosses:	//	Непутевые боссы
-					explorer = new RoutesAndBossesExplorer();				
-					break;
-				case ExploreMode.Teleports:			//	Телепорты и ловушки
-					explorer = new TeleportsExplorer();				
-					break;
-				case ExploreMode.Aquas:				//	Исследование аквариумов
-					explorer = new AquasExplorer();                  
-					break;
-				case ExploreMode.Walls:				//	Капиталки, размеры данжей
-					explorer = new WallsExplorer();                  
-					break;
-				case ExploreMode.Jumps:				//	Влияние гласов в прыгучести
-					explorer = new JumpsExplorer();                  
-					break;
-				case ExploreMode.Coupons:			//	Считаем купоны
-					explorer = new CouponsExplorer();
-					break;
-				case ExploreMode.TimeStatistic:     //	Время в данже
-					explorer = new TimeStatisticExplorer();
-					break;
-				case ExploreMode.HalfTrueHints:     //	Указатели в полуправде
-					explorer = new HalfTrueHintsExplorer();
-					break;
-				case ExploreMode.HeroDamages:     //	Дамаг, наносимый героями
-					explorer = new HeroDamageExplorer();
-					break;
-				default:
-					_logHandler.LastError = $"Mode {_exploreMode} not realized";
-					break;
+			if (_avantureKind == AvantureKind.Dungeon)
+			{
+				switch (_dungeonExploreMode)
+				{
+					case DungeonExploreMode.Rotations: //	Повороты без гласов
+						explorer = new RotationsExplorer();
+						break;
+					case DungeonExploreMode.TribblesWithBosses:    //	Трибблы у боссов
+						explorer = new TribblesWithBossesExplorer();
+						break;
+					case DungeonExploreMode.HalfFinBosses:  //	Полуфиналы
+						explorer = new HalfFinBossesExplorer();
+						break;
+					case DungeonExploreMode.BossesByName:   //	Поиск конкретного босса
+						explorer = new BossesByNameExplorer();
+						break;
+					case DungeonExploreMode.BossesLoot: //	Перечисление выпавшего лута
+						explorer = new BossLootExplorer();
+						break;
+					case DungeonExploreMode.BossAbils:  //	Абилки боссов
+						explorer = new BossAbilsExplorer();
+						break;
+					case DungeonExploreMode.TreasurePos:        //	Положения клада
+						explorer = new TreasurePosExplorer();
+						break;
+					case DungeonExploreMode.StairsPos:      //	Положения лестниц
+						explorer = new StairsPosExplorer();
+						break;
+					case DungeonExploreMode.Voices:         //	Поиск гласов
+						explorer = new VoicesExplorer();
+						break;
+					case DungeonExploreMode.Hints:          //	Подсказки в кастомках
+						explorer = new HintsExplorer();
+						break;
+					case DungeonExploreMode.Stables:            //	Конюшни
+						explorer = new StablesExplorer();
+						break;
+					case DungeonExploreMode.CacheHints:     //	Прикладовые подсказки
+						explorer = new CacheHintsExplorer();
+						break;
+					case DungeonExploreMode.RoutesAndBosses:    //	Непутевые боссы
+						explorer = new RoutesAndBossesExplorer();
+						break;
+					case DungeonExploreMode.Teleports:          //	Телепорты и ловушки
+						explorer = new TeleportsExplorer();
+						break;
+					case DungeonExploreMode.Aquas:              //	Исследование аквариумов
+						explorer = new AquasExplorer();
+						break;
+					case DungeonExploreMode.Walls:              //	Капиталки, размеры данжей
+						explorer = new WallsExplorer();
+						break;
+					case DungeonExploreMode.Jumps:              //	Влияние гласов в прыгучести
+						explorer = new JumpsExplorer();
+						break;
+					case DungeonExploreMode.Coupons:            //	Считаем купоны
+						explorer = new CouponsExplorer();
+						break;
+					case DungeonExploreMode.TimeStatistic:     //	Время в данже
+						explorer = new TimeStatisticExplorer();
+						break;
+					case DungeonExploreMode.HalfTrueHints:     //	Указатели в полуправде
+						explorer = new HalfTrueHintsExplorer();
+						break;
+					case DungeonExploreMode.HeroDamages:     //	Дамаг, наносимый героями
+						explorer = new HeroDamageExplorer();
+						break;
+					default:
+						_dungeonLogHandler.LastError = $"Mode {_dungeonExploreMode} not realized";
+						break;
+				}
+			}
+			else if (_avantureKind == AvantureKind.Plygon)
+			{
+				switch (_polygonExploreMode)
+				{
+					case PolygonExploreMode.SuccesPercent: //	Успешность полигонов
+						explorer = new PolySuccessExplorer();
+						break;
+					default:
+						_polygonLogHandler.LastError = $"Mode {_polygonExploreMode} not realized";
+						break;
+				}
 			}
 			if (explorer != null)
 			{
-				explorer.Init(_exploreMode, _logHandler, _resultLines, _exploreBackgroundWorker, 
+				LogHandler logHandler = _avantureKind == AvantureKind.Dungeon ? _dungeonLogHandler as LogHandler : _polygonLogHandler;
+				explorer.Init(_avantureKind, _dungeonExploreMode, _polygonExploreMode, logHandler, _resultLines, _exploreBackgroundWorker, 
 					customCheckBox.Checked,
 					checkBoxMinRoute.Checked
 					);
@@ -229,10 +251,10 @@ namespace MapsExplorer
 		private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 
-			if (!string.IsNullOrEmpty(_logHandler.LastError))
+			if (!string.IsNullOrEmpty(_dungeonLogHandler.LastError))
 			{
-				errorTextBox.Text = _logHandler.LastError;
-				_logHandler.LastError = null;
+				errorTextBox.Text = _dungeonLogHandler.LastError;
+				_dungeonLogHandler.LastError = null;
 			}
 			else
 			{
@@ -262,7 +284,8 @@ namespace MapsExplorer
 				Special = specialCheckBox.Checked,
 				Custom = customCheckBox.Checked,
 				Hash = hashTextBox.Text,
-				ExploreMode = _exploreMode
+				DungeonExploreMode = _dungeonExploreMode,
+				PolygonExploreMode = _polygonExploreMode
 			};
 			string json = data.ToString();
 			File.WriteAllText(filePath, json);
@@ -281,29 +304,69 @@ namespace MapsExplorer
 				hashTextBox.Text = data.Hash;
 			}
 
-			ModeComboBox.Items.Clear();
-			foreach (ExploreMode exploreMode in Enum.GetValues((typeof(ExploreMode))))
-			{
-				ModeComboBox.Items.Add(exploreMode.ToString());
-				if (exploreMode == data.ExploreMode)
-					ModeComboBox.SelectedIndex = ModeComboBox.Items.Count - 1;
-			}
-
 			Form1_ResizeEnd(sender, e);
 
-			ReadExploreMode();
+			_dungeonExploreMode = data.DungeonExploreMode;
+			_polygonExploreMode = data.PolygonExploreMode;
+			UpdateInterface();
+		}
+
+		private void UpdateModes()
+		{
+			ModeComboBox.Items.Clear();
+			if (_avantureKind == AvantureKind.Dungeon)
+			{
+				foreach (DungeonExploreMode exploreMode in Enum.GetValues((typeof(DungeonExploreMode))))
+				{
+					ModeComboBox.Items.Add(exploreMode.ToString());
+					if (exploreMode == _dungeonExploreMode)
+						ModeComboBox.SelectedIndex = ModeComboBox.Items.Count - 1;
+				}
+			}
+			else
+			{
+				foreach (PolygonExploreMode exploreMode in Enum.GetValues((typeof(PolygonExploreMode))))
+				{
+					ModeComboBox.Items.Add(exploreMode.ToString());
+					if (exploreMode == _polygonExploreMode)
+						ModeComboBox.SelectedIndex = ModeComboBox.Items.Count - 1;
+				}
+			}
+		}
+
+		private void UpdateInterface()
+		{
+			_avantureKind = radioButton1.Checked ? AvantureKind.Dungeon : AvantureKind.Plygon;
+			bool isDunge = _avantureKind == AvantureKind.Dungeon;
+			dungeBoolGroupBox.Visible = isDunge;
+
+			UpdateModes();
+			UpdateDungeElements();
 		}
 
 		private void ReadExploreMode()
 		{
-			if (!Enum.TryParse(ModeComboBox.Text, out _exploreMode))
-				_exploreMode = ExploreMode.None;
+			if (_avantureKind == AvantureKind.Dungeon)
+			{
+				if (!Enum.TryParse(ModeComboBox.Text, out _dungeonExploreMode))
+					_dungeonExploreMode = DungeonExploreMode.None;
+			}
+			else
+			{
+				if (!Enum.TryParse(ModeComboBox.Text, out _polygonExploreMode))
+					_polygonExploreMode = PolygonExploreMode.None;
+			}
 		}
 
 		private void ModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			UpdateDungeElements();
+		}
+
+		private void UpdateDungeElements()
+		{
 			ReadExploreMode();
-			checkBoxMinRoute.Visible = _exploreMode == ExploreMode.RoutesAndBosses;
+			checkBoxMinRoute.Visible = _avantureKind == AvantureKind.Dungeon && _dungeonExploreMode == DungeonExploreMode.RoutesAndBosses;
 		}
 
 		private void Form1_ResizeEnd(object sender, EventArgs e)
@@ -325,6 +388,16 @@ namespace MapsExplorer
 			resultRichTextBox.Height = h3;
 			errorTextBox.Top = Height - space * 2 - errorTextBox.Height - progressBar1.Height - 20;
 			progressBar1.Top = Height - space - progressBar1.Height - 30;
+		}
+
+		private void radioButton1_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateInterface();
+		}
+
+		private void radioButton2_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateInterface();
 		}
 	}
 }

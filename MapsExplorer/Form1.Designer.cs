@@ -37,12 +37,9 @@
 			this.countTextBox = new System.Windows.Forms.TextBox();
 			this.errorTextBox = new System.Windows.Forms.TextBox();
 			this.tableRichTextBox = new System.Windows.Forms.RichTextBox();
-			this.specialCheckBox = new System.Windows.Forms.CheckBox();
-			this.successCheckBox = new System.Windows.Forms.CheckBox();
 			this.resultRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.hashTextBox = new System.Windows.Forms.TextBox();
 			this.checkBoxMinRoute = new System.Windows.Forms.CheckBox();
-			this.customCheckBox = new System.Windows.Forms.CheckBox();
 			this.ModeComboBox = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -51,12 +48,21 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.logsBackgroundWorker = new System.ComponentModel.BackgroundWorker();
 			this._exploreBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+			this.avantureKindGroupBox = new System.Windows.Forms.GroupBox();
+			this.radioButton2 = new System.Windows.Forms.RadioButton();
+			this.radioButton1 = new System.Windows.Forms.RadioButton();
+			this.dungeBoolGroupBox = new System.Windows.Forms.GroupBox();
+			this.successCheckBox = new System.Windows.Forms.CheckBox();
+			this.customCheckBox = new System.Windows.Forms.CheckBox();
+			this.specialCheckBox = new System.Windows.Forms.CheckBox();
+			this.avantureKindGroupBox.SuspendLayout();
+			this.dungeBoolGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// startButton
 			// 
 			this.startButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.startButton.Location = new System.Drawing.Point(39, 256);
+			this.startButton.Location = new System.Drawing.Point(39, 316);
 			this.startButton.Margin = new System.Windows.Forms.Padding(4);
 			this.startButton.Name = "startButton";
 			this.startButton.Size = new System.Drawing.Size(156, 41);
@@ -78,7 +84,7 @@
 			// dateTimePicker1
 			// 
 			this.dateTimePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.dateTimePicker1.Location = new System.Drawing.Point(36, 38);
+			this.dateTimePicker1.Location = new System.Drawing.Point(36, 98);
 			this.dateTimePicker1.Margin = new System.Windows.Forms.Padding(4);
 			this.dateTimePicker1.Name = "dateTimePicker1";
 			this.dateTimePicker1.Size = new System.Drawing.Size(203, 30);
@@ -88,7 +94,7 @@
 			// dateTimePicker2
 			// 
 			this.dateTimePicker2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.dateTimePicker2.Location = new System.Drawing.Point(36, 84);
+			this.dateTimePicker2.Location = new System.Drawing.Point(36, 144);
 			this.dateTimePicker2.Margin = new System.Windows.Forms.Padding(4);
 			this.dateTimePicker2.Name = "dateTimePicker2";
 			this.dateTimePicker2.Size = new System.Drawing.Size(203, 30);
@@ -117,12 +123,12 @@
 			// 
 			// countTextBox
 			// 
-			this.countTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.countTextBox.Location = new System.Drawing.Point(99, 320);
+			this.countTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.countTextBox.Location = new System.Drawing.Point(319, 229);
 			this.countTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.countTextBox.Name = "countTextBox";
 			this.countTextBox.ReadOnly = true;
-			this.countTextBox.Size = new System.Drawing.Size(95, 30);
+			this.countTextBox.Size = new System.Drawing.Size(66, 26);
 			this.countTextBox.TabIndex = 8;
 			this.countTextBox.Text = "1";
 			// 
@@ -145,32 +151,6 @@
 			this.tableRichTextBox.Size = new System.Drawing.Size(1908, 221);
 			this.tableRichTextBox.TabIndex = 10;
 			this.tableRichTextBox.Text = "";
-			// 
-			// specialCheckBox
-			// 
-			this.specialCheckBox.AutoSize = true;
-			this.specialCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.specialCheckBox.Location = new System.Drawing.Point(39, 171);
-			this.specialCheckBox.Margin = new System.Windows.Forms.Padding(4);
-			this.specialCheckBox.Name = "specialCheckBox";
-			this.specialCheckBox.Size = new System.Drawing.Size(157, 29);
-			this.specialCheckBox.TabIndex = 11;
-			this.specialCheckBox.Text = "Специальное";
-			this.specialCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// successCheckBox
-			// 
-			this.successCheckBox.AutoSize = true;
-			this.successCheckBox.Checked = true;
-			this.successCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.successCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.successCheckBox.Location = new System.Drawing.Point(39, 137);
-			this.successCheckBox.Margin = new System.Windows.Forms.Padding(4);
-			this.successCheckBox.Name = "successCheckBox";
-			this.successCheckBox.Size = new System.Drawing.Size(88, 29);
-			this.successCheckBox.TabIndex = 12;
-			this.successCheckBox.Text = "Успех";
-			this.successCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// resultRichTextBox
 			// 
@@ -204,18 +184,6 @@
 			this.checkBoxMinRoute.Text = "MinRoute";
 			this.checkBoxMinRoute.UseVisualStyleBackColor = true;
 			// 
-			// customCheckBox
-			// 
-			this.customCheckBox.AutoSize = true;
-			this.customCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.customCheckBox.Location = new System.Drawing.Point(39, 208);
-			this.customCheckBox.Margin = new System.Windows.Forms.Padding(4);
-			this.customCheckBox.Name = "customCheckBox";
-			this.customCheckBox.Size = new System.Drawing.Size(139, 29);
-			this.customCheckBox.TabIndex = 16;
-			this.customCheckBox.Text = "Кастомное";
-			this.customCheckBox.UseVisualStyleBackColor = true;
-			// 
 			// ModeComboBox
 			// 
 			this.ModeComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -242,7 +210,7 @@
 			// 
 			this.label2.AutoSize = true;
 			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label2.Location = new System.Drawing.Point(35, 327);
+			this.label2.Location = new System.Drawing.Point(255, 232);
 			this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(60, 20);
@@ -264,7 +232,7 @@
 			// 
 			this.label4.AutoSize = true;
 			this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label4.Location = new System.Drawing.Point(12, 46);
+			this.label4.Location = new System.Drawing.Point(12, 106);
 			this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(18, 20);
@@ -275,7 +243,7 @@
 			// 
 			this.label5.AutoSize = true;
 			this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label5.Location = new System.Drawing.Point(4, 91);
+			this.label5.Location = new System.Drawing.Point(4, 151);
 			this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(29, 20);
@@ -294,23 +262,107 @@
 			this._exploreBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
 			this._exploreBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker2_RunWorkerCompleted);
 			// 
+			// avantureKindGroupBox
+			// 
+			this.avantureKindGroupBox.Controls.Add(this.radioButton2);
+			this.avantureKindGroupBox.Controls.Add(this.radioButton1);
+			this.avantureKindGroupBox.Location = new System.Drawing.Point(17, 32);
+			this.avantureKindGroupBox.Name = "avantureKindGroupBox";
+			this.avantureKindGroupBox.Size = new System.Drawing.Size(232, 46);
+			this.avantureKindGroupBox.TabIndex = 25;
+			this.avantureKindGroupBox.TabStop = false;
+			// 
+			// radioButton2
+			// 
+			this.radioButton2.AutoSize = true;
+			this.radioButton2.Checked = true;
+			this.radioButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.radioButton2.Location = new System.Drawing.Point(105, 12);
+			this.radioButton2.Name = "radioButton2";
+			this.radioButton2.Size = new System.Drawing.Size(120, 28);
+			this.radioButton2.TabIndex = 27;
+			this.radioButton2.TabStop = true;
+			this.radioButton2.Text = "Полигоны";
+			this.radioButton2.UseVisualStyleBackColor = true;
+			this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+			// 
+			// radioButton1
+			// 
+			this.radioButton1.AutoSize = true;
+			this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.radioButton1.Location = new System.Drawing.Point(7, 12);
+			this.radioButton1.Name = "radioButton1";
+			this.radioButton1.Size = new System.Drawing.Size(91, 28);
+			this.radioButton1.TabIndex = 26;
+			this.radioButton1.Text = "Данжи";
+			this.radioButton1.UseVisualStyleBackColor = true;
+			this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+			// 
+			// dungeBoolGroupBox
+			// 
+			this.dungeBoolGroupBox.Controls.Add(this.successCheckBox);
+			this.dungeBoolGroupBox.Controls.Add(this.customCheckBox);
+			this.dungeBoolGroupBox.Controls.Add(this.specialCheckBox);
+			this.dungeBoolGroupBox.Location = new System.Drawing.Point(12, 191);
+			this.dungeBoolGroupBox.Name = "dungeBoolGroupBox";
+			this.dungeBoolGroupBox.Size = new System.Drawing.Size(226, 114);
+			this.dungeBoolGroupBox.TabIndex = 26;
+			this.dungeBoolGroupBox.TabStop = false;
+			// 
+			// successCheckBox
+			// 
+			this.successCheckBox.AutoSize = true;
+			this.successCheckBox.Checked = true;
+			this.successCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.successCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.successCheckBox.Location = new System.Drawing.Point(35, 7);
+			this.successCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.successCheckBox.Name = "successCheckBox";
+			this.successCheckBox.Size = new System.Drawing.Size(88, 29);
+			this.successCheckBox.TabIndex = 18;
+			this.successCheckBox.Text = "Успех";
+			this.successCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// customCheckBox
+			// 
+			this.customCheckBox.AutoSize = true;
+			this.customCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.customCheckBox.Location = new System.Drawing.Point(35, 79);
+			this.customCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.customCheckBox.Name = "customCheckBox";
+			this.customCheckBox.Size = new System.Drawing.Size(139, 29);
+			this.customCheckBox.TabIndex = 19;
+			this.customCheckBox.Text = "Кастомное";
+			this.customCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// specialCheckBox
+			// 
+			this.specialCheckBox.AutoSize = true;
+			this.specialCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.specialCheckBox.Location = new System.Drawing.Point(35, 42);
+			this.specialCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.specialCheckBox.Name = "specialCheckBox";
+			this.specialCheckBox.Size = new System.Drawing.Size(157, 29);
+			this.specialCheckBox.TabIndex = 17;
+			this.specialCheckBox.Text = "Специальное";
+			this.specialCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1762, 820);
+			this.Controls.Add(this.dungeBoolGroupBox);
+			this.Controls.Add(this.avantureKindGroupBox);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.ModeComboBox);
-			this.Controls.Add(this.customCheckBox);
 			this.Controls.Add(this.checkBoxMinRoute);
 			this.Controls.Add(this.hashTextBox);
 			this.Controls.Add(this.resultRichTextBox);
-			this.Controls.Add(this.successCheckBox);
-			this.Controls.Add(this.specialCheckBox);
 			this.Controls.Add(this.tableRichTextBox);
 			this.Controls.Add(this.errorTextBox);
 			this.Controls.Add(this.countTextBox);
@@ -325,6 +377,10 @@
 			this.Text = "MapExplorer";
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
+			this.avantureKindGroupBox.ResumeLayout(false);
+			this.avantureKindGroupBox.PerformLayout();
+			this.dungeBoolGroupBox.ResumeLayout(false);
+			this.dungeBoolGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -340,12 +396,9 @@
 		private System.Windows.Forms.TextBox countTextBox;
 		private System.Windows.Forms.TextBox errorTextBox;
 		private System.Windows.Forms.RichTextBox tableRichTextBox;
-		private System.Windows.Forms.CheckBox specialCheckBox;
-		private System.Windows.Forms.CheckBox successCheckBox;
 		private System.Windows.Forms.RichTextBox resultRichTextBox;
 		private System.Windows.Forms.TextBox hashTextBox;
 		private System.Windows.Forms.CheckBox checkBoxMinRoute;
-        private System.Windows.Forms.CheckBox customCheckBox;
         private System.Windows.Forms.ComboBox ModeComboBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
@@ -354,6 +407,13 @@
 		private System.Windows.Forms.Label label5;
         private System.ComponentModel.BackgroundWorker logsBackgroundWorker;
 		private System.ComponentModel.BackgroundWorker _exploreBackgroundWorker;
+		private System.Windows.Forms.GroupBox avantureKindGroupBox;
+		private System.Windows.Forms.RadioButton radioButton2;
+		private System.Windows.Forms.RadioButton radioButton1;
+		private System.Windows.Forms.GroupBox dungeBoolGroupBox;
+		private System.Windows.Forms.CheckBox successCheckBox;
+		private System.Windows.Forms.CheckBox customCheckBox;
+		private System.Windows.Forms.CheckBox specialCheckBox;
 	}
 }
 

@@ -13,7 +13,8 @@ namespace MapsExplorer
 		public bool Success;
 		public bool Special;
 		public bool Custom;
-		public ExploreMode ExploreMode;
+		public DungeonExploreMode DungeonExploreMode;
+		public PolygonExploreMode PolygonExploreMode;
 		public string Hash;
 
 		public static FormData ReadFromFile(string fileName)

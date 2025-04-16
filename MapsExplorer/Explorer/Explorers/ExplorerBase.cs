@@ -1,14 +1,16 @@
 ﻿using MapsExplorer;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 public class ExplorerBase
 {
-	protected List<DungeLine> _resultLines = new List<DungeLine>();
+	protected List<LogLine> _resultLines = new List<LogLine>();
 	protected LogHandler _logHandler;
-	protected ExploreMode _exploreMode;
+	protected DungeonLogHandler DungeonLogHandler => _logHandler as DungeonLogHandler;
+	protected PolygonLogHandler PolygonLogHandler => _logHandler as PolygonLogHandler;
+	protected AvantureKind _avantureKind;
+	protected DungeonExploreMode _dungeonExploreMode;
+	protected PolygonExploreMode _polygonExploreMode;
 	protected BackgroundWorker _backgroundWorker;
 	protected bool _customCheckBoxChecked;
 	protected bool _checkBoxMinRouteChecked;
@@ -16,9 +18,11 @@ public class ExplorerBase
 	public string TableText = "";
 	public string ResultText = "";
 
-	public void Init(ExploreMode exploreMode, LogHandler logHandler, List<DungeLine> resultLines, BackgroundWorker backgroundWorker, bool customCheckBoxChecked, bool checkBoxMinRouteChecked)
+	public void Init(AvantureKind avantureKind, DungeonExploreMode dungeonExploreMode, PolygonExploreMode polygonExploreMode, LogHandler logHandler, List<LogLine> resultLines, BackgroundWorker backgroundWorker, bool customCheckBoxChecked, bool checkBoxMinRouteChecked)
 	{
-		_exploreMode = exploreMode;
+		_avantureKind = avantureKind;
+		_dungeonExploreMode = dungeonExploreMode;
+		_polygonExploreMode = polygonExploreMode;
 		_logHandler = logHandler;
 		_resultLines = resultLines;
 		_backgroundWorker = backgroundWorker;

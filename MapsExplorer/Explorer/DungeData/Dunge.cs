@@ -8,7 +8,7 @@ namespace MapsExplorer
 {
 	public class Dunge
 	{
-		public DungeLine DungeLine;
+		public LogLine LogLine;
 		public string ParseError;
 		public int Steps;
 		public bool SeeStairsFromEntrance;
@@ -59,9 +59,9 @@ namespace MapsExplorer
 		public DateTime StartDateTime;
 		public DateTime EndDateTime;
 
-		public Dunge(DungeLine dungeLine)
+		public Dunge(LogLine dungeLine)
 		{
-			DungeLine = dungeLine;
+			LogLine = dungeLine;
 		}
 
 		public Cell GetCell(Step step)
@@ -83,7 +83,7 @@ namespace MapsExplorer
 
 		public bool IsNormalBosses()
 		{
-			return DungeLine.Kind != DungeKind.Миграции && DungeLine.Kind != DungeKind.Загадки && DungeLine.Kind != DungeKind.Заброшенности;
+			return LogLine.DungeKind != DungeKind.Миграции && LogLine.DungeKind != DungeKind.Загадки && LogLine.DungeKind != DungeKind.Заброшенности;
 		}
 	}
 }
