@@ -11,6 +11,7 @@ namespace MapsExplorer
 	public class DungeonLogHandler : LogHandler
 	{
 		private readonly string[] VoiceKinds = { "север", "восток", "юг", "запад", "вниз", "спуск", "лестниц", "вверх", "наверх", "подним", "норд", "ост", "зюйд", "вест" };
+		private readonly Regex _partsKindsRegex;
 
 		private RoutesExplorer _routesExplorer;
 		private DungeonExploreMode _mode;
@@ -90,6 +91,7 @@ namespace MapsExplorer
 			_bossWarningRegex = new Regex(warnings);
 			_partBossLevelRegex = new Regex(@" \(ур\. [1234]\)");
 			_lootRegex = new Regex(@"(?:забирает|получает|кладёт в карман|становится богаче на|кладёт в кошелёк) ([^\.\,]+?)(?:(?:\, | и )([^\.\,]+?))*\.");
+			_partsKindsRegex = new Regex(@"«.*(сердце|шкуру|рога|глаз|ухо|хвост|филе|копыто|лапу|ребро).*»");
 		}
 
 		public Dunge GetDunge(LogLine line, DungeonExploreMode mode = DungeonExploreMode.None)
@@ -1185,6 +1187,11 @@ namespace MapsExplorer
 							{
 								if (infl && stepI < boss.Steps)
 									boss.InfluencesByStep[stepI]++;
+								if (infl && _mode == DungeonExploreMode.VoicesAndParts && _partsKindsRegex.IsMatch(lineText))
+								{
+									var m = _partsKindsRegex.Matches(lineText);
+									boss.PartVoices.Add(m[0].Groups[0].Value);
+								}
 								if (_mode == DungeonExploreMode.HeroDamages && stepI < boss.TextLines.Length - 1)
 								{
 									var strBlock = logLine.QuerySelector("div.text_content");
@@ -1250,7 +1257,7 @@ namespace MapsExplorer
 							boss.TribbleInFinal = boss.TribbleInFinal || tribbl;
 							if (tribbl)
 								boss.TribbleInFinal2 = logLine.TextContent.IndexOf(tribbleText, tribblIndex + 6) > 0;
-							if (_mode == DungeonExploreMode.BossesLoot)
+							if (_mode == DungeonExploreMode.BossesLoot || _mode == DungeonExploreMode.VoicesAndParts)
 							{
 								MatchCollection matches = _lootRegex.Matches(logLine.TextContent);
 								foreach (Match match in matches)

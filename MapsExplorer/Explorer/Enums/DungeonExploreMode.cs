@@ -28,4 +28,5 @@ public enum DungeonExploreMode
 	TimeStatistic,
 	HalfTrueHints,
 	HeroDamages,
+	VoicesAndParts
 }

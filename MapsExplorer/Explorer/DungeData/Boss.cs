@@ -40,5 +40,6 @@ namespace MapsExplorer
 		public bool IsFinal;
 		public List<string> Loot = new List<string>();
 		public List<string> LootParts = new List<string>();
+		public List<string> PartVoices = new List<string>();
 	}
 }

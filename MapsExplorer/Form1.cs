@@ -214,6 +214,9 @@ namespace MapsExplorer
 					case DungeonExploreMode.HeroDamages:     //	Дамаг, наносимый героями
 						explorer = new HeroDamageExplorer();
 						break;
+					case DungeonExploreMode.VoicesAndParts:     //	Гласы и запчасти с боссов
+						explorer = new VoicesAndPartsExplorer();
+						break;
 					default:
 						_dungeonLogHandler.LastError = $"Mode {_dungeonExploreMode} not realized";
 						break;

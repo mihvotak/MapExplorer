@@ -95,6 +95,7 @@
     <Compile Include="Explorer\Explorers\Dunges\TribblesWithBossesExplorer.cs" />
     <Compile Include="Explorer\Explorers\Dunges\BossesByNameExplorer.cs" />
     <Compile Include="Explorer\Explorers\Dunges\CacheHintsExplorer.cs" />
+    <Compile Include="Explorer\Explorers\Dunges\VoicesAndPartsExplorer.cs" />
     <Compile Include="Explorer\Explorers\ExplorerBase.cs" />
     <Compile Include="Explorer\Explorers\Dunges\HalfFinBossesExplorer.cs" />
     <Compile Include="Explorer\Explorers\Dunges\HintsExplorer.cs" />
