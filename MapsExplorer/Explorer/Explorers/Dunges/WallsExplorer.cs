@@ -8,13 +8,15 @@ public class WallsExplorer : ExplorerBase
 {
 	public override void Work()
 	{
-		int[,] aqua = new int[21, 21];
-		int[,] norm1f = new int[21, 21];
-		int[,] cust1f = new int[21, 21];
-		int[,] sum1f = new int[21, 21];
-		int[,] norm2f = new int[21, 21];
-		int[,] cust2f = new int[21, 21];
-		int[,] sum2f = new int[21, 21];
+		int maxSize = 22;
+		int minSize = 9;
+		int[,] aqua = new int[maxSize, maxSize];
+		int[,] norm1f = new int[maxSize, maxSize];
+		int[,] cust1f = new int[maxSize, maxSize];
+		int[,] sum1f = new int[maxSize, maxSize];
+		int[,] norm2f = new int[maxSize, maxSize];
+		int[,] cust2f = new int[maxSize, maxSize];
+		int[,] sum2f = new int[maxSize, maxSize];
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
@@ -74,13 +76,13 @@ public class WallsExplorer : ExplorerBase
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine(name);
-			for (int w = 10; w <= 16; w++)
+			for (int w = minSize; w < maxSize; w++)
 				sb.Append("\t" + w);
 			sb.AppendLine();
-			for (int h = 10; h <= 16; h++)
+			for (int h = minSize; h < maxSize; h++)
 			{
 				sb.Append(h + "");
-				for (int w = 10; w <= 16; w++)
+				for (int w = minSize; w < maxSize; w++)
 				{
 					int value = array[w, h];
 					sb.Append("\t" + value);
