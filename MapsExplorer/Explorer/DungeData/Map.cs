@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +23,10 @@ namespace MapsExplorer
 		public bool IsLeftWall;
 		public bool IsTopWall;
 		public bool IsBottomWall;
+		public bool IsShureRightWall;
+		public bool IsShureLeftWall;
+		public bool IsShureTopWall;
+		public bool IsShureBottomWall;
 
 		public bool RareWalls;
 

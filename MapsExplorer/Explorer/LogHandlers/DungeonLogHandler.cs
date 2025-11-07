@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -468,6 +468,7 @@ namespace MapsExplorer
 					}
 				}
 				map.IsLeftWall &= wallCount >= 3;
+				map.IsShureLeftWall &= wallCount >= 5;
 				wallCount = 0;
 				map.IsRightWall = true;
 				for (int i = 0; i < map.Height; i++)
@@ -482,6 +483,7 @@ namespace MapsExplorer
 					}
 				}
 				map.IsRightWall &= wallCount >= 3;
+				map.IsShureRightWall &= wallCount >= 5;
 				wallCount = 0;
 				map.IsTopWall = true;
 				for (int i = 0; i < map.Width; i++)
@@ -496,6 +498,7 @@ namespace MapsExplorer
 					}
 				}
 				map.IsTopWall &= wallCount >= 3;
+				map.IsShureTopWall &= wallCount >= 5;
 				wallCount = 0;
 				map.IsBottomWall = true;
 				for (int i = 0; i < map.Width; i++)
@@ -510,6 +513,7 @@ namespace MapsExplorer
 					}
 				}
 				map.IsBottomWall &= wallCount >= 3;
+				map.IsShureBottomWall &= wallCount >= 5;
 
 				bool nearLeftWall = map.IsLeftWall && map.EnterPos.x == 1;
 				bool nearRightWall = map.IsRightWall && map.EnterPos.x == map.Width - 2;
