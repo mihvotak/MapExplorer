@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -8,9 +8,11 @@ public class ExplorerBase
 	protected LogHandler _logHandler;
 	protected DungeonLogHandler DungeonLogHandler => _logHandler as DungeonLogHandler;
 	protected PolygonLogHandler PolygonLogHandler => _logHandler as PolygonLogHandler;
+	protected SeaLogHandler SeaLogHandler => _logHandler as SeaLogHandler;
 	protected AvantureKind _avantureKind;
 	protected DungeonExploreMode _dungeonExploreMode;
 	protected PolygonExploreMode _polygonExploreMode;
+	protected SeaExploreMode _seaExploreMode;
 	protected BackgroundWorker _backgroundWorker;
 	protected bool _customCheckBoxChecked;
 	protected bool _checkBoxMinRouteChecked;
@@ -18,12 +20,13 @@ public class ExplorerBase
 	public string TableText = "";
 	public string ResultText = "";
 
-	public void Init(AvantureKind avantureKind, DungeonExploreMode dungeonExploreMode, PolygonExploreMode polygonExploreMode, LogHandler logHandler, List<LogLine> resultLines, BackgroundWorker backgroundWorker, bool customCheckBoxChecked, bool checkBoxMinRouteChecked)
+	public void Init(AvantureKind avantureKind, DungeonExploreMode dungeonExploreMode, PolygonExploreMode polygonExploreMode, SeaExploreMode seaExploreMode, LogHandler logHandler, List<LogLine> resultLines, BackgroundWorker backgroundWorker, bool customCheckBoxChecked, bool checkBoxMinRouteChecked)
 	{
 		_avantureKind = avantureKind;
 		_dungeonExploreMode = dungeonExploreMode;
 		_polygonExploreMode = polygonExploreMode;
-		_logHandler = logHandler;
+        _seaExploreMode = seaExploreMode;
+        _logHandler = logHandler;
 		_resultLines = resultLines;
 		_backgroundWorker = backgroundWorker;
 		_customCheckBoxChecked = customCheckBoxChecked;

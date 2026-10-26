@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace MapsExplorer
 {
@@ -13,8 +14,9 @@ namespace MapsExplorer
 
 		private ListViewer _listViewer = new ListViewer();
 		private DungeonExploreMode _dungeonExploreMode;
-		private PolygonExploreMode _polygonExploreMode;
-		private AvantureKind _avantureKind;
+        private PolygonExploreMode _polygonExploreMode;
+        private SeaExploreMode _seaExploreMode;
+        private AvantureKind _avantureKind;
 
 		public Form1()
 		{
@@ -91,6 +93,7 @@ namespace MapsExplorer
 		private string _error;
 		private DungeonLogHandler _dungeonLogHandler = new DungeonLogHandler();
 		private PolygonLogHandler _polygonLogHandler = new PolygonLogHandler();
+		private SeaLogHandler _seaLogHandler = new SeaLogHandler();
 
 		private void exploreButton_Click(object sender, EventArgs e)
 		{
@@ -116,7 +119,7 @@ namespace MapsExplorer
 					{
 						Hash = hashTextBox.Text,
 						DateTime = Utils.ParseDateTime("11.11.2011 11:11"),
-						AvantureKind = AvantureKind.Plygon,
+						AvantureKind = AvantureKind.Polygon,
 						PolygonKind = PolygonKind.Неизвестный,
 						Success = true
 					};
@@ -222,22 +225,34 @@ namespace MapsExplorer
 						break;
 				}
 			}
-			else if (_avantureKind == AvantureKind.Plygon)
+            else if (_avantureKind == AvantureKind.Polygon)
+            {
+                switch (_polygonExploreMode)
+                {
+                    case PolygonExploreMode.SuccesPercent: //	Успешность полигонов
+                        explorer = new PolySuccessExplorer();
+                        break;
+                    default:
+                        _polygonLogHandler.LastError = $"Mode {_polygonExploreMode} not realized";
+                        break;
+                }
+            }
+            else if (_avantureKind == AvantureKind.Sea)
 			{
-				switch (_polygonExploreMode)
+				switch (_seaExploreMode)
 				{
-					case PolygonExploreMode.SuccesPercent: //	Успешность полигонов
-						explorer = new PolySuccessExplorer();
+					case SeaExploreMode.LeviPlaces: //	Места разломов с Левиафанами
+						explorer = new SeaLeviPlaceExplorer();
 						break;
 					default:
-						_polygonLogHandler.LastError = $"Mode {_polygonExploreMode} not realized";
+						_seaLogHandler.LastError = $"Mode {_seaExploreMode} not realized";
 						break;
 				}
 			}
 			if (explorer != null)
 			{
-				LogHandler logHandler = _avantureKind == AvantureKind.Dungeon ? _dungeonLogHandler as LogHandler : _polygonLogHandler;
-				explorer.Init(_avantureKind, _dungeonExploreMode, _polygonExploreMode, logHandler, _resultLines, _exploreBackgroundWorker, 
+				LogHandler logHandler = _avantureKind == AvantureKind.Dungeon ? _dungeonLogHandler as LogHandler : _avantureKind == AvantureKind.Polygon ? _polygonLogHandler : _seaLogHandler as LogHandler;
+				explorer.Init(_avantureKind, _dungeonExploreMode, _polygonExploreMode, _seaExploreMode, logHandler, _resultLines, _exploreBackgroundWorker, 
 					customCheckBox.Checked,
 					checkBoxMinRoute.Checked
 					);
@@ -287,8 +302,10 @@ namespace MapsExplorer
 				Special = specialCheckBox.Checked,
 				Custom = customCheckBox.Checked,
 				Hash = hashTextBox.Text,
+                AvantureKind = _avantureKind,
 				DungeonExploreMode = _dungeonExploreMode,
-				PolygonExploreMode = _polygonExploreMode
+				PolygonExploreMode = _polygonExploreMode,
+                SeaExploreMode = _seaExploreMode
 			};
 			string json = data.ToString();
 			File.WriteAllText(filePath, json);
@@ -309,9 +326,15 @@ namespace MapsExplorer
 
 			Form1_ResizeEnd(sender, e);
 
-			_dungeonExploreMode = data.DungeonExploreMode;
+            _avantureKind = data.AvantureKind;
+            radioButton1.Checked = _avantureKind == AvantureKind.Dungeon;
+            radioButton3.Checked = _avantureKind == AvantureKind.Sea;
+            radioButton2.Checked = _avantureKind == AvantureKind.Polygon;
+            _dungeonExploreMode = data.DungeonExploreMode;
 			_polygonExploreMode = data.PolygonExploreMode;
-			UpdateInterface();
+			_seaExploreMode = data.SeaExploreMode;
+            UpdateModes();
+            UpdateInterface();
 		}
 
 		private void UpdateModes()
@@ -326,7 +349,7 @@ namespace MapsExplorer
 						ModeComboBox.SelectedIndex = ModeComboBox.Items.Count - 1;
 				}
 			}
-			else
+			else if (_avantureKind == AvantureKind.Polygon)
 			{
 				foreach (PolygonExploreMode exploreMode in Enum.GetValues((typeof(PolygonExploreMode))))
 				{
@@ -335,11 +358,20 @@ namespace MapsExplorer
 						ModeComboBox.SelectedIndex = ModeComboBox.Items.Count - 1;
 				}
 			}
-		}
+            else // Sea
+            {
+                foreach (SeaExploreMode exploreMode in Enum.GetValues((typeof(SeaExploreMode))))
+                {
+                    ModeComboBox.Items.Add(exploreMode.ToString());
+                    if (exploreMode == _seaExploreMode)
+                        ModeComboBox.SelectedIndex = ModeComboBox.Items.Count - 1;
+                }
+            }
+        }
 
-		private void UpdateInterface()
+        private void UpdateInterface()
 		{
-			_avantureKind = radioButton1.Checked ? AvantureKind.Dungeon : AvantureKind.Plygon;
+			_avantureKind = radioButton1.Checked ? AvantureKind.Dungeon : radioButton2.Checked ? AvantureKind.Polygon : AvantureKind.Sea;
 			bool isDunge = _avantureKind == AvantureKind.Dungeon;
 			dungeBoolGroupBox.Visible = isDunge;
 
@@ -354,10 +386,15 @@ namespace MapsExplorer
 				if (!Enum.TryParse(ModeComboBox.Text, out _dungeonExploreMode))
 					_dungeonExploreMode = DungeonExploreMode.None;
 			}
-			else
-			{
-				if (!Enum.TryParse(ModeComboBox.Text, out _polygonExploreMode))
-					_polygonExploreMode = PolygonExploreMode.None;
+			else if (_avantureKind == AvantureKind.Polygon)
+            {
+                if (!Enum.TryParse(ModeComboBox.Text, out _polygonExploreMode))
+                    _polygonExploreMode = PolygonExploreMode.None;
+            }
+            else
+            {
+				if (!Enum.TryParse(ModeComboBox.Text, out _seaExploreMode))
+					_seaExploreMode = SeaExploreMode.None;
 			}
 		}
 

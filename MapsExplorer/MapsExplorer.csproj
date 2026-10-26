@@ -83,6 +83,7 @@
     <Compile Include="Explorer\Enums\HintCategory.cs" />
     <Compile Include="Explorer\Enums\PolygonExploreMode.cs" />
     <Compile Include="Explorer\Enums\PolygonKind.cs" />
+    <Compile Include="Explorer\Enums\SeaExploreMode.cs" />
     <Compile Include="Explorer\Enums\SecretKind.cs" />
     <Compile Include="Explorer\Enums\TreasureScheme.cs" />
     <Compile Include="Explorer\Enums\VoiceKind.cs" />
@@ -116,11 +117,16 @@
     <Compile Include="Explorer\Explorers\Polygons\PolyMaps4.cs" />
     <Compile Include="Explorer\Explorers\Polygons\PolyCell.cs" />
     <Compile Include="Explorer\Explorers\Polygons\PolySuccessExplorer.cs" />
+    <Compile Include="Explorer\Explorers\Seas\Sea.cs" />
+    <Compile Include="Explorer\Explorers\Seas\SeaGodResult.cs" />
+    <Compile Include="Explorer\Explorers\Seas\SeaLeviPlaceExplorer.cs" />
+    <Compile Include="Explorer\Explorers\Seas\SeaMap.cs" />
     <Compile Include="Explorer\FormData\FormData.cs" />
     <Compile Include="Explorer\ListViewer.cs" />
     <Compile Include="Explorer\LogHandlers\LogHandler.cs" />
     <Compile Include="Explorer\LogHandlers\DungeonLogHandler.cs" />
     <Compile Include="Explorer\LogHandlers\PolygonLogHandler.cs" />
+    <Compile Include="Explorer\LogHandlers\SeaLogHandler.cs" />
     <Compile Include="Explorer\Paths.cs" />
     <Compile Include="Explorer\PolygonData\GodResult.cs" />
     <Compile Include="Explorer\PolygonData\Polygon.cs" />

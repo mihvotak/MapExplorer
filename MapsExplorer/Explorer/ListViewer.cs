@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Globalization;
 using System.Collections.Generic;
@@ -37,7 +37,8 @@ namespace MapsExplorer
         {
             string address = "https://gv.erinome.net/duels/log/?act=search";
 
-            address += avanture == AvantureKind.Dungeon ? "&t=2" : "&t=9";  //  2 подземелье, 9 полигон
+            address += avanture == AvantureKind.Dungeon ? "&t=2" :
+                avanture == AvantureKind.Polygon ? "&t=9" : "&t=3"; //  2 подземелье, 9 полигон, 3 море
             address += "&b=" + beginDate.ToString("dd.MM.yyyy"); //13.05.2020
             address += "&e=" + endDate.ToString("dd.MM.yyyy");
             address += add;
@@ -188,30 +189,37 @@ namespace MapsExplorer
 						var t3 = tds[3].TextContent;    //  успех
 						line.Success = t3 == "успех";
 					}
-					else // Полигон
-					{
-						line.AvantureKind = AvantureKind.Plygon;
-						var t1 = tds[1].TextContent;    // Тип полигона
-						if (t1.Length > 8)
-						{
-							t1 = t1.Substring(8, t1.Length - 8);
+                    else if (line.Hash.Length == 7) // Море
+                    {
+                        var t3 = tds[3].TextContent;    //  колонка "результат"
+                        line.SuccessCount = 0;// TODO распарсить "кладов: 2, реликвий: 1", "кладов: 0"
+                        line.Success = line.SuccessCount > 0;
+                        // TODO Определение типов/особенностей моря, от 0 до 2
+                    }
+                    else // Полигон
+                    {
+                        line.AvantureKind = AvantureKind.Polygon;
+                        var t1 = tds[1].TextContent;    // Тип полигона
+                        if (t1.Length > 8)
+                        {
+                            t1 = t1.Substring(8, t1.Length - 8);
 
-							if (Enum.TryParse(t1, out line.PolygonKind))
-							{
-								;//
-							}
-							else if (t1 == "Семи Бит")
-							{
-								line.PolygonKind = PolygonKind.Семи_Бит;
-							}
-							else
-								SetError("Неизвестный тип полигона");
-						}
-						else
-							line.PolygonKind = PolygonKind.Обычный;
-						var t3 = tds[3].TextContent[0] + "";
-						int.TryParse(t3, out line.BitsSum);
-					}
+                            if (Enum.TryParse(t1, out line.PolygonKind))
+                            {
+                                ;//
+                            }
+                            else if (t1 == "Семи Бит")
+                            {
+                                line.PolygonKind = PolygonKind.Семи_Бит;
+                            }
+                            else
+                                SetError("Неизвестный тип полигона");
+                        }
+                        else
+                            line.PolygonKind = PolygonKind.Обычный;
+                        var t3 = tds[3].TextContent[0] + "";
+                        int.TryParse(t3, out line.BitsSum);
+                    }
 					var t2 = tds[2].TextContent;    //  боги
                     line.Gods = new List<string>(t2.Split(','));
                     for (int i = 0; i < line.Gods.Count; i++)

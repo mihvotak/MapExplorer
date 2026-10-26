@@ -1,8 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MapsExplorer
 {
@@ -17,6 +14,7 @@ namespace MapsExplorer
 		public bool Custom;
 		public bool Vault;
 		public List<string> Gods = new List<string>();
+		public int SuccessCount;
 		public bool Success;
 		public int BitsSum;
 		public DateTime DateTime;

@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace MapsExplorer
 {
@@ -13,8 +12,10 @@ namespace MapsExplorer
 		public bool Success;
 		public bool Special;
 		public bool Custom;
+        public AvantureKind AvantureKind;
 		public DungeonExploreMode DungeonExploreMode;
 		public PolygonExploreMode PolygonExploreMode;
+		public SeaExploreMode SeaExploreMode;
 		public string Hash;
 
 		public static FormData ReadFromFile(string fileName)

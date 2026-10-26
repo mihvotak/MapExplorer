@@ -1,6 +1,7 @@
-﻿
+
 public enum AvantureKind
 {
 	Dungeon,
-	Plygon
+    Sea,
+    Polygon,
 }

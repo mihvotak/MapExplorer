@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MapsExplorer
 {
@@ -10,6 +5,7 @@ namespace MapsExplorer
 	{
 		public const string DungeonsBaseDir = "../../../../Base/Dungeons";
 		public const string PolygonsBaseDir = "../../../../Base/Polygons";
+		public const string SeasBaseDir = "../../../../Base/Seas";
 		public const string ResultsDir = "../../../../Results";
 		public const string SaveDir = "../../../../Save";
 

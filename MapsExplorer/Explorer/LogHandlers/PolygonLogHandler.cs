@@ -1,7 +1,6 @@
-﻿using AngleSharp;
+using AngleSharp;
 using MapsExplorer;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -52,52 +51,61 @@ public class PolygonLogHandler : LogHandler
 		var godsContainer = document.QuerySelectorAll("div").First(e => e.Id == "h_tbl");
 		
 		var gods = godsContainer.QuerySelectorAll("div.t_line");
-		
-		for (int i = 0; i < gods.Length; i++)
-		{
-			var godDiv = gods[i];
-			GodResult god = new GodResult();
-			var c1 = godDiv.QuerySelector("div.c1");
-			string c1text = c1.TextContent;
-			god.Letter = c1text.Substring(0, 1);
-			int i1 = c1text.IndexOf("+");
-			int i2 = c1text.IndexOf("+", i1 + 1);
-			god.BossName = c1text.Substring(i1 + 1, i2 - (i1 + 1));
-			var link = c1.QuerySelector("a");
-			god.Link = link.GetAttribute("href");
-			god.GodName = link.TextContent;
-			var c2 = godDiv.QuerySelector("div.c2");
-			var ple = c2.QuerySelector("div.ple");
-			var hpe = ple.QuerySelector("div.hpe");
-			var spans = hpe.QuerySelectorAll("span");
-			foreach (var span in spans)
-			{
-				string id = span.GetAttribute("id");
-				if (id.Length == 7 && id.Substring(id.Length - 3, 3) == "_hp")
-				{
-					int.TryParse(span.TextContent, out god.BossEndHP);
-				}
-			}
-			string pleStr = ple.TextContent;
-			int index = pleStr.LastIndexOf('/');
-			string hp = pleStr.Substring(index + 1, pleStr.Length - (index + 1));
-			int.TryParse(hp, out god.BossFullHP);
-			var cg = c2.QuerySelector("span.cg");
-			var cgText = cg.TextContent;
-			cgText = cgText.Substring(0, cgText.IndexOf(']'));
-			var tIndex = cgText.LastIndexOf("\t");
-			cgText = cgText.Substring(tIndex + 1, cgText.Length - (tIndex + 1));
-			int plusIndex = cgText.IndexOf('+');
-			if (plusIndex != -1)
-				int.TryParse(cgText.Substring(plusIndex - 1, 1), out god.Bytes);
-			else
-				god.Bytes = 0;
-			int braIndex = cgText.IndexOf('[');
-			var bits = cgText.Substring(braIndex + 1, cgText.Length - (braIndex + 1));
-			int dotIndex = bits.IndexOf('.');
-			bits = bits.Substring(0, dotIndex);
-			god.Bits = bits.Length;
-			polygon.GodResults[i] = god;
+
+        for (int i = 0; i < gods.Length; i++)
+        {
+            var godDiv = gods[i];
+            GodResult god = new GodResult();
+            var c1 = godDiv.QuerySelector("div.c1");
+            string c1text = c1.TextContent;
+            god.Letter = c1text.Substring(0, 1);
+            int i1 = c1text.IndexOf("+");
+            int i2 = c1text.IndexOf("+", i1 + 1);
+            god.BossName = c1text.Substring(i1 + 1, i2 - (i1 + 1));
+            var link = c1.QuerySelector("a");
+            god.Link = link.GetAttribute("href");
+            god.GodName = link.TextContent;
+            var c2 = godDiv.QuerySelector("div.c2");
+            var ple = c2.QuerySelector("div.ple");
+            var hpe = ple.QuerySelector("div.hpe");
+            var spans = hpe.QuerySelectorAll("span");
+            foreach (var span in spans)
+            {
+                string id = span.GetAttribute("id");
+                if (id.Length == 7 && id.Substring(id.Length - 3, 3) == "_hp")
+                {
+                    int.TryParse(span.TextContent, out god.BossEndHP);
+                }
+            }
+            string pleStr = ple.TextContent;
+            int index = pleStr.LastIndexOf('/');
+            string hp = pleStr.Substring(index + 1, pleStr.Length - (index + 1));
+            int.TryParse(hp, out god.BossFullHP);
+            var cg = c2.QuerySelector("span.cg");
+            var cgText = cg.TextContent;
+            var ketIndex = cgText.IndexOf(']');
+            if (ketIndex != -1)
+            {
+                cgText = cgText.Substring(0, ketIndex);
+                var tIndex = cgText.LastIndexOf("\t");
+                cgText = cgText.Substring(tIndex + 1, cgText.Length - (tIndex + 1));
+                int plusIndex = cgText.IndexOf('+');
+                if (plusIndex != -1)
+                    int.TryParse(cgText.Substring(plusIndex - 1, 1), out god.Bytes);
+                else
+                    god.Bytes = 0;
+                int braIndex = cgText.IndexOf('[');
+                var bits = cgText.Substring(braIndex + 1, cgText.Length - (braIndex + 1));
+                int dotIndex = bits.IndexOf('.');
+                bits = bits.Substring(0, dotIndex);
+                god.Bits = bits.Length;
+            }
+            else
+            {
+                cgText = cgText.Replace("\t", "");
+                int.TryParse(cgText, out god.Bytes); 
+            }
+            polygon.GodResults[i] = god;
 		}
 
 		string mapsBra = "var d = [";
