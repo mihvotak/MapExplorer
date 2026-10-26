@@ -10,13 +10,13 @@ public class WallsExplorer : ExplorerBase
 	{
 		int maxSize = 22;
 		int minSize = 9;
-		int[,] aqua = new int[maxSize, maxSize];
-		int[,] norm1f = new int[maxSize, maxSize];
-		int[,] cust1f = new int[maxSize, maxSize];
-		int[,] sum1f = new int[maxSize, maxSize];
-		int[,] norm2f = new int[maxSize, maxSize];
-		int[,] cust2f = new int[maxSize, maxSize];
-		int[,] sum2f = new int[maxSize, maxSize];
+		string[,] aqua = new string[maxSize, maxSize];
+		string[,] norm1f = new string[maxSize, maxSize];
+		string[,] cust1f = new string[maxSize, maxSize];
+		string[,] sum1f = new string[maxSize, maxSize];
+		string[,] norm2f = new string[maxSize, maxSize];
+		string[,] cust2f = new string[maxSize, maxSize];
+		string[,] sum2f = new string[maxSize, maxSize];
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
@@ -47,24 +47,41 @@ public class WallsExplorer : ExplorerBase
 			tds.Add(map.Height + "");
 			int probability = wallsShure ? 2 : 1;
 			if (dunge.LastFloor == 1 && (dunge.LogLine.Category == MapCategory.Аква || dunge.LookAsAqua))
-				aqua[map.Width, map.Height] = Math.Max(probability, aqua[map.Width, map.Height]);
+			{
+				if (wallsShure || aqua[map.Width, map.Height] == null)
+					aqua[map.Width, map.Height] = line.Link;
+			}
 			else
 			{
 				if (dunge.LastFloor == 1)
 				{
 					if (dunge.IsCustom)
-						cust1f[map.Width, map.Height] = Math.Max(probability, cust1f[map.Width, map.Height]);
+					{
+						if (wallsShure || cust1f[map.Width, map.Height] == null)
+							cust1f[map.Width, map.Height] = line.Link;
+					}
 					else
-						norm1f[map.Width, map.Height] = Math.Max(probability, norm1f[map.Width, map.Height]);
-					sum1f[map.Width, map.Height] = Math.Max(probability, sum1f[map.Width, map.Height]);
+					{
+						if (wallsShure || norm1f[map.Width, map.Height] == null)
+							norm1f[map.Width, map.Height] = line.Link;
+					}
+					if (wallsShure || sum1f[map.Width, map.Height] == null)
+						sum1f[map.Width, map.Height] = line.Link;
 				}
 				else if (dunge.LastFloor == 2)
 				{
 					if (dunge.IsCustom)
-						cust2f[map.Width, map.Height] = Math.Max(probability, cust2f[map.Width, map.Height]);
+					{
+						if (wallsShure || cust2f[map.Width, map.Height] == null)
+							cust2f[map.Width, map.Height] = line.Link;
+					}
 					else
-						norm2f[map.Width, map.Height] = Math.Max(probability, norm2f[map.Width, map.Height]);
-					sum2f[map.Width, map.Height] = Math.Max(probability, sum2f[map.Width, map.Height]);
+					{
+						if (wallsShure || norm2f[map.Width, map.Height] == null)
+							norm2f[map.Width, map.Height] = line.Link;
+					}
+					if (wallsShure || sum2f[map.Width, map.Height] == null)
+						sum2f[map.Width, map.Height] = line.Link;
 				}
 			}
 			string tr = string.Join("\t", tds);
@@ -72,7 +89,7 @@ public class WallsExplorer : ExplorerBase
 
 			ReportProgress(i);
 		}
-		string PrintArray(int[,] array, string name)
+		string PrintArray(string[,] array, string name)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine(name);
@@ -83,10 +100,7 @@ public class WallsExplorer : ExplorerBase
 			{
 				sb.Append(h + "");
 				for (int w = minSize; w < maxSize; w++)
-				{
-					int value = array[w, h];
-					sb.Append("\t" + value);
-				}
+					sb.Append("\t" + array[w, h]);
 				sb.AppendLine();
 			}
 			return sb.ToString();

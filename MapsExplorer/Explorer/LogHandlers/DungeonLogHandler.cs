@@ -468,7 +468,7 @@ namespace MapsExplorer
 					}
 				}
 				map.IsLeftWall &= wallCount >= 3;
-				map.IsShureLeftWall &= wallCount >= 5;
+				map.IsShureLeftWall = map.IsLeftWall && wallCount >= 5;
 				wallCount = 0;
 				map.IsRightWall = true;
 				for (int i = 0; i < map.Height; i++)
@@ -483,7 +483,7 @@ namespace MapsExplorer
 					}
 				}
 				map.IsRightWall &= wallCount >= 3;
-				map.IsShureRightWall &= wallCount >= 5;
+				map.IsShureRightWall = map.IsRightWall && wallCount >= 5;
 				wallCount = 0;
 				map.IsTopWall = true;
 				for (int i = 0; i < map.Width; i++)
@@ -498,7 +498,7 @@ namespace MapsExplorer
 					}
 				}
 				map.IsTopWall &= wallCount >= 3;
-				map.IsShureTopWall &= wallCount >= 5;
+				map.IsShureTopWall = map.IsTopWall && wallCount >= 5;
 				wallCount = 0;
 				map.IsBottomWall = true;
 				for (int i = 0; i < map.Width; i++)
@@ -513,7 +513,7 @@ namespace MapsExplorer
 					}
 				}
 				map.IsBottomWall &= wallCount >= 3;
-				map.IsShureBottomWall &= wallCount >= 5;
+				map.IsShureBottomWall = map.IsBottomWall && wallCount >= 5;
 
 				bool nearLeftWall = map.IsLeftWall && map.EnterPos.x == 1;
 				bool nearRightWall = map.IsRightWall && map.EnterPos.x == map.Width - 2;
@@ -593,6 +593,53 @@ namespace MapsExplorer
 						dunge.LookAsStable = true;
 					else if (map.RareWalls && canBeAqua && !canBeStable)
 						dunge.LookAsAqua = true;
+				}
+
+				if (floor == 2 || (dunge.LogLine.Category == MapCategory.Рандом && !dunge.LookAsAqua))
+				{
+					if (nearLeftWall)
+					{
+						map.IsLeftWall = false;
+						map.IsShureLeftWall = false;
+					}
+					if (nearRightWall)
+					{
+						map.IsRightWall = false;
+						map.IsShureRightWall = false;
+					}
+					if (nearTopWall)
+					{
+						map.IsTopWall = false;
+						map.IsShureTopWall = false;
+					}
+					if (nearBottomWall)
+					{
+						map.IsBottomWall = false;
+						map.IsShureBottomWall = false;
+					}
+					if (floor == dunge.LastFloor && dunge.TreasurePos != null && dunge.TreasurePos.Floor == floor)
+					{
+						if (dunge.TreasurePos.Pos.x == 1)
+						{
+							map.IsLeftWall = false;
+							map.IsShureLeftWall = false;
+						}
+						if (dunge.TreasurePos.Pos.x == map.Width - 2)
+						{
+							map.IsRightWall = false;
+							map.IsShureRightWall = false;
+						}
+						if (dunge.TreasurePos.Pos.y == 1)
+						{
+							map.IsTopWall = false;
+							map.IsShureTopWall = false;
+						}
+						if (dunge.TreasurePos.Pos.y == map.Height - 2)
+						{
+							map.IsBottomWall = false;
+							map.IsShureBottomWall = false;
+						}
+					}
 				}
 			}
 
