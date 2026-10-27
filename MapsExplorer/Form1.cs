@@ -110,7 +110,7 @@ namespace MapsExplorer
 					{
 						Hash = hashTextBox.Text,
 						DateTime = Utils.ParseDateTime("11.11.2011 11:11"),
-						AvantureKind = AvantureKind.Dungeon,
+						AvantureKind = _avantureKind,
 						Category = MapCategory.Рандом,
 						DungeKind = DungeKind.Неизвестное,
 						Success = true
@@ -119,14 +119,16 @@ namespace MapsExplorer
 					{
 						Hash = hashTextBox.Text,
 						DateTime = Utils.ParseDateTime("11.11.2011 11:11"),
-						AvantureKind = AvantureKind.Polygon,
+						AvantureKind = _avantureKind,
 						PolygonKind = PolygonKind.Неизвестный,
 						Success = true
 					};
 				_resultLines = new List<LogLine>();
 				_resultLines.Add(line);
 			}
-			else if (_dungeonExploreMode == DungeonExploreMode.None)
+			else if ((_avantureKind == AvantureKind.Dungeon && _dungeonExploreMode == DungeonExploreMode.None)
+                || (_avantureKind == AvantureKind.Polygon && _polygonExploreMode == PolygonExploreMode.None)
+                || (_avantureKind == AvantureKind.Sea && _seaExploreMode == SeaExploreMode.None))
 			{
 				errorTextBox.Text = "Режим не выбран (None)";
 				return;
@@ -268,11 +270,17 @@ namespace MapsExplorer
 
 		private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-
-			if (!string.IsNullOrEmpty(_dungeonLogHandler.LastError))
+            LogHandler handler = _avantureKind == AvantureKind.Dungeon ? (LogHandler)_dungeonLogHandler
+                : _avantureKind == AvantureKind.Polygon ? (LogHandler)_polygonLogHandler : _seaLogHandler;
+            if (e.Error != null)
+            {
+                errorTextBox.Text = e.Error.Message;
+                return;
+            }
+			if (!string.IsNullOrEmpty(handler.LastError))
 			{
-				errorTextBox.Text = _dungeonLogHandler.LastError;
-				_dungeonLogHandler.LastError = null;
+				errorTextBox.Text = handler.LastError;
+				handler.LastError = null;
 			}
 			else
 			{

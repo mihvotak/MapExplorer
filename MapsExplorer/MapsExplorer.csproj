@@ -84,6 +84,7 @@
     <Compile Include="Explorer\Enums\PolygonExploreMode.cs" />
     <Compile Include="Explorer\Enums\PolygonKind.cs" />
     <Compile Include="Explorer\Enums\SeaExploreMode.cs" />
+    <Compile Include="Explorer\Enums\SeaKind.cs" />
     <Compile Include="Explorer\Enums\SecretKind.cs" />
     <Compile Include="Explorer\Enums\TreasureScheme.cs" />
     <Compile Include="Explorer\Enums\VoiceKind.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Explorer\Explorers\Polygons\PolyCell.cs" />
     <Compile Include="Explorer\Explorers\Polygons\PolySuccessExplorer.cs" />
     <Compile Include="Explorer\Explorers\Seas\Sea.cs" />
+    <Compile Include="Explorer\Explorers\Seas\SeaCell.cs" />
     <Compile Include="Explorer\Explorers\Seas\SeaGodResult.cs" />
     <Compile Include="Explorer\Explorers\Seas\SeaLeviPlaceExplorer.cs" />
     <Compile Include="Explorer\Explorers\Seas\SeaMap.cs" />
@@ -132,6 +134,7 @@
     <Compile Include="Explorer\PolygonData\Polygon.cs" />
     <Compile Include="Explorer\RoutesExplorer.cs" />
     <Compile Include="Explorer\Tools\Plot2d.cs" />
+    <Compile Include="Explorer\Tools\SeaStatMap.cs" />
     <Compile Include="Explorer\Utils.cs" />
     <Compile Include="Explorer\WebLoader.cs" />
     <Compile Include="Form1.cs">

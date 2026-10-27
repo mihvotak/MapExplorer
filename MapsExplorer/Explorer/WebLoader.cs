@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Net;
@@ -14,7 +14,7 @@ namespace MapsExplorer
 			StringBuilder builder = new StringBuilder();
 			WebResponse response = null;
 			int count = 0;
-			int limit = 500;
+			int limit = 1;
 			while (count < limit)
 			{
 				try

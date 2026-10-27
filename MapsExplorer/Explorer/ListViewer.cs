@@ -88,7 +88,7 @@ namespace MapsExplorer
                 doc = WebLoader.GetContent(address, out _error);
 				if (string.IsNullOrEmpty(doc))
 					break;
-                AddPageList(_context, doc);
+                AddPageList(_context, doc).GetAwaiter().GetResult();
                 if (_total > 0)
                 {
                     double part = (double)1 / parts;
@@ -102,7 +102,20 @@ namespace MapsExplorer
         }
 
 
-        private async void AddPageList(IBrowsingContext context, string docStrFull)
+        private SeaKind ParseSeaKind(string text)
+        {
+            SeaKind kind;
+            text = text.Trim();
+            if (text.Length == 0 || !Enum.TryParse(text, true, out kind)
+                || !Enum.IsDefined(typeof(SeaKind), kind) || char.IsDigit(text[0]))
+            {
+                SetError("Неизвестный тип моря: " + text);
+                return SeaKind.Неизвестное;
+            }
+            return kind;
+        }
+
+        private async Task AddPageList(IBrowsingContext context, string docStrFull)
         {
             if (_total == -1)
                 _total = 0;
@@ -191,10 +204,24 @@ namespace MapsExplorer
 					}
                     else if (line.Hash.Length == 7) // Море
                     {
+                        line.AvantureKind = AvantureKind.Sea;
                         var t3 = tds[3].TextContent;    //  колонка "результат"
-                        line.SuccessCount = 0;// TODO распарсить "кладов: 2, реликвий: 1", "кладов: 0"
+                        var rewards = System.Text.RegularExpressions.Regex.Matches(t3, @"(?:кладов|реликвий):\s*(\d+)");
+                        line.SuccessCount = rewards.Cast<System.Text.RegularExpressions.Match>().Sum(m => int.Parse(m.Groups[1].Value));
                         line.Success = line.SuccessCount > 0;
-                        // TODO Определение типов/особенностей моря, от 0 до 2
+                        var kindsText = System.Text.RegularExpressions.Regex.Replace(tds[1].TextContent,
+                            @"^\s*море\b\s*", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Trim();
+                        if (kindsText.Length == 0)
+                            line.SeaKind = SeaKind.Обычное;
+                        else
+                        {
+                            var kinds = kindsText.Split(new[] { ',', '+' });
+                            if (kinds.Length > 2)
+                                SetError("Больше двух типов моря: " + kindsText);
+                            line.SeaKind = ParseSeaKind(kinds[0]);
+                            if (kinds.Length > 1)
+                                line.SeaKind2 = ParseSeaKind(kinds[1]);
+                        }
                     }
                     else // Полигон
                     {
