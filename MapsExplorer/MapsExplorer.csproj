@@ -122,6 +122,7 @@
     <Compile Include="Explorer\Explorers\Seas\SeaCell.cs" />
     <Compile Include="Explorer\Explorers\Seas\SeaGodResult.cs" />
     <Compile Include="Explorer\Explorers\Seas\SeaLeviPlaceExplorer.cs" />
+    <Compile Include="Explorer\Explorers\Seas\RiftStatisticsExplorer.cs" />
     <Compile Include="Explorer\Explorers\Seas\SeaMap.cs" />
     <Compile Include="Explorer\FormData\FormData.cs" />
     <Compile Include="Explorer\ListViewer.cs" />

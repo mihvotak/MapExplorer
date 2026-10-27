@@ -95,7 +95,8 @@ public class SeaLogEntry
 
 public enum SeaRiftResult
 {
-    Unknown, Island, Whirlpool, Supplies, Repair, Leviathan
+    Unknown, Island, Whirlpool, Supplies, Repair, Leviathan,
+    LeviathanHintIsland, SuppliesIsland, RepairIsland, PrayerIsland, HintIsland, MysteryIsland
 }
 
 public class SeaRiftActivation

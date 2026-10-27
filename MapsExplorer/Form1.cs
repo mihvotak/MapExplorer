@@ -246,6 +246,9 @@ namespace MapsExplorer
 					case SeaExploreMode.LeviPlaces: //	Места разломов с Левиафанами
 						explorer = new SeaLeviPlaceExplorer();
 						break;
+                    case SeaExploreMode.RiftStatistics: // Статистика эффектов активации разломов
+                        explorer = new RiftStatisticsExplorer();
+                        break;
 					default:
 						_seaLogHandler.LastError = $"Mode {_seaExploreMode} not realized";
 						break;

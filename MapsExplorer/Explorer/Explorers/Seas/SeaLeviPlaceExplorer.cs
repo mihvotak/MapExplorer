@@ -40,7 +40,7 @@ public class SeaLeviPlaceExplorer : ExplorerBase
                     continue;
                 builder.AppendLine(string.Join("\t", new[] { line.Link, Utils.GetDateAndTimeString(line.DateTime),
                     activation.ArkNumber, 
-                    activation.Position.ToString(), activation.Position.PortDistance.ToString(), activation.LeviathanPosition.Value.ToString(), activation.LeviathanPosition.Value.PortDistance.ToString(),
+                    activation.Position.ToString(), activation.Position.PortDistance.ToString(), activation.LeviathanPosition?.ToString() ?? "-", activation.LeviathanPosition?.PortDistance.ToString() ?? "-",
                     sea.MinBorderDistance?.ToString() ?? "-", sea.MaxBorderDistance?.ToString() ?? "-" }));
                 bubbleCounter++;
                 if (sea.MaxBorderDistance != null)

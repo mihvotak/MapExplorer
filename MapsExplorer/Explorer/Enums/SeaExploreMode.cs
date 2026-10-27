@@ -2,5 +2,6 @@
 public enum SeaExploreMode
 {
     None,
-    LeviPlaces
+    LeviPlaces,
+    RiftStatistics
 }

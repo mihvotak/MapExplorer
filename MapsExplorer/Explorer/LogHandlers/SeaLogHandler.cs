@@ -277,18 +277,7 @@ public class SeaLogHandler : LogHandler
                 continue;
             var messages = map.LogEntries.Where(e => e.ArkNumber == ark.Key).ToList();
             var text = string.Join(" ", messages.Select(e => e.Text));
-            var result = SeaRiftResult.Unknown;
-            // Ordinary combat, hints about a leviathan, and summoning Leva are not a spawn.
-            if (Regex.IsMatch(text, @"Левиафан.*(?:из бездонных|выбрасывает на поверхность|поднимается из глубин)|из бездонных глубин восста[её]т могучий Левиафан", RegexOptions.IgnoreCase))
-                result = SeaRiftResult.Leviathan;
-            else if (Regex.IsMatch(text, @"остров|клочок суши", RegexOptions.IgnoreCase))
-                result = SeaRiftResult.Island;
-            else if (Regex.IsMatch(text, @"возникает огромный водоворот", RegexOptions.IgnoreCase))
-                result = SeaRiftResult.Whirlpool;
-            else if (Regex.IsMatch(text, @"Подземный взрыв.*чинит ковчег", RegexOptions.IgnoreCase))
-                result = SeaRiftResult.Repair;
-            else if (Regex.IsMatch(text, @"Ковчег вызывает извержение.*варит всю рыбу", RegexOptions.IgnoreCase))
-                result = SeaRiftResult.Supplies;
+            var result = IdentifyRiftResult(previous, map, ark.Value, text);
 
             var activation = new SeaRiftActivation { StepNum = map.StepNum, Position = ark.Value,
                 ArkNumber = ark.Key, BubbleKind = bubble.Kind, Result = result, Text = text };
@@ -312,6 +301,40 @@ public class SeaLogHandler : LogHandler
             map.RiftActivations.Add(activation);
             sea.RiftActivations.Add(activation);
         }
+    }
+
+    private static SeaRiftResult IdentifyRiftResult(SeaMap previous, SeaMap map, SeaPosition position, string text)
+    {
+        // Match activation phrases, not unrelated influences, island visits or ordinary combat.
+        if (Regex.IsMatch(text, @"Левиафан.*(?:выбрасывает на поверхность гигантское щупальце|поднимается из глубин и тут же таранит)|из бездонных глубин восста[её]т могучий Левиафан", RegexOptions.IgnoreCase))
+            return SeaRiftResult.Leviathan;
+        if (Regex.IsMatch(text, @"возникает огромный водоворот", RegexOptions.IgnoreCase))
+            return SeaRiftResult.Whirlpool;
+        if (Regex.IsMatch(text, @"Подземный взрыв.*чинит ковчег", RegexOptions.IgnoreCase))
+            return SeaRiftResult.Repair;
+        if (Regex.IsMatch(text, @"Ковчег вызывает извержение.*варит всю рыбу", RegexOptions.IgnoreCase))
+            return SeaRiftResult.Supplies;
+
+        if (Regex.IsMatch(text, @"остров|клочок суши", RegexOptions.IgnoreCase))
+        {
+            // Only a newly raised neighbouring island counts, not an existing nearby island
+            // whose hint changed or which was explored during the same turn.
+            var islands = position.GetNeighbours().Select(p => map.GetCell(p))
+                .Where(c => c != null && c.Kind == SeaCellKind.Island
+                    && previous.GetCell(c.Position)?.Kind != SeaCellKind.Island
+                    && previous.GetCell(c.Position)?.Kind != SeaCellKind.Lighthouse).ToList();
+            if (islands.Count == 1)
+                switch (islands[0].Symbol)
+                {
+                    case 'O': return SeaRiftResult.LeviathanHintIsland; // double question mark
+                    case '<': return SeaRiftResult.SuppliesIsland;
+                    case 'n': return SeaRiftResult.RepairIsland;
+                    case 'v': return SeaRiftResult.PrayerIsland;
+                    case '>': return SeaRiftResult.HintIsland;
+                    case 'i': return SeaRiftResult.MysteryIsland;
+                }
+        }
+        return SeaRiftResult.Unknown;
     }
 }
 
