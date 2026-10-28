@@ -1,4 +1,4 @@
-﻿using AngleSharp;
+using AngleSharp;
 using MapsExplorer;
 using System.Runtime.Remoting.Contexts;
 
@@ -9,9 +9,16 @@ public class LogHandler
 	protected IConfiguration _config;
 	protected IBrowsingContext _context;
 
-	public LogHandler()
+    protected bool _offlineMode;
+
+    public LogHandler()
 	{
 		_config = Configuration.Default;
 		_context = BrowsingContext.New(_config);
 	}
+
+    public void SetOfflineMode(bool offlineMode)
+    {
+        _offlineMode = offlineMode;
+    }
 }

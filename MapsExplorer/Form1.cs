@@ -17,6 +17,7 @@ namespace MapsExplorer
         private PolygonExploreMode _polygonExploreMode;
         private SeaExploreMode _seaExploreMode;
         private AvantureKind _avantureKind;
+        private bool _useOfflineLogs;
 
 		public Form1()
 		{
@@ -77,19 +78,25 @@ namespace MapsExplorer
 		{
 			progressBar1.Value = 100;
 
-			countTextBox.Text = _resultLines.Count.ToString();
 			errorTextBox.Text = _error ?? "";
-			StringBuilder builder = new StringBuilder();
-			foreach (LogLine line in _resultLines)
-				builder.Append(line.ToString() + "\n");
-			string all = builder.ToString();
-			logsRichTextBox.Text = all;
-			if (!Directory.Exists(Paths.ResultsDir))
-				Directory.CreateDirectory(Paths.ResultsDir);
-			File.WriteAllText(Paths.ResultsDir + "/list.txt", all);
+            ShowLogLines();
 		}
 
-		private List<LogLine> _resultLines;
+        private void ShowLogLines()
+        {
+            countTextBox.Text = _resultLines.Count.ToString();
+            StringBuilder builder = new StringBuilder();
+            foreach (LogLine line in _resultLines)
+                builder.Append(line.ToString() + "\n");
+            string all = builder.ToString();
+            logsRichTextBox.Text = all;
+
+            if (!Directory.Exists(Paths.ResultsDir))
+                Directory.CreateDirectory(Paths.ResultsDir);
+            File.WriteAllText(Paths.ResultsDir + "/list.txt", all);
+        }
+
+        private List<LogLine> _resultLines;
 		private string _error;
 		private DungeonLogHandler _dungeonLogHandler = new DungeonLogHandler();
 		private PolygonLogHandler _polygonLogHandler = new PolygonLogHandler();
@@ -257,10 +264,14 @@ namespace MapsExplorer
 			if (explorer != null)
 			{
 				LogHandler logHandler = _avantureKind == AvantureKind.Dungeon ? _dungeonLogHandler as LogHandler : _avantureKind == AvantureKind.Polygon ? _polygonLogHandler : _seaLogHandler as LogHandler;
-				explorer.Init(_avantureKind, _dungeonExploreMode, _polygonExploreMode, _seaExploreMode, logHandler, _resultLines, _exploreBackgroundWorker, 
+                logHandler.SetOfflineMode(_useOfflineLogs);
+                explorer.Init(_avantureKind, 
+                    _dungeonExploreMode, _polygonExploreMode, _seaExploreMode, 
+                    logHandler, 
+                    _resultLines, 
+                    _exploreBackgroundWorker, 
 					customCheckBox.Checked,
-					checkBoxMinRoute.Checked
-					);
+					checkBoxMinRoute.Checked);
 				explorer.Work();
 				_completeCallback = () =>
 				{
@@ -305,19 +316,21 @@ namespace MapsExplorer
 			if (!Directory.Exists(Paths.SaveDir))
 				Directory.CreateDirectory(Paths.SaveDir);
 			var filePath = Paths.SaveDir + SaveFileName;
-			FormData data = new FormData()
-			{
-				StartDate = dateTimePicker1.Value,
-				EndDate = dateTimePicker2.Value,
-				Success = successCheckBox.Checked,
-				Special = specialCheckBox.Checked,
-				Custom = customCheckBox.Checked,
-				Hash = hashTextBox.Text,
+            FormData data = new FormData()
+            {
+                StartDate = dateTimePicker1.Value,
+                EndDate = dateTimePicker2.Value,
+                Success = successCheckBox.Checked,
+                Special = specialCheckBox.Checked,
+                Custom = customCheckBox.Checked,
+                Hash = hashTextBox.Text,
                 AvantureKind = _avantureKind,
-				DungeonExploreMode = _dungeonExploreMode,
-				PolygonExploreMode = _polygonExploreMode,
-                SeaExploreMode = _seaExploreMode
-			};
+                DungeonExploreMode = _dungeonExploreMode,
+                PolygonExploreMode = _polygonExploreMode,
+                SeaExploreMode = _seaExploreMode,
+                UseOfflineLogs = _useOfflineLogs,
+                LogLines = _resultLines
+            };
 			string json = data.ToString();
 			File.WriteAllText(filePath, json);
 		}
@@ -333,20 +346,25 @@ namespace MapsExplorer
 				specialCheckBox.Checked = data.Special;
 				customCheckBox.Checked = data.Custom;
 				hashTextBox.Text = data.Hash;
-			}
+                _avantureKind = data.AvantureKind;
+                _dungeonExploreMode = data.DungeonExploreMode;
+                _polygonExploreMode = data.PolygonExploreMode;
+                _seaExploreMode = data.SeaExploreMode;
+                _useOfflineLogs = data.UseOfflineLogs;
+                _resultLines = data.LogLines;
+            }
 
-			Form1_ResizeEnd(sender, e);
+            Form1_ResizeEnd(sender, e);
 
-            _avantureKind = data.AvantureKind;
             radioButton1.Checked = _avantureKind == AvantureKind.Dungeon;
             radioButton3.Checked = _avantureKind == AvantureKind.Sea;
             radioButton2.Checked = _avantureKind == AvantureKind.Polygon;
-            _dungeonExploreMode = data.DungeonExploreMode;
-			_polygonExploreMode = data.PolygonExploreMode;
-			_seaExploreMode = data.SeaExploreMode;
+            checkBoxOffline.Checked = _useOfflineLogs;
             UpdateModes();
             UpdateInterface();
-		}
+            if (_resultLines != null && _resultLines.Count > 0)
+                ShowLogLines();
+        }
 
 		private void UpdateModes()
 		{
@@ -450,5 +468,10 @@ namespace MapsExplorer
 		{
 			UpdateInterface();
 		}
-	}
+
+        private void checkBoxOffline_CheckedChanged(object sender, EventArgs e)
+        {
+            _useOfflineLogs = checkBoxOffline.Checked;
+        }
+    }
 }

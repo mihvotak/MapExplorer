@@ -49,13 +49,14 @@ namespace MapsExplorer
             this.logsBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this._exploreBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.avantureKindGroupBox = new System.Windows.Forms.GroupBox();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.dungeBoolGroupBox = new System.Windows.Forms.GroupBox();
             this.successCheckBox = new System.Windows.Forms.CheckBox();
             this.customCheckBox = new System.Windows.Forms.CheckBox();
             this.specialCheckBox = new System.Windows.Forms.CheckBox();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.checkBoxOffline = new System.Windows.Forms.CheckBox();
             this.avantureKindGroupBox.SuspendLayout();
             this.dungeBoolGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -113,7 +114,7 @@ namespace MapsExplorer
             // exploreButton
             // 
             this.exploreButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.exploreButton.Location = new System.Drawing.Point(31, 587);
+            this.exploreButton.Location = new System.Drawing.Point(31, 617);
             this.exploreButton.Margin = new System.Windows.Forms.Padding(4);
             this.exploreButton.Name = "exploreButton";
             this.exploreButton.Size = new System.Drawing.Size(156, 41);
@@ -274,6 +275,17 @@ namespace MapsExplorer
             this.avantureKindGroupBox.TabIndex = 25;
             this.avantureKindGroupBox.TabStop = false;
             // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.radioButton3.Location = new System.Drawing.Point(56, 20);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(79, 28);
+            this.radioButton3.TabIndex = 28;
+            this.radioButton3.Text = "Моря";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
@@ -349,22 +361,25 @@ namespace MapsExplorer
             this.specialCheckBox.Text = "Специальное";
             this.specialCheckBox.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // checkBoxOffline
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.radioButton3.Location = new System.Drawing.Point(56, 20);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(79, 28);
-            this.radioButton3.TabIndex = 28;
-            this.radioButton3.Text = "Моря";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.checkBoxOffline.AutoSize = true;
+            this.checkBoxOffline.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.checkBoxOffline.Location = new System.Drawing.Point(38, 566);
+            this.checkBoxOffline.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxOffline.Name = "checkBoxOffline";
+            this.checkBoxOffline.Size = new System.Drawing.Size(137, 29);
+            this.checkBoxOffline.TabIndex = 20;
+            this.checkBoxOffline.Text = "Offline логи";
+            this.checkBoxOffline.UseVisualStyleBackColor = true;
+            this.checkBoxOffline.CheckedChanged += new System.EventHandler(this.checkBoxOffline_CheckedChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1762, 820);
+            this.Controls.Add(this.checkBoxOffline);
             this.Controls.Add(this.dungeBoolGroupBox);
             this.Controls.Add(this.avantureKindGroupBox);
             this.Controls.Add(this.label5);
@@ -428,6 +443,7 @@ namespace MapsExplorer
 		private System.Windows.Forms.CheckBox customCheckBox;
 		private System.Windows.Forms.CheckBox specialCheckBox;
         private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.CheckBox checkBoxOffline;
     }
 }
 

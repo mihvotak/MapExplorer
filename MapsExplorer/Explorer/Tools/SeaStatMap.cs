@@ -10,7 +10,7 @@ public static class SeaStatMap
     public const int ImageSize = 1000;
     public const int MaxDistance = 24;
     public const int SmallSeaMaxDistance = 16;
-    private const float Margin = 40;
+    private const float Margin = 5;
     private const float MapTop = 80;
     private static readonly SeaPosition Origin = new SeaPosition(0, 0, 0);
     public static void Save(string path, IEnumerable<SeaPosition> positions, string title, int maxDistance = MaxDistance,
@@ -26,11 +26,11 @@ public static class SeaStatMap
 
         using (var bitmap = new Bitmap(ImageSize, ImageSize))
         using (var graphics = Graphics.FromImage(bitmap))
-        using (var seaBrush = new SolidBrush(Color.FromArgb(82, 150, 172)))
-        using (var mark1Brush = new SolidBrush(Color.FromArgb(100, 255, 100)))
-        using (var mark2Brush = new SolidBrush(Color.FromArgb(200, 80, 200)))
-        using (var gridPen = new Pen(Color.FromArgb(48, 88, 108), 0.9f))
-        using (var ringPen = new Pen(Color.FromArgb(172, 225, 233), 1f))
+        using (var seaBrush = new SolidBrush(Color.FromArgb(100, 110, 210)))
+        using (var mark1Brush = new SolidBrush(Color.FromArgb(100, 160, 100)))
+        using (var mark2Brush = new SolidBrush(Color.FromArgb(160, 80, 160)))
+        using (var gridPen = new Pen(Color.FromArgb(0, 0, 0), 1f))
+        using (var ringPen = new Pen(Color.FromArgb(255, 225, 255), 1.7f))
         using (var portPen = new Pen(Color.FromArgb(255, 255, 255), 2f))
         using (var titleFont = new Font("Arial", 19, FontStyle.Regular, GraphicsUnit.Pixel))
         using (var captionFont = new Font("Arial", 14, FontStyle.Regular, GraphicsUnit.Pixel))
@@ -39,7 +39,7 @@ public static class SeaStatMap
             graphics.Clear(Color.White);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             graphics.DrawString(title, titleFont, Brushes.Black, new RectangleF(0, 15, ImageSize, 30), format);
-            graphics.DrawString("Разломы с левиафаном (фиолетовый): " + marked.Count + " · Одинокие (зелёный): " + lonely.Count,
+            graphics.DrawString($"Одиночные большие разломы (зелёный): {lonely.Count} · Разломы с левиафаном (пурпурный): {marked.Count}",
                 captionFont, Brushes.Black, new RectangleF(0, 46, ImageSize, 25), format);
 
             var cells = new List<SeaPosition>();

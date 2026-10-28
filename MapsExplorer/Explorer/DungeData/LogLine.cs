@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace MapsExplorer
 {
+    [Serializable]
 	public class LogLine
 	{
 		public string Hash;

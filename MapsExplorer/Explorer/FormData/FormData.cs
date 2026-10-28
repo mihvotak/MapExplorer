@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -12,11 +13,13 @@ namespace MapsExplorer
 		public bool Success;
 		public bool Special;
 		public bool Custom;
+        public bool UseOfflineLogs;
         public AvantureKind AvantureKind;
 		public DungeonExploreMode DungeonExploreMode;
 		public PolygonExploreMode PolygonExploreMode;
 		public SeaExploreMode SeaExploreMode;
 		public string Hash;
+        public List<LogLine> LogLines;
 
 		public static FormData ReadFromFile(string fileName)
 		{

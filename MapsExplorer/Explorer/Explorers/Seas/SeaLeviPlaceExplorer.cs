@@ -9,7 +9,7 @@ public class SeaLeviPlaceExplorer : ExplorerBase
     public override void Work()
     {
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine("Log\tDate\tArk\tBubblePosition\tBubblePortDestance\tLeviPosition\tLeviPortDestance\tMinBorderDistance\tMaxBorderDistance");
+        builder.AppendLine("Log\tDate\tTypes\tSize\tArk\tBubblePosition\tBubblePortDestance\tLeviPosition\tLeviPortDestance\tMinBorderDistance\tMaxBorderDistance");
         StringBuilder errors = new StringBuilder();
         int counter = 0;
         int bubbleCounter = 0;
@@ -39,6 +39,9 @@ public class SeaLeviPlaceExplorer : ExplorerBase
                 if (!positions.Add(activation.Position))
                     continue;
                 builder.AppendLine(string.Join("\t", new[] { line.Link, Utils.GetDateAndTimeString(line.DateTime),
+                    ((line.SeaKind == SeaKind.Обычное ? "" : " " + line.SeaKind)
+                    + (line.SeaKind2 == SeaKind.Неизвестное ? "" : "/" + line.SeaKind2)),
+                    (line.SeaKind == SeaKind.Малое || line.SeaKind2 == SeaKind.Малое) ? "Малое" : "Большое",
                     activation.ArkNumber, 
                     activation.Position.ToString(), activation.Position.PortDistance.ToString(), activation.LeviathanPosition?.ToString() ?? "-", activation.LeviathanPosition?.PortDistance.ToString() ?? "-",
                     sea.MinBorderDistance?.ToString() ?? "-", sea.MaxBorderDistance?.ToString() ?? "-" }));
@@ -60,12 +63,12 @@ public class SeaLeviPlaceExplorer : ExplorerBase
         Directory.CreateDirectory(Paths.ResultsDir);
         File.WriteAllText(Paths.ResultsDir + "/SeaLeviPlaceExplorer.txt", exploreRes);
         SeaStatMap.Save(Path.Combine(Paths.ResultsDir, "SeaLeviPlaceExplorer_Small.png"),
-            smallSeaPositions, "Глубокие разломы — малые карты", SeaStatMap.SmallSeaMaxDistance, smallLonelyPositions);
+            smallSeaPositions, "Одиночные большие разломы — малые карты", SeaStatMap.SmallSeaMaxDistance, smallLonelyPositions);
         SeaStatMap.Save(Path.Combine(Paths.ResultsDir, "SeaLeviPlaceExplorer_Other.png"),
-            otherSeaPositions, "Глубокие разломы — большие карты", SeaStatMap.MaxDistance, otherLonelyPositions);
+            otherSeaPositions, "Одиночные большие разломы — большие карты", SeaStatMap.MaxDistance, otherLonelyPositions);
         TableText = exploreRes;
         ResultText = "Всего логов: " + counter + "\nЛевиафанов: " + bubbleCounter
-            + "\nОдиноких глубоких разломов: " + lonelyCounter
+            + "\nОдиночных больших разломов: " + lonelyCounter
             + "\nМинимальное расстояние от пузыря до края: " + minBorderDirtance + "\n" + errors;
     }
 }

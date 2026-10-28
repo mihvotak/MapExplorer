@@ -28,7 +28,7 @@ public class SeaLogHandler : LogHandler
         {
             content = File.ReadAllText(localPath);
         }
-        else
+        else if (!_offlineMode)
         {
             string address = Paths.GetLogPath(line.Hash);
             content = WebLoader.GetContent(address, out LastError);
@@ -37,6 +37,10 @@ public class SeaLogHandler : LogHandler
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
             File.WriteAllText(localPath, content);
+        }
+        else
+        {
+            LastError = "лога нет в кэше";
         }
 
         if (string.IsNullOrEmpty(content))
