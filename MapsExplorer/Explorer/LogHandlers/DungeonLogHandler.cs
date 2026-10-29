@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AngleSharp;
+using AngleSharp.Html.Parser;
 using Newtonsoft.Json.Linq;
 
 namespace MapsExplorer
@@ -140,9 +141,9 @@ namespace MapsExplorer
 			return content;
 		}
 
-		private async void Parse(string html, Dunge dunge, bool isDesc)
+		private void Parse(string html, Dunge dunge, bool isDesc)
 		{
-			var document = await _context.OpenAsync(req => req.Content(html));
+			var document = new HtmlParser().ParseDocument(html);
 			var centralBlock = document.QuerySelectorAll("div").First(e => e.Id == "central_block");
 			var centralBlockContent = centralBlock.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
 			var logContainer0 = centralBlockContent.QuerySelector("div.d_content");
@@ -1061,7 +1062,7 @@ namespace MapsExplorer
 						string bossLog = GetLogContent(dunge.LogLine, out LastError, bossNum);
 						if (string.IsNullOrEmpty(bossLog))
 							return;
-						var bossDocument = await _context.OpenAsync(req => req.Content(bossLog));
+						var bossDocument = new HtmlParser().ParseDocument(bossLog);
 						var bossCentralBlock = bossDocument.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
 						var logContainer = bossDocument.QuerySelector("div.d_content");
 						var logLines = logContainer.QuerySelectorAll("div.new_line");
@@ -1073,7 +1074,7 @@ namespace MapsExplorer
 							bossLog = GetLogContent(dunge.LogLine, out LastError, bossNum, true);
 							if (string.IsNullOrEmpty(bossLog))
 								return;
-							bossDocument = await _context.OpenAsync(req => req.Content(bossLog));
+							bossDocument = new HtmlParser().ParseDocument(bossLog);
 							bossCentralBlock = bossDocument.QuerySelectorAll("div").First(e => e.Id == "last_items_arena");
 							logContainer = bossDocument.QuerySelector("div.d_content");
 							logLines = logContainer.QuerySelectorAll("div.new_line");

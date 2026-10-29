@@ -62,7 +62,7 @@ namespace MapsExplorer
 
 		private void OnListViewReady(string error, List<LogLine> resultLines)
 		{
-			_resultLines = resultLines;
+			_resultLines = resultLines ?? new List<LogLine>();
 			for (int i = _resultLines.Count - 1; i >= 0; i--)
 				if (_resultLines[i].Hash.Length <= 5)
 					_resultLines.RemoveAt(i);
@@ -329,7 +329,7 @@ namespace MapsExplorer
                 PolygonExploreMode = _polygonExploreMode,
                 SeaExploreMode = _seaExploreMode,
                 UseOfflineLogs = _useOfflineLogs,
-                LogLines = _resultLines
+                LogLines = _resultLines ?? new List<LogLine>()
             };
 			string json = data.ToString();
 			File.WriteAllText(filePath, json);

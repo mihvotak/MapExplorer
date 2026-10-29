@@ -1,6 +1,4 @@
 using AngleSharp;
-using MapsExplorer;
-using System.Runtime.Remoting.Contexts;
 
 public class LogHandler
 {

@@ -1,4 +1,5 @@
 using AngleSharp;
+using AngleSharp.Html.Parser;
 using MapsExplorer;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
@@ -45,9 +46,9 @@ public class PolygonLogHandler : LogHandler
 		return polygon;
 	}
 
-	private async void Parse(string html, Polygon polygon, bool isDesc)
+	private void Parse(string html, Polygon polygon, bool isDesc)
 	{
-		var document = await _context.OpenAsync(req => req.Content(html));
+		var document = new HtmlParser().ParseDocument(html);
 		var godsContainer = document.QuerySelectorAll("div").First(e => e.Id == "h_tbl");
 		
 		var gods = godsContainer.QuerySelectorAll("div.t_line");

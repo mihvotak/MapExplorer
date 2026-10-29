@@ -12,6 +12,7 @@ public class RiftStatisticsExplorer : ExplorerBase
         var activations = new List<SeaRiftActivation>();
         var countedActivations = new HashSet<string>();
         var unknownActivations = new StringBuilder();
+        var repairSuppliesActivations = new StringBuilder();
         var errors = new StringBuilder();
         int logCount = 0;
         for (int i = 0; i < _resultLines.Count; i++)
@@ -36,6 +37,10 @@ public class RiftStatisticsExplorer : ExplorerBase
                     unknownActivations.AppendLine(line.Link + "?s=" + activation.StepNum
                         + "\tХод: " + activation.StepNum + "\tКовчег: " + activation.ArkNumber
                         + "\tРазлом: " + activation.BubbleKind + "\t" + activation.Text);
+                if (activation.Result == SeaRiftResult.Repair || activation.Result == SeaRiftResult.Supplies)
+                    repairSuppliesActivations.AppendLine(line.Link + "?s=" + activation.StepNum
+                        + "\tХод: " + activation.StepNum + "\tКовчег: " + activation.ArkNumber
+                        + "\tРазлом: " + activation.BubbleKind + "\t" + activation.Text);
             }
             logCount++;
             ReportProgress(i);
@@ -52,6 +57,8 @@ public class RiftStatisticsExplorer : ExplorerBase
         result.Append(statistics);
         result.AppendLine("\nНеопознанные активации:");
         result.Append(unknownActivations.Length == 0 ? "Нет.\n" : unknownActivations.ToString());
+        result.AppendLine("\nПочинка / Провизия (без острова):");
+        result.Append(repairSuppliesActivations.Length == 0 ? "Нет.\n" : repairSuppliesActivations.ToString());
         if (errors.Length > 0)
         {
             result.AppendLine("\nОшибки обработки логов:");

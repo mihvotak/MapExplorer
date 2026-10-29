@@ -34,18 +34,20 @@ namespace MapsExplorer
 					}
 				}
 			}
-            using (Stream stream = response.GetResponseStream())
+            using (WebResponse resp = response)
             {
-                using (StreamReader reader = new StreamReader(stream))
+                using (Stream stream = resp.GetResponseStream())
                 {
-                    string line = "";
-                    while ((line = reader.ReadLine()) != null)
+                    using (StreamReader reader = new StreamReader(stream))
                     {
-                        builder.Append(line);
+                        string line = "";
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            builder.Append(line);
+                        }
                     }
                 }
             }
-            response.Close();
             return builder.ToString();
         }
 

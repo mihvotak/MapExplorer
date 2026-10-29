@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 namespace MapsExplorer
@@ -11,9 +11,18 @@ namespace MapsExplorer
 
 		public static DateTime ParseDateTime(string dateStr)
 		{
-			DateTime time = DateTime.ParseExact(dateStr, DateTimeFormat, _provider);
-			return time;
-
+			if (string.IsNullOrEmpty(dateStr))
+				return DateTime.MinValue;
+			try
+			{
+				if (DateTime.TryParseExact(dateStr, DateTimeFormat, _provider, DateTimeStyles.None, out DateTime time))
+					return time;
+			}
+			catch
+			{
+				// ignored
+			}
+			return DateTime.MinValue;
 		}
 
 		public static string GetDateFolderString(DateTime dateTime)

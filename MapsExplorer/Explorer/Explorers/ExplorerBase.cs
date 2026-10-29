@@ -40,6 +40,8 @@ public class ExplorerBase
 
 	protected void ReportProgress(int lineIndex)
 	{
+		if (_resultLines == null || _resultLines.Count == 0)
+			return;
 		_backgroundWorker.ReportProgress((int)((double)(lineIndex + 1) / _resultLines.Count * 100));
 	}
 }
