@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace MapsExplorer
 {
@@ -101,8 +100,10 @@ namespace MapsExplorer
 		private DungeonLogHandler _dungeonLogHandler = new DungeonLogHandler();
 		private PolygonLogHandler _polygonLogHandler = new PolygonLogHandler();
 		private SeaLogHandler _seaLogHandler = new SeaLogHandler();
+        private LogHandler _currentLogHandler;
+        private ExplorerBase _explorer;
 
-		private void exploreButton_Click(object sender, EventArgs e)
+        private void exploreButton_Click(object sender, EventArgs e)
 		{
 			tableRichTextBox.Text = "";
 			resultRichTextBox.Text = "";
@@ -158,76 +159,76 @@ namespace MapsExplorer
 
 		private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
 		{
-			ExplorerBase explorer = null;
+			_explorer = null;
 			if (_avantureKind == AvantureKind.Dungeon)
 			{
 				switch (_dungeonExploreMode)
 				{
 					case DungeonExploreMode.Rotations: //	Повороты без гласов
-						explorer = new RotationsExplorer();
+						_explorer = new RotationsExplorer();
 						break;
 					case DungeonExploreMode.TribblesWithBosses:    //	Трибблы у боссов
-						explorer = new TribblesWithBossesExplorer();
+						_explorer = new TribblesWithBossesExplorer();
 						break;
 					case DungeonExploreMode.HalfFinBosses:  //	Полуфиналы
-						explorer = new HalfFinBossesExplorer();
+						_explorer = new HalfFinBossesExplorer();
 						break;
 					case DungeonExploreMode.BossesByName:   //	Поиск конкретного босса
-						explorer = new BossesByNameExplorer();
+						_explorer = new BossesByNameExplorer();
 						break;
 					case DungeonExploreMode.BossesLoot: //	Перечисление выпавшего лута
-						explorer = new BossLootExplorer();
+						_explorer = new BossLootExplorer();
 						break;
 					case DungeonExploreMode.BossAbils:  //	Абилки боссов
-						explorer = new BossAbilsExplorer();
+						_explorer = new BossAbilsExplorer();
 						break;
 					case DungeonExploreMode.TreasurePos:        //	Положения клада
-						explorer = new TreasurePosExplorer();
+						_explorer = new TreasurePosExplorer();
 						break;
 					case DungeonExploreMode.StairsPos:      //	Положения лестниц
-						explorer = new StairsPosExplorer();
+						_explorer = new StairsPosExplorer();
 						break;
 					case DungeonExploreMode.Voices:         //	Поиск гласов
-						explorer = new VoicesExplorer();
+						_explorer = new VoicesExplorer();
 						break;
 					case DungeonExploreMode.Hints:          //	Подсказки в кастомках
-						explorer = new HintsExplorer();
+						_explorer = new HintsExplorer();
 						break;
 					case DungeonExploreMode.Stables:            //	Конюшни
-						explorer = new StablesExplorer();
+						_explorer = new StablesExplorer();
 						break;
 					case DungeonExploreMode.CacheHints:     //	Прикладовые подсказки
-						explorer = new CacheHintsExplorer();
+						_explorer = new CacheHintsExplorer();
 						break;
 					case DungeonExploreMode.RoutesAndBosses:    //	Непутевые боссы
-						explorer = new RoutesAndBossesExplorer();
+						_explorer = new RoutesAndBossesExplorer();
 						break;
 					case DungeonExploreMode.Teleports:          //	Телепорты и ловушки
-						explorer = new TeleportsExplorer();
+						_explorer = new TeleportsExplorer();
 						break;
 					case DungeonExploreMode.Aquas:              //	Исследование аквариумов
-						explorer = new AquasExplorer();
+						_explorer = new AquasExplorer();
 						break;
 					case DungeonExploreMode.Walls:              //	Капиталки, размеры данжей
-						explorer = new WallsExplorer();
+						_explorer = new WallsExplorer();
 						break;
 					case DungeonExploreMode.Jumps:              //	Влияние гласов в прыгучести
-						explorer = new JumpsExplorer();
+						_explorer = new JumpsExplorer();
 						break;
 					case DungeonExploreMode.Coupons:            //	Считаем купоны
-						explorer = new CouponsExplorer();
+						_explorer = new CouponsExplorer();
 						break;
 					case DungeonExploreMode.TimeStatistic:     //	Время в данже
-						explorer = new TimeStatisticExplorer();
+						_explorer = new TimeStatisticExplorer();
 						break;
 					case DungeonExploreMode.HalfTrueHints:     //	Указатели в полуправде
-						explorer = new HalfTrueHintsExplorer();
+						_explorer = new HalfTrueHintsExplorer();
 						break;
 					case DungeonExploreMode.HeroDamages:     //	Дамаг, наносимый героями
-						explorer = new HeroDamageExplorer();
+						_explorer = new HeroDamageExplorer();
 						break;
 					case DungeonExploreMode.VoicesAndParts:     //	Гласы и запчасти с боссов
-						explorer = new VoicesAndPartsExplorer();
+						_explorer = new VoicesAndPartsExplorer();
 						break;
 					default:
 						_dungeonLogHandler.LastError = $"Mode {_dungeonExploreMode} not realized";
@@ -239,7 +240,7 @@ namespace MapsExplorer
                 switch (_polygonExploreMode)
                 {
                     case PolygonExploreMode.SuccesPercent: //	Успешность полигонов
-                        explorer = new PolySuccessExplorer();
+                        _explorer = new PolySuccessExplorer();
                         break;
                     default:
                         _polygonLogHandler.LastError = $"Mode {_polygonExploreMode} not realized";
@@ -251,32 +252,32 @@ namespace MapsExplorer
 				switch (_seaExploreMode)
 				{
 					case SeaExploreMode.LeviPlaces: //	Места разломов с Левиафанами
-						explorer = new SeaLeviPlaceExplorer();
+						_explorer = new SeaLeviPlaceExplorer();
 						break;
                     case SeaExploreMode.RiftStatistics: // Статистика эффектов активации разломов
-                        explorer = new RiftStatisticsExplorer();
+                        _explorer = new RiftStatisticsExplorer();
                         break;
 					default:
 						_seaLogHandler.LastError = $"Mode {_seaExploreMode} not realized";
 						break;
 				}
 			}
-			if (explorer != null)
+			if (_explorer != null)
 			{
-				LogHandler logHandler = _avantureKind == AvantureKind.Dungeon ? _dungeonLogHandler as LogHandler : _avantureKind == AvantureKind.Polygon ? _polygonLogHandler : _seaLogHandler as LogHandler;
-                logHandler.SetOfflineMode(_useOfflineLogs);
-                explorer.Init(_avantureKind, 
-                    _dungeonExploreMode, _polygonExploreMode, _seaExploreMode, 
-                    logHandler, 
+                _currentLogHandler = _avantureKind == AvantureKind.Dungeon ? _dungeonLogHandler as LogHandler : _avantureKind == AvantureKind.Polygon ? _polygonLogHandler : _seaLogHandler as LogHandler;
+                _currentLogHandler.Prepare(_useOfflineLogs);
+                _explorer.Init(_avantureKind, 
+                    _dungeonExploreMode, _polygonExploreMode, _seaExploreMode,
+                    _currentLogHandler, 
                     _resultLines, 
                     _exploreBackgroundWorker, 
 					customCheckBox.Checked,
 					checkBoxMinRoute.Checked);
-				explorer.Work();
+				_explorer.Work();
 				_completeCallback = () =>
 				{
-					tableRichTextBox.Text = explorer.TableText;
-					resultRichTextBox.Text = explorer.ResultText;
+					tableRichTextBox.Text = _explorer.TableText;
+					resultRichTextBox.Text = _explorer.ResultText;
 				};
 			}
 		}

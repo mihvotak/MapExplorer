@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -12,7 +12,9 @@ public class TeleportsExplorer : ExplorerBase
 		{
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			builder.Append(line.Link + "\t" + Utils.GetDateAndTimeString(line.DateTime) + "\t");
+            if (dunge == null)
+                continue;
+            builder.Append(line.Link + "\t" + Utils.GetDateAndTimeString(line.DateTime) + "\t");
 			Map map = dunge.Maps[0];
 			builder.Append(map.Width + "\t" + map.Height + "\t");
 			var traps = map.Cells.FindAll(c => c.CellKind == CellKind.Trap).Count;

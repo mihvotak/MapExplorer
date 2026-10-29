@@ -13,7 +13,6 @@ public class RiftStatisticsExplorer : ExplorerBase
         var countedActivations = new HashSet<string>();
         var unknownActivations = new StringBuilder();
         var repairSuppliesActivations = new StringBuilder();
-        var errors = new StringBuilder();
         int logCount = 0;
         for (int i = 0; i < _resultLines.Count; i++)
         {
@@ -21,8 +20,8 @@ public class RiftStatisticsExplorer : ExplorerBase
             var sea = SeaLogHandler.GetSea(line, _seaExploreMode);
             if (sea == null)
             {
-                errors.AppendLine(line.Link + ": " + SeaLogHandler.LastError);
-                SeaLogHandler.LastError = "";
+                _errors.Add(line.Link + ": " + SeaLogHandler.LastError);
+                SeaLogHandler.LastError = null;
                 ReportProgress(i);
                 continue;
             }
@@ -59,11 +58,7 @@ public class RiftStatisticsExplorer : ExplorerBase
         result.Append(unknownActivations.Length == 0 ? "Нет.\n" : unknownActivations.ToString());
         result.AppendLine("\nПочинка / Провизия (без острова):");
         result.Append(repairSuppliesActivations.Length == 0 ? "Нет.\n" : repairSuppliesActivations.ToString());
-        if (errors.Length > 0)
-        {
-            result.AppendLine("\nОшибки обработки логов:");
-            result.Append(errors);
-        }
+        result.Append(ErrorsListString);
         ResultText = result.ToString();
         Directory.CreateDirectory(Paths.ResultsDir);
         File.WriteAllText(Path.Combine(Paths.ResultsDir, "RiftStatisticsExplorer.txt"), ResultText);

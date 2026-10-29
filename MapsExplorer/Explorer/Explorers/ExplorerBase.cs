@@ -16,8 +16,11 @@ public class ExplorerBase
 	protected BackgroundWorker _backgroundWorker;
 	protected bool _customCheckBoxChecked;
 	protected bool _checkBoxMinRouteChecked;
+    
+    protected List<string> _errors = new List<string>();
+    protected string ErrorsListString => _errors == null || _errors.Count == 0 ? "" : "\nОшибки обработки логов:\n" + string.Join("\n", _errors);
 
-	public string TableText = "";
+    public string TableText = "";
 	public string ResultText = "";
 
 	public void Init(AvantureKind avantureKind, DungeonExploreMode dungeonExploreMode, PolygonExploreMode polygonExploreMode, SeaExploreMode seaExploreMode, LogHandler logHandler, List<LogLine> resultLines, BackgroundWorker backgroundWorker, bool customCheckBoxChecked, bool checkBoxMinRouteChecked)

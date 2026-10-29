@@ -10,7 +10,6 @@ public class SeaLeviPlaceExplorer : ExplorerBase
     {
         StringBuilder builder = new StringBuilder();
         builder.AppendLine("Log\tDate\tTypes\tSize\tArk\tBubblePosition\tBubblePortDestance\tLeviPosition\tLeviPortDestance\tMinBorderDistance\tMaxBorderDistance");
-        StringBuilder errors = new StringBuilder();
         int counter = 0;
         int bubbleCounter = 0;
         int minBorderDirtance = int.MaxValue;
@@ -25,8 +24,8 @@ public class SeaLeviPlaceExplorer : ExplorerBase
             Sea sea = SeaLogHandler.GetSea(line, _seaExploreMode);
             if (sea == null)
             {
-                errors.AppendLine(line.Link + ": " + SeaLogHandler.LastError);
-                SeaLogHandler.LastError = "";
+                _errors.Add(line.Link + ": " + SeaLogHandler.LastError);
+                SeaLogHandler.LastError = null;
                 ReportProgress(i);
                 continue;
             }
@@ -69,6 +68,7 @@ public class SeaLeviPlaceExplorer : ExplorerBase
         TableText = exploreRes;
         ResultText = "Всего логов: " + counter + "\nЛевиафанов: " + bubbleCounter
             + "\nОдиночных больших разломов: " + lonelyCounter
-            + "\nМинимальное расстояние от пузыря до края: " + minBorderDirtance + "\n" + errors;
+            + "\nМинимальное расстояние от пузыря до края: " + minBorderDirtance;
+        ResultText += ErrorsListString;
     }
 }

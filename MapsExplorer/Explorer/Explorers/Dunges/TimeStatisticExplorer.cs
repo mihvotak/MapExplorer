@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -13,7 +13,9 @@ public class TimeStatisticExplorer : ExplorerBase
 		{
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			Map map = dunge.Maps[dunge.LastFloor - 1];
+            if (dunge == null)
+                continue;
+            Map map = dunge.Maps[dunge.LastFloor - 1];
 			tds.AddRow();
 			tds.Add("Ссылка", line.Link);
 			tds.Add("Старт", Utils.GetDateAndTimeString(dunge.StartDateTime));

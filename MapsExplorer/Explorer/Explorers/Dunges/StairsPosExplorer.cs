@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -15,7 +15,9 @@ public class StairsPosExplorer : ExplorerBase
 			//if (line.Category != Category.Аква)
 			//	continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			Map map = dunge.Maps[0];
+            if (dunge == null)
+                continue;
+            Map map = dunge.Maps[0];
 			if (map.StairsPos == Int2.Zero)
 				continue;
 			bool match = dunge.LookAsAqua;

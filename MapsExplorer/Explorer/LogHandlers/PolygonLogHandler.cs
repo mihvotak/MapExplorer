@@ -18,7 +18,7 @@ public class PolygonLogHandler : LogHandler
 	public Polygon GetPolygon(LogLine line, PolygonExploreMode mode = PolygonExploreMode.None)
 	{
 		_mode = mode;
-		LastError = "";
+		LastError = null;
 		string dir = Paths.PolygonsBaseDir + "/" + Utils.GetDateFolderString(line.DateTime);
 		string localPath = dir + "/" + line.Hash + ".html";
 		string content = null;

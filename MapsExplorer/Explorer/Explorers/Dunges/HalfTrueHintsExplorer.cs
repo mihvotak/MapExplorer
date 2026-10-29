@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -18,7 +18,9 @@ public class HalfTrueHintsExplorer : ExplorerBase
 			if (line.DungeKind != DungeKind.Полуправды || line.DungeKind == DungeKind.Загадки)
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			if (dunge.StartKind == DungeKind.Загадки || dunge.StartKind != DungeKind.Полуправды || (dunge.SecretRom != null && (dunge.SecretRom.SecretKind == SecretKind.ChangeType || dunge.SecretRom.SecretKind == SecretKind.UnknownMark) && dunge.SecretRom.Visited))
+            if (dunge == null)
+                continue;
+            if (dunge.StartKind == DungeKind.Загадки || dunge.StartKind != DungeKind.Полуправды || (dunge.SecretRom != null && (dunge.SecretRom.SecretKind == SecretKind.ChangeType || dunge.SecretRom.SecretKind == SecretKind.UnknownMark) && dunge.SecretRom.Visited))
 				continue;
 			List<string> tds = new List<string>();
 			tds.Add(line.Link);

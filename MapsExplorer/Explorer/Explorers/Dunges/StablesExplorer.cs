@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -16,7 +16,9 @@ public class StablesExplorer : ExplorerBase
 			if (line.Category != MapCategory.Конюшня)
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			bool enough = dunge.Stable != null && dunge.Stable.EnoughInfo;
+            if (dunge == null)
+                continue;
+            bool enough = dunge.Stable != null && dunge.Stable.EnoughInfo;
 			builder.Append(line.Hash + "\t" + Utils.GetDateAndTimeString(line.DateTime) + "\t");
 			Map map = dunge.Maps[0];
 			builder.Append(map.Width + "\t" + map.Height + "\t");

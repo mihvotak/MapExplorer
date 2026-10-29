@@ -26,7 +26,9 @@ public class WallsExplorer : ExplorerBase
 			//if (!line.Success)
 			//	continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			Map map = dunge.Maps[dunge.LastFloor - 1];
+            if (dunge == null)
+                continue;
+            Map map = dunge.Maps[dunge.LastFloor - 1];
 			if (map.BadRouteWalls)
 				continue;
 			if (dunge.LastFloor == 1 && (dunge.LogLine.Category == MapCategory.Конюшня || dunge.LogLine.Category == MapCategory.Ромашка))

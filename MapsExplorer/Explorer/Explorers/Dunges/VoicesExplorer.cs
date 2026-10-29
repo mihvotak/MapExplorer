@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -13,7 +13,9 @@ public class VoicesExplorer : ExplorerBase
 		{
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			foreach (List<VoiceKind> voices in dunge.Voices)
+            if (dunge == null)
+                continue;
+            foreach (List<VoiceKind> voices in dunge.Voices)
 			{
 				List<string> tds = new List<string>();
 				tds.Add(line.Link);

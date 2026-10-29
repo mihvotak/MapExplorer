@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -12,9 +12,9 @@ public class HalfFinBossesExplorer : ExplorerBase
 		{
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			if (dunge == null)
-				break;
-			int count = 0;
+            if (dunge == null)
+                continue;
+            int count = 0;
 			string s = "";
 			foreach (Boss boss in dunge.Bosses)
 			{

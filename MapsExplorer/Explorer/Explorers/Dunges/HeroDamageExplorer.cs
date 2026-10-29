@@ -1,9 +1,7 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Linq;
-using System;
 
 public class HeroDamageExplorer : ExplorerBase
 {
@@ -20,7 +18,9 @@ public class HeroDamageExplorer : ExplorerBase
 			if (line.DungeKind == DungeKind.Бесшумности || line.DungeKind == DungeKind.Загадки || line.DungeKind2 == DungeKind.Бесшумности)
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			if (dunge.StartKind == DungeKind.Бесшумности || dunge.StartKind == DungeKind.Загадки || dunge.StartKind2 == DungeKind.Бесшумности)
+            if (dunge == null)
+                continue;
+            if (dunge.StartKind == DungeKind.Бесшумности || dunge.StartKind == DungeKind.Загадки || dunge.StartKind2 == DungeKind.Бесшумности)
 				continue;
 			if (dunge.SecretRom.Exists && (dunge.SecretRom.SecretKind == SecretKind.ChangeType || dunge.SecretRom.SecretKind == SecretKind.UnknownMark))
 				continue;

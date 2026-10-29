@@ -15,7 +15,7 @@ public class LogHandler
 		_context = BrowsingContext.New(_config);
 	}
 
-    public void SetOfflineMode(bool offlineMode)
+    public void Prepare(bool offlineMode)
     {
         _offlineMode = offlineMode;
     }

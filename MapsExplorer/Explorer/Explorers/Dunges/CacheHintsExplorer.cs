@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -12,7 +12,9 @@ public class CacheHintsExplorer : ExplorerBase
 		{
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			Map map = dunge.Maps[dunge.LastFloor - 1];
+            if (dunge == null)
+                continue;
+            Map map = dunge.Maps[dunge.LastFloor - 1];
 			bool enough = dunge.Stable != null && dunge.Stable.EnoughInfo;
 			builder.Append(line.Hash + "\t" + Utils.GetDateAndTimeString(line.DateTime) + "\t");
 			builder.Append(line.Category.ToString() + "\t");

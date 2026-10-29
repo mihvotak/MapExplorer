@@ -20,7 +20,7 @@ public class SeaLogHandler : LogHandler
     public Sea GetSea(LogLine line, SeaExploreMode mode = SeaExploreMode.None)
     {
         _mode = mode;
-        LastError = "";
+        LastError = null;
         string dir = Paths.SeasBaseDir + "/" + Utils.GetDateFolderString(line.DateTime);
         string localPath = dir + "/" + line.Hash + ".html";
         string content = null;

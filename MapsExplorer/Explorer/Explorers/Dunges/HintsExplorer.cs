@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -42,7 +42,9 @@ public class HintsExplorer : ExplorerBase
 			if (line.Category != MapCategory.Рандом)
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			if (dunge.IsCustom && !_customCheckBoxChecked)
+            if (dunge == null)
+                continue;
+            if (dunge.IsCustom && !_customCheckBoxChecked)
 				continue;
 			List<string> tds = new List<string>();
 			tds.Add(line.Link);

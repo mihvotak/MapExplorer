@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -14,7 +14,9 @@ public class PolySuccessExplorer : ExplorerBase
 		{
 			LogLine line = _resultLines[i];
 			Polygon polygon = PolygonLogHandler.GetPolygon(line, _polygonExploreMode);
-			List<string> tds = new List<string>();
+            if (polygon == null)
+                continue;
+            List<string> tds = new List<string>();
 			tds.Add(polygon.LogLine.Link);
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
 			tds.Add(string.Join("|", polygon.GodResults.Select(g => g.BossFullHP.ToString())));

@@ -1,4 +1,4 @@
-﻿
+
 using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +15,9 @@ public class CouponsExplorer : ExplorerBase
 			if (!line.Success)
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			foreach (string coupon in dunge.Coupons)
+            if (dunge == null)
+                continue;
+            foreach (string coupon in dunge.Coupons)
 			{
 				if (!results.ContainsKey(coupon))
 					results.Add(coupon, 0);

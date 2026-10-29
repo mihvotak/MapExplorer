@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -19,7 +19,9 @@ public class BossAbilsExplorer : ExplorerBase
 		{
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			foreach (var boss in dunge.Bosses)
+            if (dunge == null)
+                continue;
+            foreach (var boss in dunge.Bosses)
 			{
 				/*
 				int steps = boss.Hps.Count;

@@ -1,4 +1,4 @@
-﻿using MapsExplorer;
+using MapsExplorer;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -21,7 +21,9 @@ public class TreasurePosExplorer : ExplorerBase
 			if (needFloor == 1 && line.Category != MapCategory.Рандом)
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
-			if (dunge.LastFloor != needFloor)
+            if (dunge == null)
+                continue;
+            if (dunge.LastFloor != needFloor)
 				continue;
 			if (!line.Success || line.Vault)
 				continue;
