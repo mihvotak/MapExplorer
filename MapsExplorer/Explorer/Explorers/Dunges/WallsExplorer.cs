@@ -27,7 +27,11 @@ public class WallsExplorer : ExplorerBase
 			//	continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             Map map = dunge.Maps[dunge.LastFloor - 1];
 			if (map.BadRouteWalls)
 				continue;
@@ -121,5 +125,6 @@ public class WallsExplorer : ExplorerBase
 		resSb.AppendLine(PrintArray(sum2f, "Все рандомные, 2Э"));
 		ResultText = resSb.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/WallsResult.txt", ResultText);
+		ResultText += ErrorsListString;
 	}
 }

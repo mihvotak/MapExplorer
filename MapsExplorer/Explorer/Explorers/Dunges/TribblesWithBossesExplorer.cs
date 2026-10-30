@@ -58,7 +58,11 @@ public class TribblesWithBossesExplorer : ExplorerBase
 			//	continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             int killedBosses = dunge.Bosses.Count(b => b.HeroesWin);
 			bool time1 = line.DateTime < new DateTime(2019, 10, 29);
 			bool time2 = !time1 && line.DateTime < new DateTime(2019, 12, 27);
@@ -209,6 +213,6 @@ public class TribblesWithBossesExplorer : ExplorerBase
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/TribblesResult.txt", exploreRes);
 		TableText = exploreRes;
-
+		ResultText += ErrorsListString;
 	}
 }

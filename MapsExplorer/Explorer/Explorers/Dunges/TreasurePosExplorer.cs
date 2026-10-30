@@ -22,7 +22,11 @@ public class TreasurePosExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             if (dunge.LastFloor != needFloor)
 				continue;
 			if (!line.Success || line.Vault)
@@ -87,5 +91,6 @@ public class TreasurePosExplorer : ExplorerBase
 
 		TableText = exploreRes;
 		ResultText = s;
+		ResultText += ErrorsListString;
 	}
 }

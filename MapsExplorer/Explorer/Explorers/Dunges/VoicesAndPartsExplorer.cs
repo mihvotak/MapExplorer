@@ -16,7 +16,11 @@ public class VoicesAndPartsExplorer : ExplorerBase
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             foreach (var boss in dunge.Bosses)
 			{
 				if (boss.PartVoices.Count > 0)
@@ -53,5 +57,6 @@ public class VoicesAndPartsExplorer : ExplorerBase
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/BossLootExplorer.txt", exploreRes);
 		TableText = exploreRes;
+		ResultText += ErrorsListString;
 	}
 }

@@ -13,7 +13,11 @@ public class TeleportsExplorer : ExplorerBase
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             builder.Append(line.Link + "\t" + Utils.GetDateAndTimeString(line.DateTime) + "\t");
 			Map map = dunge.Maps[0];
 			builder.Append(map.Width + "\t" + map.Height + "\t");
@@ -26,5 +30,6 @@ public class TeleportsExplorer : ExplorerBase
 		}
 		string exploreRes = builder.ToString();
 		TableText = exploreRes;
+		ResultText += ErrorsListString;
 	}
 }

@@ -16,7 +16,11 @@ public class CouponsExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             foreach (string coupon in dunge.Coupons)
 			{
 				if (!results.ContainsKey(coupon))
@@ -30,5 +34,6 @@ public class CouponsExplorer : ExplorerBase
 			builder.Append(pair.Key + "\t" + pair.Value + "\n");
 		}
 		TableText = builder.ToString();
+		ResultText += ErrorsListString;
 	}
 }

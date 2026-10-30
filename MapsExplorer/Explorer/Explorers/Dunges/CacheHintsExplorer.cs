@@ -13,7 +13,11 @@ public class CacheHintsExplorer : ExplorerBase
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             Map map = dunge.Maps[dunge.LastFloor - 1];
 			bool enough = dunge.Stable != null && dunge.Stable.EnoughInfo;
 			builder.Append(line.Hash + "\t" + Utils.GetDateAndTimeString(line.DateTime) + "\t");
@@ -26,5 +30,6 @@ public class CacheHintsExplorer : ExplorerBase
 		}
 		string exploreRes = builder.ToString();
 		TableText = exploreRes;
+		ResultText += ErrorsListString;
 	}
 }

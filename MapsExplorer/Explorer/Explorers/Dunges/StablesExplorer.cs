@@ -17,7 +17,11 @@ public class StablesExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             bool enough = dunge.Stable != null && dunge.Stable.EnoughInfo;
 			builder.Append(line.Hash + "\t" + Utils.GetDateAndTimeString(line.DateTime) + "\t");
 			Map map = dunge.Maps[0];
@@ -50,5 +54,6 @@ public class StablesExplorer : ExplorerBase
 		}
 		string exploreRes = builder.ToString();
 		TableText = exploreRes;
+		ResultText += ErrorsListString;
 	}
 }

@@ -15,7 +15,11 @@ public class BossesByNameExplorer : ExplorerBase
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             foreach (var boss in dunge.Bosses)
 			{
 				if (boss.Name.Contains("Микро-"))
@@ -51,5 +55,6 @@ public class BossesByNameExplorer : ExplorerBase
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/BossesByName.txt", exploreRes);
 		TableText = exploreRes;
+		ResultText += ErrorsListString;
 	}
 }

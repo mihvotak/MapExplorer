@@ -43,7 +43,11 @@ public class HintsExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             if (dunge.IsCustom && !_customCheckBoxChecked)
 				continue;
 			List<string> tds = new List<string>();
@@ -262,6 +266,7 @@ public class HintsExplorer : ExplorerBase
 		builder.Append("\n");
 		builder.Append("\n");
 		builder.Append("\n");
+		ResultText += ErrorsListString;
 	}
 
 }

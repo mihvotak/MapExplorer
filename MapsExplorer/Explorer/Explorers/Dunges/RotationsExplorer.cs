@@ -107,7 +107,11 @@ public class RotationsExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             if (dunge.SecretRom.Exists && (dunge.SecretRom.SecretKind == SecretKind.ChangeType || dunge.SecretRom.SecretKind == SecretKind.UnknownMark) && dunge.SecretRom.Visited)
 				continue;
 
@@ -187,6 +191,7 @@ public class RotationsExplorer : ExplorerBase
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/Rotations.txt", exploreRes);
 		TableText = exploreRes;
+		ResultText += ErrorsListString;
 
 	}
 }

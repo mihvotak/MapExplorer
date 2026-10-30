@@ -15,7 +15,11 @@ public class PolySuccessExplorer : ExplorerBase
 			LogLine line = _resultLines[i];
 			Polygon polygon = PolygonLogHandler.GetPolygon(line, _polygonExploreMode);
             if (polygon == null)
+            {
+                _errors.Add(line.Link + ": " + PolygonLogHandler.LastError);
+                PolygonLogHandler.LastError = null;
                 continue;
+            }
             List<string> tds = new List<string>();
 			tds.Add(polygon.LogLine.Link);
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
@@ -29,5 +33,6 @@ public class PolySuccessExplorer : ExplorerBase
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/PlygonSuccessExplorer.txt", exploreRes);
 		TableText = exploreRes;
+		ResultText += ErrorsListString;
 	}
 }

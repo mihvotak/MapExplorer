@@ -19,7 +19,11 @@ public class HeroDamageExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             if (dunge.StartKind == DungeKind.Бесшумности || dunge.StartKind == DungeKind.Загадки || dunge.StartKind2 == DungeKind.Бесшумности)
 				continue;
 			if (dunge.SecretRom.Exists && (dunge.SecretRom.SecretKind == SecretKind.ChangeType || dunge.SecretRom.SecretKind == SecretKind.UnknownMark))
@@ -109,6 +113,6 @@ public class HeroDamageExplorer : ExplorerBase
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/HeroDamageResult.txt", exploreRes);
 		TableText = exploreRes;
-
+		ResultText += ErrorsListString;
 	}
 }

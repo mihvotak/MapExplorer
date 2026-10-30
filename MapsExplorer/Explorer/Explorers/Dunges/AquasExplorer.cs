@@ -18,7 +18,11 @@ public class AquasExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             Map map = dunge.Maps[0];
 			if (map.BadRouteWalls)
 				continue;
@@ -63,6 +67,6 @@ public class AquasExplorer : ExplorerBase
 		string exploreTab = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/AquasTab.txt", exploreTab);
 		TableText = exploreTab;
-
+		ResultText += ErrorsListString;
 	}
 }

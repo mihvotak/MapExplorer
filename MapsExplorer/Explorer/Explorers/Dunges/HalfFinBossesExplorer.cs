@@ -13,7 +13,11 @@ public class HalfFinBossesExplorer : ExplorerBase
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             int count = 0;
 			string s = "";
 			foreach (Boss boss in dunge.Bosses)
@@ -43,6 +47,6 @@ public class HalfFinBossesExplorer : ExplorerBase
 		string exploreRes = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/HalfFinBosses.txt", exploreRes);
 		TableText = exploreRes;
-
+		ResultText += ErrorsListString;
 	}
 }

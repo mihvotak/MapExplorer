@@ -19,7 +19,11 @@ public class HalfTrueHintsExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             if (dunge.StartKind == DungeKind.Загадки || dunge.StartKind != DungeKind.Полуправды || (dunge.SecretRom != null && (dunge.SecretRom.SecretKind == SecretKind.ChangeType || dunge.SecretRom.SecretKind == SecretKind.UnknownMark) && dunge.SecretRom.Visited))
 				continue;
 			List<string> tds = new List<string>();
@@ -149,5 +153,6 @@ public class HalfTrueHintsExplorer : ExplorerBase
 		string exploreTab = builder.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/HalfTrueHints.txt", exploreTab);
 		TableText = exploreTab;
+		ResultText += ErrorsListString;
 	}
 }

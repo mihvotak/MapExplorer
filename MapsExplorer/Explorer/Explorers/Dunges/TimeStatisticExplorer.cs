@@ -14,7 +14,11 @@ public class TimeStatisticExplorer : ExplorerBase
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             Map map = dunge.Maps[dunge.LastFloor - 1];
 			tds.AddRow();
 			tds.Add("Ссылка", line.Link);
@@ -38,5 +42,6 @@ public class TimeStatisticExplorer : ExplorerBase
 		string exploreRes = tds.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/" + _dungeonExploreMode + ".txt", exploreRes);
 		TableText = exploreRes;
+		ResultText += ErrorsListString;
 	}
 }

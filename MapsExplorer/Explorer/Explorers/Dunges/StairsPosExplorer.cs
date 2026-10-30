@@ -16,7 +16,11 @@ public class StairsPosExplorer : ExplorerBase
 			//	continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             Map map = dunge.Maps[0];
 			if (map.StairsPos == Int2.Zero)
 				continue;
@@ -50,5 +54,6 @@ public class StairsPosExplorer : ExplorerBase
 		s += plot.GetRes4(20);
 		TableText = exploreRes;
 		ResultText = s;
+		ResultText += ErrorsListString;
 	}
 }

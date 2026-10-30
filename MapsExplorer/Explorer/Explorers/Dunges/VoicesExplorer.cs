@@ -14,7 +14,11 @@ public class VoicesExplorer : ExplorerBase
 			LogLine line = _resultLines[i];
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             foreach (List<VoiceKind> voices in dunge.Voices)
 			{
 				List<string> tds = new List<string>();
@@ -40,5 +44,6 @@ public class VoicesExplorer : ExplorerBase
 		File.WriteAllText(Paths.ResultsDir + "/VoicesResult.txt", resData);
 		TableText = rawDataTable;
 		ResultText = resData;
+		ResultText += ErrorsListString;
 	}
 }

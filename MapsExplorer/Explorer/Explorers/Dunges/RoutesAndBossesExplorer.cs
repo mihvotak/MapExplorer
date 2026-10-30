@@ -26,7 +26,11 @@ public class RoutesAndBossesExplorer : ExplorerBase
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
+            {
+                _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
+                DungeonLogHandler.LastError = null;
                 continue;
+            }
             Map map = dunge.Maps[dunge.LastFloor - 1];
 			if (map.BadRouteWalls)
 				continue;
@@ -166,5 +170,6 @@ public class RoutesAndBossesExplorer : ExplorerBase
 		string exploreRes = builder2.ToString();
 		File.WriteAllText(Paths.ResultsDir + "/RoutesResult.txt", exploreRes);
 		ResultText = exploreRes;
+		ResultText += ErrorsListString;
 	}
 }
