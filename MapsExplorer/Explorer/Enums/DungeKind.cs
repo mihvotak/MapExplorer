@@ -1,4 +1,4 @@
-﻿namespace MapsExplorer
+namespace MapsExplorer
 {
 	public enum DungeKind
 	{
@@ -27,6 +27,7 @@
 		Токсичности,
 		Чистоты,
 		Обыденности,
-		Полуправды
+		Полуправды,
+        Сноса
 	}
 }

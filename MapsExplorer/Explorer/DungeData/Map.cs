@@ -31,7 +31,7 @@ namespace MapsExplorer
 		public bool RareWalls;
 
 		public bool BadRouteWalls;
-		public RoutesExplorer.RouteGrid Grid;
+		public DungeonRoutesHandler.RouteGrid Grid;
 
 		public Cell GetCell(int x, int y)
 		{

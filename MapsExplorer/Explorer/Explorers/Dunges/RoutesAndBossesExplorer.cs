@@ -17,12 +17,17 @@ public class RoutesAndBossesExplorer : ExplorerBase
 		int[,] noRoutesTreasure = new int[half * 2, half * 2];
 		StringBuilder builder = new StringBuilder();
 		StringBuilder builder2 = new StringBuilder();
+		StringBuilder builderNonRoute = new StringBuilder();
+		builderNonRoute.Append("Непутевые боссы — расстояние до клада\n");
+		builderNonRoute.Append(string.Join("\t", new string[] { "Ссылка", "Дата", "Категория", "Тип", "Этаж", "Имя", "X", "Y", "Real", "Min", "Abils", "TreasureDistance" }) + "\n");
 		for (int i = 0; i < _resultLines.Count; i++)
 		{
 			LogLine line = _resultLines[i];
-			if (line.Category != MapCategory.Рандом)
-				continue;
-			if (!line.Success || line.Vault)
+            if (line.Category != MapCategory.Рандом)
+                continue;
+            if (line.Custom)
+                continue;
+            if (!line.Success || line.Vault)
 				continue;
 			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
@@ -31,6 +36,8 @@ public class RoutesAndBossesExplorer : ExplorerBase
                 DungeonLogHandler.LastError = null;
                 continue;
             }
+            if (dunge.StartKind == DungeKind.Сноса || dunge.StartKind2 == DungeKind.Сноса)
+                continue;
             Map map = dunge.Maps[dunge.LastFloor - 1];
 			if (map.BadRouteWalls)
 				continue;
@@ -102,6 +109,29 @@ public class RoutesAndBossesExplorer : ExplorerBase
 				builder.Append(tr + "\n");
 
 			}
+			// Непутевые боссы — расстояние до клада
+			foreach (Boss boss in dunge.Bosses)
+			{
+				if (boss.Pos.Floor != dunge.LastFloor)
+					continue;
+				if (!boss.IsNonRoute)
+					continue;
+				List<string> tds2 = new List<string>();
+				tds2.Add(line.Link);
+				tds2.Add(Utils.GetDateAndTimeString(line.DateTime));
+				tds2.Add((dunge.LookAsAqua && dunge.LogLine.Category != MapCategory.Аква) ? "Аква!" : dunge.LogLine.Category.ToString());
+				tds2.Add(line.DungeKind.ToString());
+				tds2.Add(boss.Pos.Floor + "");
+				tds2.Add(boss.Name);
+                tds2.Add((boss.Pos.Pos - map.EnterPos).x + "");
+				tds2.Add(-(boss.Pos.Pos - map.EnterPos).y + "");
+				tds2.Add(boss.BossToTreasureRealLen + "");
+				tds2.Add(boss.BossToTreasureMinLen + "");
+				tds2.Add(boss.AbilsCount + "");
+                tds2.Add((boss.Pos.Pos - dunge.TreasurePos.Pos).SumMagnitude + "");
+                string tr2 = string.Join("\t", tds2);
+				builderNonRoute.Append(tr2 + "\n");
+			}
 			if (showOne)
 			{
 				for (int y = 0; y < map.Height; y++)
@@ -110,7 +140,7 @@ public class RoutesAndBossesExplorer : ExplorerBase
 					{
 						Cell cell = map.GetCell(x, y);
 						string sym = cell.GetSymbol(dunge.Rotation);
-						RoutesExplorer.RouteCell rc = map.Grid.GetCell(x, y);
+						DungeonRoutesHandler.RouteCell rc = map.Grid.GetCell(x, y);
 						bool calculatedBoss = cell.CellKind == CellKind.Boss && cell.Boss.BossPower == 0;
 						if (calculatedBoss)
 							sym = "Б!";
@@ -139,6 +169,8 @@ public class RoutesAndBossesExplorer : ExplorerBase
 			}
 			ReportProgress(i);
 		}
+		// Непутевые боссы — после основной таблицы
+		builder.Append(builderNonRoute.ToString());
 
 		void WriteResultGraph(string name, int[,] data)
 		{

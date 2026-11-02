@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace MapsExplorer
 {
-	public class RoutesExplorer
+	public class DungeonRoutesHandler
 	{
 		public class RouteCell
 		{
@@ -300,7 +300,85 @@ namespace MapsExplorer
 					}
 				}
 			}
+		}
 
+		public void ComputeBossToTreasureDistances(Dunge dunge)
+		{
+			Map map = dunge.Maps[dunge.LastFloor - 1];
+			RouteGrid grid2 = new RouteGrid(map.Width, map.Height);
+			List<RouteCell> waiting = new List<RouteCell>();
+			List<RouteCell> done = new List<RouteCell>();
+			int xLeft = map.IsLeftWall ? 0 : -1;
+			int xRight = map.IsRightWall ? map.Width - 1 : map.Width;
+			int yTop = map.IsTopWall ? 0 : -1;
+			int yBottom = map.IsBottomWall ? map.Height - 1 : map.Height;
+
+			void CalculateStepsFromTreasure(Int2 inPos, RouteGrid gridI)
+			{
+				Cell enterCell = map.GetCell(dunge.TreasurePos.Pos);
+				RouteCell first = new RouteCell() { Cell = enterCell, Pos = inPos, MinStep = 0, RealStep = 0 };
+				gridI.SetCell(inPos.x, inPos.y, first);
+				waiting.Add(first);
+				while (waiting.Count > 0)
+				{
+					RouteCell from = waiting[0];
+					waiting.RemoveAt(0);
+					bool wallkableFrom = from.Cell.CellKind != CellKind.Unknown && from.Cell.CellKind != CellKind.Wall;
+					int realSteps = from.RealStep + 1;
+					int minSteps = from.MinStep + 1;
+					for (int dirI = 0; dirI < 4; dirI++)
+					{
+						bool needAddToWaiting = false;
+						Int2 dir = Int2.FourDirections[dirI];
+						Int2 pos = from.Pos + dir;
+						if (pos.x < xLeft || pos.x > xRight)
+							continue;
+						if (pos.y < yTop || pos.y > yBottom)
+							continue;
+						if (gridI.GetCell(pos.x, pos.y) == null)
+						{
+							Cell cell = pos.x >= 0 && pos.x < map.Width && pos.y >= 0 && pos.y < map.Height ? map.GetCell(pos.x, pos.y) : new Cell() { CellKind = CellKind.Unknown };
+							gridI.SetCell(pos.x, pos.y, new RouteCell() { Pos = pos, Cell = cell });
+							needAddToWaiting = true;
+						}
+						RouteCell rc = gridI.GetCell(pos.x, pos.y);
+						if (rc.Cell.CellKind == CellKind.Wall)
+							continue;
+
+						if (rc.MinStep == -1 || rc.MinStep > minSteps)
+						{
+							rc.MinStep = minSteps;
+							needAddToWaiting = true;
+						}
+
+						if (wallkableFrom && from.RealStep >= 0)
+						{
+							if (rc.RealStep == -1 || rc.RealStep > realSteps)
+							{
+								rc.RealStep = realSteps;
+								needAddToWaiting = true;
+							}
+						}
+
+						if (needAddToWaiting)
+							waiting.Add(rc);
+					}
+				}
+			}
+			CalculateStepsFromTreasure(dunge.TreasurePos.Pos, grid2);
+
+			foreach (Boss boss in dunge.Bosses)
+			{
+				if (boss.Pos.Floor != dunge.LastFloor)
+					continue;
+				RouteCell rc = grid2.GetCell(boss.Pos.Pos);
+				if (rc != null)
+				{
+					boss.BossToTreasureRealLen = rc.RealStep;
+					boss.BossToTreasureMinLen = rc.MinStep;
+				}
+				boss.IsNonRoute = !boss.IsFinal && !boss.IsRouting && !boss.CanBeRouting;
+			}
 		}
 	}
 }

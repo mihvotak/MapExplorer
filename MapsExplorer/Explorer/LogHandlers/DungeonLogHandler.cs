@@ -14,7 +14,7 @@ namespace MapsExplorer
 		private readonly string[] VoiceKinds = { "север", "восток", "юг", "запад", "вниз", "спуск", "лестниц", "вверх", "наверх", "подним", "норд", "ост", "зюйд", "вест" };
 		private readonly Regex _partsKindsRegex;
 
-		private RoutesExplorer _routesExplorer;
+		private DungeonRoutesHandler _routesHandler;
 		private DungeonExploreMode _mode;
 		
 		private Regex _bossWarningRegex;
@@ -85,7 +85,7 @@ namespace MapsExplorer
 		public DungeonLogHandler()
 			:base()
 		{
-			_routesExplorer = new RoutesExplorer();
+			_routesHandler = new DungeonRoutesHandler();
 			string content = System.IO.File.ReadAllText("../../../dungeondb2_ru.dat");
 			JObject jObject = JObject.Parse(content);
 			string warnings = jObject.GetValue("bossHint").ToString();
@@ -247,7 +247,7 @@ namespace MapsExplorer
 							var array = jObject.Children().ToArray();
 							for (int i = 0; i < array.Length; i++)
 							{
-								var moveHps = array[i].Children().ToArray();
+								var moveHps = array[i].Children().ToArray()[0].Children().ToArray();
 								int len = moveHps.Length;
 								int[] hps = new int[len];
 								dunge.Hps.Add(hps);
@@ -1598,7 +1598,10 @@ namespace MapsExplorer
 			}
 
 			if (_mode == DungeonExploreMode.RoutesAndBosses && dunge.LogLine.Category == MapCategory.Рандом)
-				_routesExplorer.Explore(dunge);
+			{
+				_routesHandler.Explore(dunge);
+				_routesHandler.ComputeBossToTreasureDistances(dunge);
+			}
 			if (dunge.LogLine.Success && !dunge.LogLine.Vault)
 			{
 				Map map = dunge.Maps[dunge.LastFloor - 1];
@@ -1933,6 +1936,8 @@ namespace MapsExplorer
 				kinds.Add(DungeKind.Чистоты);
 			if (text.Contains("Полуправды") || text.Contains("Половина указателей на сокровищницу здесь врёт"))
 				kinds.Add(DungeKind.Полуправды);
+			if (text.Contains("Сноса") || text.Contains("Здесь чудеса часто сносят прилегающие стены"))
+				kinds.Add(DungeKind.Сноса);
 			if (kinds.Count > 0)
 				kind = kinds[0];
 			if (kinds.Count > 1)

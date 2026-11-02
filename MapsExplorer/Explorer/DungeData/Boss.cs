@@ -38,6 +38,9 @@ namespace MapsExplorer
 		public bool CanBeRouting;
 		public bool IsRouting;
 		public bool IsFinal;
+		public bool IsNonRoute;
+		public int BossToTreasureRealLen = -1;
+		public int BossToTreasureMinLen = -1;
 		public List<string> Loot = new List<string>();
 		public List<string> LootParts = new List<string>();
 		public List<string> PartVoices = new List<string>();
