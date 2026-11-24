@@ -20,7 +20,11 @@ public class TreasurePosExplorer : ExplorerBase
 				continue;
 			if (needFloor == 1 && line.Category != MapCategory.Рандом)
 				continue;
-			Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
+            if (line.Custom)
+                continue;
+            if (line.DungeKind == DungeKind.Сноса || line.DungeKind2 == DungeKind.Сноса)
+                continue;
+            Dunge dunge = DungeonLogHandler.GetDunge(line, _dungeonExploreMode);
             if (dunge == null)
             {
                 _errors.Add(line.Link + ": " + DungeonLogHandler.LastError);
@@ -31,7 +35,9 @@ public class TreasurePosExplorer : ExplorerBase
 				continue;
 			if (!line.Success || line.Vault)
 				continue;
-			List<string> tds = new List<string>();
+            if (line.DungeKind == DungeKind.Сноса || line.DungeKind2 == DungeKind.Сноса)
+                continue;
+            List<string> tds = new List<string>();
 			tds.Add(line.Link);
 			tds.Add(Utils.GetDateAndTimeString(line.DateTime));
 			tds.Add(line.DungeKind.ToString());

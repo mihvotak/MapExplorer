@@ -133,7 +133,7 @@
     <Compile Include="Explorer\Paths.cs" />
     <Compile Include="Explorer\PolygonData\GodResult.cs" />
     <Compile Include="Explorer\PolygonData\Polygon.cs" />
-    <Compile Include="Explorer\RoutesExplorer.cs" />
+    <Compile Include="Explorer\DungeonRoutesHandler.cs" />
     <Compile Include="Explorer\Tools\Plot2d.cs" />
     <Compile Include="Explorer\Tools\SeaStatMap.cs" />
     <Compile Include="Explorer\Utils.cs" />

@@ -1,7 +1,4 @@
-﻿using MapsExplorer.Explorer.DungeData;
-using System;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
+using MapsExplorer.Explorer.DungeData;
 
 namespace MapsExplorer
 {
@@ -16,11 +13,11 @@ namespace MapsExplorer
 		public string Symbol;
 		public int Step = -1;
 		public bool Reverse = false;
+        public bool IsWall => CellKind == CellKind.Wall;
+        public bool IsNotWall => CellKind != CellKind.Wall;
 
-		public bool CanBeBoss()
-		{
-			return CellKind == CellKind.PossibleBoss || CellKind == CellKind.Something || CellKind == CellKind.UnknownNotWall || CellKind == CellKind.Unknown;
-		}
+        public bool CanBeBoss => CellKind == CellKind.PossibleBoss || CellKind == CellKind.Something || CellKind == CellKind.UnknownNotWall || CellKind == CellKind.Unknown;
+        public bool IsBossOrCanBe => CellKind == CellKind.Boss || CanBeBoss;
 
 		public const string HintsList = "↑→↓←↗↘↙↖∨<∧>⌊⌈⌉⌋╩╠╦╣✵❄☁♨☀✺";
 
