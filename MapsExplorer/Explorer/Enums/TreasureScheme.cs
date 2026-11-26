@@ -1,24 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 public enum TreasureScheme
 {
-	Unknown,
-	T,
-    T_hz,
-    T2,
-    T2_hz,
-	L0, //(не Г)
-    L1, //(Г)
-    O_0w0,
-	O_0w_hz,
-	O_1w_2,
-	O_1w_1,
-	O_1w_hz,
-	C,
+	Unknown,// неизвестная схема
+    T,      // точно T
+    T_hz,   // скорее всего T, босс не найден
+    T2,     // не T, босс в проходе
+    T2_hz,  // точно не T, но босса не нашли
+    C,      // Ц схема, есть босс или намёк
+    L0,     // угол, но не чистая Г
+    L1,     // чистая Г, со стенкой
+    O_0w0,  // нет стен, есть босс
+	O_0w_hz,// нет стен, босс не найден
+    O_1w_1, // 1 стена, босс напротив
+    O_1w_2, // 1 стена, босс не напротив
+	O_1w_hz,// 1 стена, босс не найден
 }
 
 public enum TreasureSchemeKind
